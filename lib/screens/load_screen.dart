@@ -15,6 +15,8 @@ class LoadScreen extends StatefulWidget {
 class LoadScreenState extends State<LoadScreen> {
   final initializer = AppInitializer();
 
+  bool isInit = false;
+
   @override
   void initState() {
     super.initState();
@@ -22,37 +24,40 @@ class LoadScreenState extends State<LoadScreen> {
   }
 
   Future<void> startApp() async {
-    try {
-      final user = await initializer.hasUser();
-      final settings = await initializer.loadSettings();
+    while(!isInit) {
+      try {
+        final user = await initializer.hasUser();
+        final settings = await initializer.loadSettings();
 
-      if (!mounted) return;
-      
-      initializer.dispose();
+        if (!mounted) return;
+        
+        initializer.dispose();
+        isInit = true;
 
-      if (user != null) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (_) => MainScreen(
-              user: user,
-              settings: settings,
+        if (user != null) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (_) => MainScreen(
+                user: user,
+                settings: settings,
+              )
             )
-          )
-        );
-      } else {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (_) => AuthScreen()
-          )
-        );
-      }
-    } catch(e) {
-      print('Сервер недоступен');
-      print(e);
+          );
+        } else {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (_) => AuthScreen()
+            )
+          );
+        }
+      } catch(e) {
+        print('Сервер недоступен');
+        print(e);
 
-      await Future.delayed(Duration(seconds: 1));
+        await Future.delayed(Duration(seconds: 1));
+      }
     }
   }
 
