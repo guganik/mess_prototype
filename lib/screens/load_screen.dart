@@ -17,8 +17,6 @@ class LoadScreen extends StatefulWidget {
 class LoadScreenState extends State<LoadScreen> {
   final initializer = AppInitializer();
 
-  String error
-
   @override
   void initState() {
     super.initState();
@@ -29,7 +27,6 @@ class LoadScreenState extends State<LoadScreen> {
     final checker = context.read<ConnectionChecker>();
     
     while (!checker.isConnected) {
-      print(checker.isConnected);
       await Future.delayed(Duration(seconds: 1));
     }
 
@@ -69,7 +66,27 @@ class LoadScreenState extends State<LoadScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: CircularProgressIndicator(),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(
+              strokeAlign: 6,
+              strokeWidth: 6,
+            ),
+            SizedBox(height: 48,),
+            Text(
+              'Подключение...',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold
+              ),
+            ),
+            SizedBox(height: 8,),
+            Text(
+              'Проверь подключение к интернету или отключи VPN\n(либо Русский сервер поставь)'
+            )
+          ],
+        ),
       ),
     );
   }
