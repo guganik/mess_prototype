@@ -1,6 +1,7 @@
 // ignore_for_file: must_be_immutable
 
 import 'package:flutter/material.dart';
+import 'package:mess_prototype/widgets/switcher.dart';
 
 class SwitcherButton extends StatefulWidget {
   final VoidCallback funTap;
@@ -84,7 +85,10 @@ class SwitcherButtonState extends State<SwitcherButton> {
                 style: TextStyle(
                   fontSize: 14
                 ),
-              )
+              ),
+              Spacer(),
+              Switcher(),
+              SizedBox(width: 4,),
             ],
           ),
         )
