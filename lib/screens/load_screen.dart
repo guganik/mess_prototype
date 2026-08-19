@@ -4,6 +4,8 @@ import 'package:mess_prototype/screens/auth_screen.dart';
 import 'package:mess_prototype/services/app_initializer.dart';
 
 import 'package:mess_prototype/screens/main_screen.dart';
+import 'package:mess_prototype/services/connection_checker.dart';
+import 'package:provider/provider.dart';
 
 class LoadScreen extends StatefulWidget {
   const LoadScreen({super.key});
@@ -15,6 +17,8 @@ class LoadScreen extends StatefulWidget {
 class LoadScreenState extends State<LoadScreen> {
   final initializer = AppInitializer();
 
+  String error
+
   @override
   void initState() {
     super.initState();
@@ -22,10 +26,16 @@ class LoadScreenState extends State<LoadScreen> {
   }
 
   Future<void> startApp() async {
+    final checker = context.read<ConnectionChecker>();
+    
+    while (!checker.isConnected) {
+      print(checker.isConnected);
+      await Future.delayed(Duration(seconds: 1));
+    }
+
     try {
       final user = await initializer.hasUser();
       final settings = await initializer.loadSettings();
-      print(user);
 
       if (!mounted) return;
       
