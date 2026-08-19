@@ -34,68 +34,31 @@ class SwitcherButtonState extends State<SwitcherButton> {
 
   @override
   Widget build(BuildContext context) {
-    return MouseRegion(
-      onEnter: (event) {
-        setState(() {
-          hovered = true;
-        });
-      },
-      onExit: (event) {
-        setState(() {
-          hovered = false;
-          pressed = false;
-        });
-      },
-
-      child: GestureDetector(
-        onTap: widget.funTap,
-
-        onTapDown: (details) {
-          setState(() {
-            pressed = true;
-          });
-        },
-
-        onTapUp: (details) {
-          setState(() {
-            pressed = false;
-          });
-        },
-
-        onTapCancel: () {
-          setState(() {
-            pressed = false;
-          });
-        },
-
-        child: AnimatedContainer(
-          duration: Duration(milliseconds: 200),
-          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-          height: sizeTable[widget.size-1],
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(10)),
-            color: widget.defaultColor
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      height: sizeTable[widget.size-1],
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(10)),
+        color: widget.defaultColor
+      ),
+      child: Row(
+        children: [
+          widget.icon != null ? Icon(widget.icon) : SizedBox(),
+          SizedBox(width: 4,),
+          Text(
+            widget.label,
+            style: TextStyle(
+              fontSize: 14
+            ),
           ),
-          child: Row(
-            children: [
-              widget.icon != null ? Icon(widget.icon) : SizedBox(),
-              SizedBox(width: 4,),
-              Text(
-                widget.label,
-                style: TextStyle(
-                  fontSize: 14
-                ),
-              ),
-              Spacer(),
-              Switcher(
-                funTap: () {print('Нажат свитчер');},
-                pressed: false,
-              ),
-              SizedBox(width: 4,),
-            ],
+          Spacer(),
+          Switcher(
+            funTap: () {print('Нажат свитчер');},
+            pressed: false,
           ),
-        )
-      )
+          SizedBox(width: 4,),
+        ],
+      ),
     );
   }
 }

@@ -37,25 +37,19 @@ class SwitcherState extends State<Switcher> {
         color: widget.pressed
           ? widget.backgroundColorPressed
           : widget.backgroundColor,
-        border: widget.pressed 
+        border: !widget.pressed
           ? Border.all(color: widget.borderColor!)
           : null,
         borderRadius: BorderRadius.circular(50),
       ),
       child: Row(
         children: [
-          !widget.pressed
-            ? Spacer()
-            : SizedBox(),
           Container(
             decoration: BoxDecoration(
               color: widget.circleColor,
               shape: BoxShape.circle
             ),
           ),
-          widget.pressed
-            ? Spacer()
-            : SizedBox()
         ],
       ) 
     );

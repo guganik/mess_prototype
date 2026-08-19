@@ -46,7 +46,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 child: Column(
                   children: [
                     SwitcherButton(
-                      funTap: () {}, label: 'Тестовый свитчер'),
+                      funTap: () {},
+                      label: 'Тестовый свитчер'
+                    ),
                     SizedBox(height: 16,),
                     Container(
                       height: 32,
