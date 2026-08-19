@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:mess_prototype/providers/user_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -17,6 +18,14 @@ import 'package:mess_prototype/screens/load_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.white,
+      statusBarIconBrightness: Brightness.dark,
+    ),
+  );
+  
   runApp(
     MultiProvider(
       providers: [
