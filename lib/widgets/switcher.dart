@@ -32,7 +32,8 @@ class SwitcherState extends State<Switcher> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 48,
+      width: sizeTable[widget.size-1] * 1.5,
+      height: sizeTable[widget.size-1],
       decoration: BoxDecoration(
         color: widget.pressed
           ? widget.backgroundColorPressed
@@ -43,18 +44,20 @@ class SwitcherState extends State<Switcher> {
         borderRadius: BorderRadius.circular(10),
       ),
       child: Row(
-        crossAxisAlignment: widget.pressed
-          ? CrossAxisAlignment.end
-          : CrossAxisAlignment.start,
+        mainAxisAlignment: widget.pressed
+          ? MainAxisAlignment.end
+          : MainAxisAlignment.start,
         children: [
+          SizedBox(width: sizeTable[widget.size-1] / 10,),
           Container(
-            width: 28,
-            height: 28,
+            width: sizeTable[widget.size-1] / 1.5,
+            height: sizeTable[widget.size-1] / 1.5,
             decoration: BoxDecoration(
               color: widget.circleColor,
               shape: BoxShape.circle
             ),
           ),
+          SizedBox(width: sizeTable[widget.size-1] / 10,),
         ],
       ) 
     );

@@ -6,7 +6,7 @@ import 'package:mess_prototype/widgets/switcher.dart';
 class SwitcherButton extends StatefulWidget {
   final VoidCallback funTap;
   final String label;
-  final bool pressed;
+  bool pressed;
   final IconData? icon;
   final Color? defaultColor;
   final Color? defaultColorHover;
@@ -34,31 +34,41 @@ class SwitcherButtonState extends State<SwitcherButton> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-      height: sizeTable[widget.size-1],
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(10)),
-        color: widget.defaultColor
-      ),
-      child: Row(
-        children: [
-          widget.icon != null ? Icon(widget.icon) : SizedBox(),
-          SizedBox(width: 4,),
-          Text(
-            widget.label,
-            style: TextStyle(
-              fontSize: 14
+    return GestureDetector(
+      onTap: () {
+        widget.funTap;
+        
+        setState(() {
+          widget.pressed = !widget.pressed;
+        });
+      },
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+        height: sizeTable[widget.size-1],
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+          color: widget.defaultColor
+        ),
+        child: Row(
+          children: [
+            widget.icon != null ? Icon(widget.icon) : SizedBox(),
+            SizedBox(width: 4,),
+            Text(
+              widget.label,
+              style: TextStyle(
+                fontSize: 14
+              ),
             ),
-          ),
-          Spacer(),
-          Switcher(
-            funTap: () {print('Нажат свитчер');},
-            pressed: widget.pressed,
-          ),
-          SizedBox(width: 4,),
-        ],
-      ),
+            Spacer(),
+            Switcher(
+              funTap: () {print('Нажат свитчер');},
+              pressed: widget.pressed,
+              size: widget.size,
+            ),
+            SizedBox(width: 4,),
+          ],
+        ),
+      )
     );
   }
 }

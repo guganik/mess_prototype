@@ -293,7 +293,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                   'Здесь будет что-то вроде статуса...',
                   style: TextStyle(
                     fontSize: 14,
-                    color: Colors.grey
+                    color: Colors.grey[300]
                   ),
                 ),
               ),

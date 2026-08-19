@@ -29,7 +29,7 @@ class _AvatarEditorScreenState extends State<AvatarEditorScreen> {
   static const double maxZoom = 10.0;
 
   /// Какая часть доступной области экрана отводится редактору.
-  static const double editorScreenRatio = 0.85;
+  static const double editorScreenRatio = 1;
 
   // ============================================================
   // IMAGE

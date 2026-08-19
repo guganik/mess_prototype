@@ -42,45 +42,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ],
               ),
               SizedBox(height: 32,),
-              Container(
-                child: Column(
-                  children: [
-                    SwitcherButton(
-                      funTap: () {},
-                      label: 'Тестовый свитчер'
-                    ),
-                    SizedBox(height: 16,),
-                    SwitcherButton(
-                      funTap: () {},
-                      label: 'Тестовый свитчер'
-                    ),
-                    SizedBox(height: 16,),
-                    Container(
-                      height: 32,
-                      color: const Color.fromRGBO(75, 75, 75, 0.35),
-                    ),
-                    SizedBox(height: 16,),
-                    Container(
-                      height: 32,
-                      color: const Color.fromRGBO(75, 75, 75, 0.35),
-                    ),
-                    SizedBox(height: 16,),
-                    Container(
-                      height: 32,
-                      color: const Color.fromRGBO(75, 75, 75, 0.35),
-                    ),
-                    SizedBox(height: 16,),
-                    Container(
-                      height: 32,
-                      color: const Color.fromRGBO(75, 75, 75, 0.35),
-                    ),
-                    SizedBox(height: 16,),
-                    Container(
-                      height: 32,
-                      color: const Color.fromRGBO(75, 75, 75, 0.35),
-                    ),
-                  ],
-                ),
+              Column(
+                children: [
+                  SwitcherButton(
+                    size: 1,
+                    pressed: false,
+                    funTap: () {},
+                    label: 'Тестовый свитчер'
+                  ),
+                ],
               ),
             ],
           ),

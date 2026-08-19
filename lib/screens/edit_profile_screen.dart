@@ -203,134 +203,136 @@ class EditProfileScreenState extends State<EditProfileScreen> {
     final screenWidth = MediaQuery.of(context).size.width;
     // final screenHeight = MediaQuery.of(context).size.height;
 
-    return Scaffold(
-      body: Container(
-        width: screenWidth,
-        padding: EdgeInsets.all(16),
-        child: Column(
-          children: [
-						Row(
-							children: [
-								BackArrow(),
-                SizedBox(width: 16,),
-                Text(
-                  'Редактирование профиля',
-                  style: TextStyle(
-                    fontSize: 20,
-                  ),
-                ),
-								Spacer(),
-							],
-						),
-            SizedBox(height: 16,),
-            TextField(
-              controller: controller.usernameController,
-              decoration: InputDecoration(
-                prefixText: '@',
-                hintText: user.username,
-                labelText: 'Имя пользователя',
-                errorText: usernameError.isNotEmpty
-                  ? usernameError
-                  : null,
-              ),
-              onChanged: (_) {
-                setState(() {
-                  _validateUsername();
-                });
-              },
-            ),
-            SizedBox(height: 8,),
-            TextField(
-              controller: controller.firstNameController,
-              decoration: InputDecoration(
-                hintText: user.firstName ?? 'Введите свое имя',
-                labelText: 'Имя',
-                errorText: firstNameError.isNotEmpty 
-                  ? firstNameError
-                  : null,
-              ),
-              onChanged: (_) {
-                setState(() {
-                  _validateFirstName();
-                });
-              },
-            ),
-            SizedBox(height: 8,),
-            TextField(
-              controller: controller.emailController,
-              decoration: InputDecoration(
-                hintText: user.email ?? 'example@example.com',
-                labelText: 'Почта',
-                errorText: emailError.isNotEmpty
-                  ? emailError
-                  : null,
-              ),
-              onChanged: (_) {
-                setState(() {
-                  _validateEmail();
-                });
-              },
-            ),
-            SizedBox(height: 8,),
-            TextField(
-              inputFormatters: [phoneFormatter],
-              keyboardType: TextInputType.phone,
-              controller: controller.phoneController,
-              decoration: InputDecoration(
-                hintText: user.phone != null
-                  ? phoneFormatter.maskText(user.phone!)
-                  : '+7 987 654 32-10',
-                labelText: 'Номер телефона',
-                errorText: phoneError.isNotEmpty
-                  ? phoneError
-                  : null,
-              ),
-              onChanged: (_) {
-                setState(() {
-                  _validatePhone();
-                });
-              },
-            ),
-            Spacer(),
-            MouseRegion(
-              onEnter: (event) {
-                setState(() {  
-                  hovered = true;
-                });
-              },
-              onExit: (event) {
-                setState(() {
-                  hovered = false;
-                });
-              },
-              child: GestureDetector(
-                onTap: _saveProfile,
-                child: AnimatedContainer(
-                  duration: Duration(milliseconds: 200),
-                  padding: EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: hasChanges && !hasErrors && !isSaving
-                    ? hovered
-                      ? Colors.grey[500]
-                      : Colors.grey[400]
-                    : Colors.grey[300],
-                    borderRadius: BorderRadius.all(Radius.circular(30))
-                  ),
-                  child: Text(
-                    isSaving 
-                      ? 'Сохранение...'
-                      : 'Применить изменения',
+    return SafeArea(
+      child: Scaffold(
+        body: Container(
+          width: screenWidth,
+          padding: EdgeInsets.all(16),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  BackArrow(),
+                  SizedBox(width: 16,),
+                  Text(
+                    'Редактирование профиля',
                     style: TextStyle(
-                      fontSize: 16,
-                      color: hasChanges && !hasErrors && !isSaving
-                        ? Colors.black
-                        : Colors.grey[600],
+                      fontSize: 20,
                     ),
-                  )
-                ),
+                  ),
+                  Spacer(),
+                ],
               ),
-            )
-          ],
+              SizedBox(height: 16,),
+              TextField(
+                controller: controller.usernameController,
+                decoration: InputDecoration(
+                  prefixText: '@',
+                  hintText: user.username,
+                  labelText: 'Имя пользователя',
+                  errorText: usernameError.isNotEmpty
+                    ? usernameError
+                    : null,
+                ),
+                onChanged: (_) {
+                  setState(() {
+                    _validateUsername();
+                  });
+                },
+              ),
+              SizedBox(height: 8,),
+              TextField(
+                controller: controller.firstNameController,
+                decoration: InputDecoration(
+                  hintText: user.firstName ?? 'Введите свое имя',
+                  labelText: 'Имя',
+                  errorText: firstNameError.isNotEmpty 
+                    ? firstNameError
+                    : null,
+                ),
+                onChanged: (_) {
+                  setState(() {
+                    _validateFirstName();
+                  });
+                },
+              ),
+              SizedBox(height: 8,),
+              TextField(
+                controller: controller.emailController,
+                decoration: InputDecoration(
+                  hintText: user.email ?? 'example@example.com',
+                  labelText: 'Почта',
+                  errorText: emailError.isNotEmpty
+                    ? emailError
+                    : null,
+                ),
+                onChanged: (_) {
+                  setState(() {
+                    _validateEmail();
+                  });
+                },
+              ),
+              SizedBox(height: 8,),
+              TextField(
+                inputFormatters: [phoneFormatter],
+                keyboardType: TextInputType.phone,
+                controller: controller.phoneController,
+                decoration: InputDecoration(
+                  hintText: user.phone != null
+                    ? phoneFormatter.maskText(user.phone!)
+                    : '+7 987 654 32-10',
+                  labelText: 'Номер телефона',
+                  errorText: phoneError.isNotEmpty
+                    ? phoneError
+                    : null,
+                ),
+                onChanged: (_) {
+                  setState(() {
+                    _validatePhone();
+                  });
+                },
+              ),
+              Spacer(),
+              MouseRegion(
+                onEnter: (event) {
+                  setState(() {  
+                    hovered = true;
+                  });
+                },
+                onExit: (event) {
+                  setState(() {
+                    hovered = false;
+                  });
+                },
+                child: GestureDetector(
+                  onTap: _saveProfile,
+                  child: AnimatedContainer(
+                    duration: Duration(milliseconds: 200),
+                    padding: EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: hasChanges && !hasErrors && !isSaving
+                      ? hovered
+                        ? Colors.grey[500]
+                        : Colors.grey[400]
+                      : Colors.grey[300],
+                      borderRadius: BorderRadius.all(Radius.circular(30))
+                    ),
+                    child: Text(
+                      isSaving 
+                        ? 'Сохранение...'
+                        : 'Применить изменения',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: hasChanges && !hasErrors && !isSaving
+                          ? Colors.black
+                          : Colors.grey[600],
+                      ),
+                    )
+                  ),
+                ),
+              )
+            ],
+          )
         )
       )
     );
