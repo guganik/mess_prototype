@@ -281,8 +281,10 @@ class ProfileScreenState extends State<ProfileScreen> {
               SizedBox(height: 8,),
               Container(
                 padding: EdgeInsets.all(8),
+                height: 16*4,
+                width: screenWidth * 0.9,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(20)),
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
                   border: Border.all(
                     color: Colors.grey
                   )
@@ -307,21 +309,6 @@ class ProfileScreenState extends State<ProfileScreen> {
                 },
                 label: 'Редактировать профиль',
                 icon: Icons.edit,
-              ),
-              SizedBox(height: 16,),
-              Container(
-                height: 32,
-                color: const Color.fromRGBO(75, 75, 75, 0.35),
-              ),
-              SizedBox(height: 16,),
-              Container(
-                height: 32,
-                color: const Color.fromRGBO(75, 75, 75, 0.35),
-              ),
-              SizedBox(height: 16,),
-              Container(
-                height: 32,
-                color: const Color.fromRGBO(75, 75, 75, 0.35),
               ),
             ],
           ),

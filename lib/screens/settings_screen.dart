@@ -44,38 +44,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               Container(
                 child: Column(
                   children: [
-                    Row(
-                      children: [
-                        Container(
-                          width: 16*7,
-                          height: 16*7,
-                          decoration: BoxDecoration(
-                            color: const Color.fromRGBO(75, 75, 75, 0.35),
-                            shape: BoxShape.circle
-                          ),
-                        ),
-                        SizedBox(width: 16,),
-                        Expanded(
-                          child: SizedBox(
-                            height: 16*7,
-                            child: Column(
-                              children: [
-                                Container(
-                                  height: 32,
-                                  color: const Color.fromRGBO(75, 75, 75, 0.35),
-                                ),
-                                SizedBox(height: 16,),
-                                Container(
-                                  height: 64,
-                                  color: const Color.fromRGBO(75, 75, 75, 0.35),
-                                )
-                              ],
-                            )
-                          ),
-                        )
-                      ],
-                    ),
-                    SizedBox(height: 64,),
                     Container(
                       height: 32,
                       color: const Color.fromRGBO(75, 75, 75, 0.35),
