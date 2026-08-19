@@ -158,163 +158,165 @@ class ProfileScreenState extends State<ProfileScreen> {
     final screenWidth = MediaQuery.of(context).size.width;
     // final screenHeight = MediaQuery.of(context).size.height;
 
-    return Scaffold(
-      body: Container(
-        width: screenWidth,
-        padding: EdgeInsets.all(16),
-        child: Column(
-          children: [
-						Row(
-							children: [
-								BackArrow(),
-								Spacer(),
-							],
-						),
-            MouseRegion(
-              onEnter: (_) {
-                setState(() {
-                  _avatarHovered = true;
-                });
-              },
-              onExit: (_) {
-                if (!_avatarHolding) {
+    return SafeArea(
+      child: Scaffold(
+        body: Container(
+          width: screenWidth,
+          padding: EdgeInsets.all(16),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  BackArrow(),
+                  Spacer(),
+                ],
+              ),
+              MouseRegion(
+                onEnter: (_) {
                   setState(() {
-                    _avatarHovered = false;
+                    _avatarHovered = true;
                   });
-                }
-              },
-              child: GestureDetector(
-                onTap: _changeAvatar,
-                onLongPressStart: (_) {
-                  _startAvatarHold();
                 },
-                onLongPressEnd: (_) {
-                  if (_deleteProgress < 1.0) {
-                    _cancelAvatarHold();
+                onExit: (_) {
+                  if (!_avatarHolding) {
+                    setState(() {
+                      _avatarHovered = false;
+                    });
                   }
                 },
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Container(
-                      width: 16 * 10,
-                      height: 16 * 10,
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                      ),
-                      clipBehavior: Clip.antiAlias,
-                      child: user!.avatarLocalPath != null
-                        ? Image.file(
-                          File(user.avatarLocalPath!),
-                          fit: BoxFit.cover,
-                        )
-                        : Container(
-                            color: const Color.fromRGBO(
-                              75,
-                              75,
-                              75,
-                              0.35,
-                            ),
-                            child: Icon(
-                              Icons.person,
-                              color: Colors.grey,
-                              size: 16 * 6,
-                            ),
-                          ),
-                    ),
-
-                    if (_avatarHovered || _avatarHolding)
-                      AnimatedContainer(
-                        duration: _avatarHolding
-                            ? const Duration(milliseconds: 50)
-                            : const Duration(milliseconds: 300),
+                child: GestureDetector(
+                  onTap: _changeAvatar,
+                  onLongPressStart: (_) {
+                    _startAvatarHold();
+                  },
+                  onLongPressEnd: (_) {
+                    if (_deleteProgress < 1.0) {
+                      _cancelAvatarHold();
+                    }
+                  },
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Container(
                         width: 16 * 10,
                         height: 16 * 10,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           shape: BoxShape.circle,
-                          color: Color.lerp(
-                            Colors.black.withValues(alpha: 0.45),
-                            Colors.red.withValues(alpha: 0.85),
-                            _deleteProgress.clamp(0.0, 1.0),
-                          ),
                         ),
-                        child: Center(
-                          child: AnimatedDefaultTextStyle(
-                            duration: const Duration(milliseconds: 300),
-                            style: TextStyle(
-                              color: Color.lerp(
-                                Colors.white,
-                                Colors.brown.shade900,
-                                _deleteProgress.clamp(0.0, 1.0),
+                        clipBehavior: Clip.antiAlias,
+                        child: user!.avatarLocalPath != null
+                          ? Image.file(
+                            File(user.avatarLocalPath!),
+                            fit: BoxFit.cover,
+                          )
+                          : Container(
+                              color: const Color.fromRGBO(
+                                75,
+                                75,
+                                75,
+                                0.35,
                               ),
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
+                              child: Icon(
+                                Icons.person,
+                                color: Colors.grey,
+                                size: 16 * 6,
+                              ),
                             ),
-                            child: const Text(
-                              'Нажатие — изменить\n'
-                              'Удержание — удалить',
-                              textAlign: TextAlign.center,
+                      ),
+
+                      if (_avatarHovered || _avatarHolding)
+                        AnimatedContainer(
+                          duration: _avatarHolding
+                              ? const Duration(milliseconds: 50)
+                              : const Duration(milliseconds: 300),
+                          width: 16 * 10,
+                          height: 16 * 10,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Color.lerp(
+                              Colors.black.withValues(alpha: 0.45),
+                              Colors.red.withValues(alpha: 0.85),
+                              _deleteProgress.clamp(0.0, 1.0),
+                            ),
+                          ),
+                          child: Center(
+                            child: AnimatedDefaultTextStyle(
+                              duration: const Duration(milliseconds: 300),
+                              style: TextStyle(
+                                color: Color.lerp(
+                                  Colors.white,
+                                  Colors.brown.shade900,
+                                  _deleteProgress.clamp(0.0, 1.0),
+                                ),
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              child: const Text(
+                                'Нажатие — изменить\n'
+                                'Удержание — удалить',
+                                textAlign: TextAlign.center,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
-            SizedBox(height: 16,),
-            Text(
-              user.firstName != null && user.firstName!.isNotEmpty
-                ? user.firstName!
-                : user.username,
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold
+              SizedBox(height: 16,),
+              Text(
+                user.firstName != null && user.firstName!.isNotEmpty
+                  ? user.firstName!
+                  : user.username,
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold
+                ),
               ),
-            ),
-            Text(
-              '@${user.username}',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[600]!
+              Text(
+                '@${user.username}',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey[600]!
+                ),
               ),
-            ),
-            SizedBox(height: 32,),
-            Container(
-              height: 16*8,
-              color: const Color.fromRGBO(75, 75, 75, 0.35),
-            ),
-            SizedBox(height: 16,),
-            DefaultButton(
-              funTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => EditProfileScreen()
-                  )
-                );
-              },
-              label: 'Редактировать профиль',
-              icon: Icons.edit,
-            ),
-            SizedBox(height: 16,),
-            Container(
-              height: 32,
-              color: const Color.fromRGBO(75, 75, 75, 0.35),
-            ),
-            SizedBox(height: 16,),
-            Container(
-              height: 32,
-              color: const Color.fromRGBO(75, 75, 75, 0.35),
-            ),
-            SizedBox(height: 16,),
-            Container(
-              height: 32,
-              color: const Color.fromRGBO(75, 75, 75, 0.35),
-            ),
-          ],
+              SizedBox(height: 32,),
+              Container(
+                height: 16*8,
+                color: const Color.fromRGBO(75, 75, 75, 0.35),
+              ),
+              SizedBox(height: 16,),
+              DefaultButton(
+                funTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EditProfileScreen()
+                    )
+                  );
+                },
+                label: 'Редактировать профиль',
+                icon: Icons.edit,
+              ),
+              SizedBox(height: 16,),
+              Container(
+                height: 32,
+                color: const Color.fromRGBO(75, 75, 75, 0.35),
+              ),
+              SizedBox(height: 16,),
+              Container(
+                height: 32,
+                color: const Color.fromRGBO(75, 75, 75, 0.35),
+              ),
+              SizedBox(height: 16,),
+              Container(
+                height: 32,
+                color: const Color.fromRGBO(75, 75, 75, 0.35),
+              ),
+            ],
+          ),
         ),
-      ),
-    );
+      )
+    ); 
   }
 }

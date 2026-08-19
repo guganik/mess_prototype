@@ -83,6 +83,7 @@ class LoadScreenState extends State<LoadScreen> {
             ),
             SizedBox(height: 8,),
             Text(
+              textAlign: TextAlign.center,
               'Проверь подключение к интернету или отключи VPN\n(либо Русский сервер поставь)'
             )
           ],

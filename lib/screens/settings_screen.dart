@@ -30,7 +30,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
-    return Scaffold(
+    return SafeArea(
+      child: 
+    
+    );
+    Scaffold(
 			body: Container(
 				padding: EdgeInsets.all(16),
 				child: Column(
