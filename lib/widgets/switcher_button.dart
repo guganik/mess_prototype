@@ -6,6 +6,7 @@ import 'package:mess_prototype/widgets/switcher.dart';
 class SwitcherButton extends StatefulWidget {
   final VoidCallback funTap;
   final String label;
+  final bool pressed;
   final IconData? icon;
   final Color? defaultColor;
   final Color? defaultColorHover;
@@ -16,6 +17,7 @@ class SwitcherButton extends StatefulWidget {
     super.key,
     required this.funTap,
     required this.label,
+    required this.pressed,
     this.icon,
     this.size = 2,
     this.defaultColor = Colors.transparent,
@@ -29,8 +31,6 @@ class SwitcherButton extends StatefulWidget {
 
 class SwitcherButtonState extends State<SwitcherButton> {
   List sizeTable = [24.0, 32.0, 38.0];
-  bool hovered = false;
-  bool pressed = false;
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +54,7 @@ class SwitcherButtonState extends State<SwitcherButton> {
           Spacer(),
           Switcher(
             funTap: () {print('Нажат свитчер');},
-            pressed: false,
+            pressed: widget.pressed,
           ),
           SizedBox(width: 4,),
         ],

@@ -50,9 +50,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       label: 'Тестовый свитчер'
                     ),
                     SizedBox(height: 16,),
-                    Container(
-                      height: 32,
-                      color: const Color.fromRGBO(75, 75, 75, 0.35),
+                    SwitcherButton(
+                      funTap: () {},
+                      label: 'Тестовый свитчер'
                     ),
                     SizedBox(height: 16,),
                     Container(

@@ -32,7 +32,7 @@ class SwitcherState extends State<Switcher> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(4),
+      width: 48,
       decoration: BoxDecoration(
         color: widget.pressed
           ? widget.backgroundColorPressed
@@ -40,11 +40,16 @@ class SwitcherState extends State<Switcher> {
         border: !widget.pressed
           ? Border.all(color: widget.borderColor!)
           : null,
-        borderRadius: BorderRadius.circular(50),
+        borderRadius: BorderRadius.circular(10),
       ),
       child: Row(
+        crossAxisAlignment: widget.pressed
+          ? CrossAxisAlignment.end
+          : CrossAxisAlignment.start,
         children: [
           Container(
+            width: 28,
+            height: 28,
             decoration: BoxDecoration(
               color: widget.circleColor,
               shape: BoxShape.circle
