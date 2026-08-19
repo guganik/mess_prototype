@@ -1,0 +1,222 @@
+import 'package:flutter/material.dart';
+import 'package:mess_prototype/api/api_service.dart';
+
+import 'package:mess_prototype/controllers/auth_controller.dart';
+import 'package:mess_prototype/repositories/app_settings_repository.dart';
+import 'package:mess_prototype/repositories/user_repository.dart';
+import 'package:mess_prototype/screens/auth_screen.dart';
+
+import 'package:mess_prototype/screens/main_screen.dart';
+
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
+
+  @override
+  State<RegisterScreen> createState() => _RegisterScreenState();
+}
+class _RegisterScreenState extends State<RegisterScreen> {
+  final controller = AuthController();
+  final apiService = ApiService();
+
+  bool loading = false;
+  
+  bool hovered = false;
+
+  Future<void> register() async {
+    setState(() {
+      loading = true;
+    });
+
+    try {
+      await apiService.register(
+        username: controller.username,
+        firstName: controller.firstName,
+        email: controller.email,
+        phone: controller.phone,
+        password: controller.password
+      );
+
+      final authResponse = await apiService.login(
+        username: controller.username,
+        password: controller.password
+      );
+
+      final serverUser = await apiService.getCurrentUser(token: authResponse.accessToken);
+      final user = serverUser.copyWith(token: authResponse.accessToken);
+
+      final userRepository = UserRepository();
+      await userRepository.saveUser(user); 
+      
+      final settingsRepository = SettingsRepository();
+      final settings = await settingsRepository.getAppSettings();
+
+      if (!mounted) return;
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => MainScreen(
+            user: user,
+            settings: settings,
+          )
+        )
+      );
+    }
+
+    catch(e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            e.toString()
+          )
+        )
+      );
+    }
+
+    finally {
+      setState(() {
+        loading = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    // ignore: unused_local_variable
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    return Scaffold(
+      body: Column(
+        children: [
+          Spacer(),
+          Center(
+            child: Container(
+              width: screenWidth * 0.8,
+              padding: EdgeInsets.all(16*4),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(20)),
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color.fromRGBO(0, 0, 0, 0.2),
+                    offset: Offset(0, 4),
+                    blurRadius: 10
+                  )
+                ]
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextField(
+                    controller: controller.usernameController,
+                    decoration: InputDecoration(
+                      hintText: 'Имя пользователя'
+                    ),
+                  ),
+                  TextField(
+                    controller: controller.firstNameController,
+                    decoration: InputDecoration(
+                      hintText: 'Имя (необязательно)'
+                    ),
+                  ),
+                  TextField(
+                    controller: controller.emailController,
+                    decoration: InputDecoration(
+                      hintText: 'Почта'
+                    ),
+                  ),
+                  TextField(
+                    controller: controller.phoneController,
+                    decoration: InputDecoration(
+                      hintText: 'Номер телефона'
+                    ),
+                  ),
+                  TextField(
+                    controller: controller.passwordController,
+                    obscureText: true,
+                    decoration: InputDecoration(
+                      hintText: 'Пароль'
+                    ),
+                  ),
+                  SizedBox(height: 20,),
+                  Row(
+                    children: [
+                      Spacer(),
+                      MouseRegion(
+                        onEnter: (_) {
+                          setState(() {
+                            hovered = true;
+                          });
+                        },
+                        onExit: (event) {
+                          setState(() {
+                            hovered = false;
+                          });
+                        },
+                        child: GestureDetector(
+                          onTap: register,
+                          child: AnimatedContainer(
+                            padding: EdgeInsets.symmetric(horizontal: 32, vertical: 8),
+                            duration: Duration(milliseconds: 200),
+                            decoration: BoxDecoration(
+                              color: hovered
+                                ? Colors.grey[400]
+                                : Colors.grey[300],
+                              borderRadius: BorderRadius.all(Radius.circular(20))
+                            ),
+                            child: Text('Создать аккаунт'),
+                          ),
+                        ),
+                      ),
+                      Spacer()
+                    ]
+                  ),
+                  SizedBox(height: 16,),
+                  Row(
+                    children: [
+                      Spacer(),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AuthScreen()
+                            )
+                          );
+                        },
+
+                        child: Column(
+                          children: [
+                            Text('Есть аккаунт? Войди!'),
+                            SizedBox(height: 2,),
+                            Container(
+                              color: Colors.grey[500],
+                              width: 125,
+                              height: 1,
+                            )
+                          ]
+                        ),
+                      ),
+                      Spacer(),
+                    ],
+                  )
+                ],
+              ),
+            )
+          ),
+          Spacer()
+        ]
+
+        // child: Column(
+        // )
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+}
