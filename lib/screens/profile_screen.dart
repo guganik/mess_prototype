@@ -88,7 +88,7 @@ class ProfileScreenState extends State<ProfileScreen> {
     try {
       final userProvider = context.read<UserProvider>();
       final updatedUser = await userProvider.repository.deleteAvatar();
-      
+
       await userProvider.updateUser(updatedUser);
 
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Аватар успешно обновлен')));
@@ -246,7 +246,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                                   Colors.brown.shade900,
                                   _deleteProgress.clamp(0.0, 1.0),
                                 ),
-                                fontSize: 13,
+                                fontSize: 14,
                                 fontWeight: FontWeight.w600,
                               ),
                               child: const Text(
@@ -274,16 +274,28 @@ class ProfileScreenState extends State<ProfileScreen> {
               Text(
                 '@${user.username}',
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 14,
                   color: Colors.grey[600]!
                 ),
               ),
-              SizedBox(height: 32,),
+              SizedBox(height: 8,),
               Container(
-                height: 16*8,
-                color: const Color.fromRGBO(75, 75, 75, 0.35),
+                padding: EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(20)),
+                  border: Border.all(
+                    color: Colors.grey
+                  )
+                ),
+                child: Text(
+                  'Здесь будет что-то вроде статуса...',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey
+                  ),
+                ),
               ),
-              SizedBox(height: 16,),
+              SizedBox(height: 32,),
               DefaultButton(
                 funTap: () {
                   Navigator.push(
