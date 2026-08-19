@@ -87,7 +87,10 @@ class SwitcherButtonState extends State<SwitcherButton> {
                 ),
               ),
               Spacer(),
-              Switcher(),
+              Switcher(
+                funTap: () {print('Нажат свитчер');},
+                pressed: false,
+              ),
               SizedBox(width: 4,),
             ],
           ),
