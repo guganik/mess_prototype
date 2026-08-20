@@ -116,21 +116,6 @@ class ApiService {
     return User.fromJson(data);
   }
 
-  Future<User> updatePresence({required String token}) async {
-    final response = await _client.patch(
-      Uri.parse('$serverUrl/users/me/presence'),
-      
-      headers: {
-        'Authorization': 'Bearer $token'
-      },
-    );
-
-    _checkResponse(response);
-
-    final data = _decodeJson(response);
-
-    return User.fromJson(data);
-  }
 
   Future<User> updateCurrentUser({
     required String token,

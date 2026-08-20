@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 
 import 'package:mess_prototype/controllers/auth_controller.dart';
 import 'package:mess_prototype/providers/user_provider.dart';
+import 'package:mess_prototype/repositories/app_settings_repository.dart';
 import 'package:mess_prototype/screens/auth_screen.dart';
-import 'package:provider/provider.dart';
 
 import 'package:mess_prototype/screens/main_screen.dart';
+import 'package:provider/provider.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -21,33 +22,32 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool hovered = false;
 
   Future<void> register() async {
-    if (loading) return;
-
     setState(() {
       loading = true;
     });
 
     try {
-      final userProvider = context.read<UserProvider>();
-      await userProvider.register(
+      await context.read<UserProvider>().register(
         username: controller.username,
-        firstName: controller.firstName.isEmpty ? null : controller.firstName,
-        email: controller.email.isEmpty ? null : controller.email,
-        phone: controller.phone.isEmpty ? null : controller.phone,
+        firstName: controller.firstName,
+        email: controller.email,
+        phone: controller.phone,
         password: controller.password,
       );
+
+      final settingsRepository = SettingsRepository();
+      final settings = await settingsRepository.getAppSettings();
 
       if (!mounted) return;
 
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (_) => const MainScreen(),
+          builder: (_) => MainScreen(settings: settings),
         ),
       );
     } catch (e) {
       if (!mounted) return;
-
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(e.toString())),
       );

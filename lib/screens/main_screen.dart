@@ -1,8 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:mess_prototype/models/user.dart';
 
+import 'package:mess_prototype/models/app_settings.dart';
+import 'package:mess_prototype/models/user.dart';
 import 'package:mess_prototype/providers/user_provider.dart';
 import 'package:mess_prototype/screens/auth_screen.dart';
 
@@ -17,7 +18,12 @@ import 'package:mess_prototype/widgets/default_button.dart';
 import 'package:provider/provider.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+  final Settings settings;
+
+  const MainScreen({
+    super.key,
+    required this.settings,
+  });
 
   @override
   MainScreenState createState() => MainScreenState();
@@ -27,9 +33,6 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   bool pressed = false;
   bool hovered = false;
 
-  bool initializedProvider = false;
-
-  late UserProvider userProvider;
 
   List friends = [];
   List chats = [];
@@ -62,31 +65,10 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
     super.dispose();
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    if (!initializedProvider) {
-      userProvider = context.read<UserProvider>();
-      initializedProvider = true;
-    }
-  }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) async {
-    final user = userProvider.user;
-
-    if (user == null || user.token == null) return;
-
-    try {
-      if (state == AppLifecycleState.resumed) {
-        await userProvider.updatePresence();
-
-        if (!mounted) return;
-      }
-    } catch (e) {
-      print('Ошибка изменения статус при смене состояния приложения: $e');
-    }
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // RealtimeService owns the connection/presence lifecycle.
   }
 
   @override
@@ -95,7 +77,6 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
 
     final currentUser = userProvider.user;
 
-    // chatSvc.setUserId(widget.user.user_id);
     final checker = context.watch<ConnectionChecker>();
 
     return Scaffold(
@@ -340,26 +321,21 @@ class LeftPanelState extends State<LeftPanel> {
   @override
   void initState() {
     super.initState();
-    currentStatusColor = statusColors[context.read<UserProvider>().user?.status ?? 'offline'];
+    final user = context.read<UserProvider>().user;
+    currentStatusColor = statusColors[user?.status ?? 'offline'];
   }
 
   Future<void> changeStatus(String status, BuildContext context) async {
-    final userProvider = context.read<UserProvider>();
-
-    final user = userProvider.user;
-
-    if(user == null || user.token == null) return;
-
     try {
-      await userProvider.changeStatus(status);
+      await context.read<UserProvider>().setStatus(status);
 
+      if (!mounted) return;
       setState(() {
         currentStatusColor = statusColors[status];
-
         pressedChangeStatus = false;
       });
     } catch (e) {
-      print('Не удалось изменить статус: $e');
+      debugPrint('Не удалось изменить статус: $e');
     }
   }
 
@@ -394,7 +370,7 @@ class LeftPanelState extends State<LeftPanel> {
                           color: const Color.fromRGBO(75, 75, 75, 0.35),
                         ),
                         clipBehavior: Clip.antiAlias,
-                        child: user != null && user.avatarLocalPath != null
+                        child: user!.avatarLocalPath != null
                           ? Image.file(
                               File(user.avatarLocalPath!),
                               fit: BoxFit.cover,
@@ -424,29 +400,31 @@ class LeftPanelState extends State<LeftPanel> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        user != null
-                        ? user.firstName != null && user.firstName!.isNotEmpty
-                          ? Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  user.firstName!,
-                                  style: TextStyle(fontSize: 20),
-                                ),
-                                Text(
-                                  '@${user.username}',
-                                  style: TextStyle(fontSize: 12),
-                                ),
-                              ],
-                            )
-                          : Text(
-                              '@${user.username}',
+                        user.firstName != null && user.firstName!.isNotEmpty
+                        ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              user.firstName!,
                               style: TextStyle(
                                 fontSize: 20,
-                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              '@${user.username}',
+                              style: TextStyle(
+                                fontSize: 12,
                               ),
                             )
-                        : Container()
+                          ],
+                        )
+                        : Text(
+                            user.username,
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold
+                            ),
+                          )
                       ],
                     )
                   )
@@ -648,14 +626,10 @@ class LeftPanelState extends State<LeftPanel> {
               DefaultButton(
                 funTap: () async {
                   await context.read<UserProvider>().logout();
-
-                  if (!context.mounted) return;
-
+                  if (!mounted) return;
                   Navigator.pushAndRemoveUntil(
                     context,
-                    MaterialPageRoute(
-                      builder: (_) => const AuthScreen(),
-                    ),
+                    MaterialPageRoute(builder: (_) => const AuthScreen()),
                     (_) => false,
                   );
                 },

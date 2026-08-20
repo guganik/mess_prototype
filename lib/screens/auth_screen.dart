@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
 import 'package:mess_prototype/controllers/auth_controller.dart';
+import 'package:mess_prototype/providers/user_provider.dart';
+import 'package:mess_prototype/repositories/app_settings_repository.dart';
 import 'package:mess_prototype/screens/register_screen.dart';
 
-import 'package:mess_prototype/providers/user_provider.dart';
 import 'package:mess_prototype/screens/main_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -23,33 +24,32 @@ class _AuthScreenState extends State<AuthScreen> {
   String? errorText;
 
   Future<void> authorization() async {
-    if (loading) return;
-
     setState(() {
       loading = true;
       errorText = null;
     });
 
     try {
-      final userProvider = context.read<UserProvider>();
-      await userProvider.login(
+      await context.read<UserProvider>().login(
         username: controller.username,
         password: controller.password,
       );
+
+      final settingsRepository = SettingsRepository();
+      final settings = await settingsRepository.getAppSettings();
 
       if (!mounted) return;
 
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (_) => const MainScreen(),
+          builder: (_) => MainScreen(settings: settings),
         ),
       );
-    } catch (e) {
+    } catch (_) {
       if (!mounted) return;
-
       setState(() {
-        errorText = 'Не удалось войти: $e';
+        errorText = 'Пользователь не найден';
       });
     } finally {
       if (mounted) {

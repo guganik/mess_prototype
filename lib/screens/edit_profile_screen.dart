@@ -58,7 +58,6 @@ class EditProfileScreenState extends State<EditProfileScreen> {
   @override
   void dispose() {
     controller.dispose();
-
     super.dispose();
   }
 
@@ -137,17 +136,13 @@ class EditProfileScreenState extends State<EditProfileScreen> {
     if (isSaving) return;
 
     final user = currentUser;
+    if (user == null) return;
 
-    if (user == null || user.token == null) return;
-
-    setState(() {
-      _validateAll();
-    });
+    setState(_validateAll);
 
     if (hasErrors || !hasChanges) return;
-    
-    final changes = _buildChanges(user);
 
+    final changes = _buildChanges(user);
     if (changes.isEmpty) return;
 
     setState(() {
@@ -163,12 +158,12 @@ class EditProfileScreenState extends State<EditProfileScreen> {
       );
 
       if (!mounted) return;
-
       Navigator.pop(context);
     } catch (e) {
       if (!mounted) return;
-
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Не удалось сохранить изменения')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
     } finally {
       if (mounted) {
         setState(() {
