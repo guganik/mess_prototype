@@ -645,9 +645,9 @@ class LeftPanelState extends State<LeftPanel> {
               SizedBox(height: 8,),
               DefaultButton(
                 funTap: () async {
-                  await userProvider.logout();
+                  await context.read<UserProvider>().logout();
 
-                  if (!mounted) return;
+                  if (!context.mounted) return;
 
                   Navigator.pushAndRemoveUntil(
                     context,

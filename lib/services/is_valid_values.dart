@@ -56,10 +56,17 @@ class IsValidValues {
     return null;
   }
 
-  String? phone(MaskTextInputFormatter phoneFormatter) {
-    final cleanPhone = phoneFormatter.getUnmaskedText();
+  String? phone(String value) {
+    final phone = value.trim().replaceAll(RegExp(r'[\s()-]'), '');
 
-    if (cleanPhone.length < 10) return 'Номер телефона слишком короткий';
+    if (phone.isEmpty) return 'Номер телефона не может быть пустым';
+    if (!RegExp(r'^\+[0-9]+$').hasMatch(phone)) {
+      return 'Номер телефона должен начинаться с "+" и содержать только цифры';
+    }
+
+    final digitCount = phone.length - 1;
+    if (digitCount < 10) return 'Номер телефона слишком короткий';
+    if (digitCount > 15) return 'Номер телефона слишком длинный';
 
     return null;
   }
