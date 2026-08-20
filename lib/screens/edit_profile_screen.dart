@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-import 'package:mess_prototype/api/api_service.dart';
 import 'package:mess_prototype/controllers/auth_controller.dart';
 import 'package:mess_prototype/models/user.dart';
 import 'package:mess_prototype/providers/user_provider.dart';
@@ -17,7 +16,6 @@ class EditProfileScreen extends StatefulWidget {
 
 class EditProfileScreenState extends State<EditProfileScreen> {
   final AuthController controller = AuthController();
-  final ApiService apiService = ApiService();
   final IsValidValues isValidValues = IsValidValues();
 
   final MaskTextInputFormatter phoneFormatter = MaskTextInputFormatter(
@@ -60,7 +58,6 @@ class EditProfileScreenState extends State<EditProfileScreen> {
   @override
   void dispose() {
     controller.dispose();
-    apiService.dispose();
 
     super.dispose();
   }
@@ -99,7 +96,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
       return;
     }
 
-    phoneError = isValidValues.phone(phoneFormatter) ?? '';
+    phoneError = isValidValues.phone(value) ?? '';
   }
 
   void _validateAll() {
@@ -158,23 +155,16 @@ class EditProfileScreenState extends State<EditProfileScreen> {
     });
 
     try {
-      final updatedUser = await apiService.updateCurrentUser(
-        token: user.token!,
+      await context.read<UserProvider>().updateProfile(
         username: changes['username'],
         firstName: changes['first_name'],
         email: changes['email'],
-        phone: changes['phone']
+        phone: changes['phone'],
       );
 
       if (!mounted) return;
 
-      context.read<UserProvider>().updateUser(updatedUser.copyWith(token: user.token));
-
       Navigator.pop(context);
-    } on ApiException catch (e) {
-      if (!mounted) return;
-
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message)));
     } catch (e) {
       if (!mounted) return;
 

@@ -1,9 +1,7 @@
 // ignore_for_file: unused_local_variable
 
 import 'package:flutter/material.dart';
-import 'package:mess_prototype/api/api_service.dart';
 import 'package:mess_prototype/providers/user_provider.dart';
-import 'package:mess_prototype/repositories/user_repository.dart';
 import 'package:mess_prototype/widgets/back_arrow.dart';
 import 'package:mess_prototype/widgets/switcher_button.dart';
 
@@ -17,15 +15,8 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  final UserRepository userRepository = UserRepository();
-  final ApiService apiService = ApiService();
-
   @override
   Widget build(BuildContext context) {
-    final userProvider = context.read<UserProvider>();
-
-    final user = userProvider.user;
-
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 

@@ -87,9 +87,7 @@ class ProfileScreenState extends State<ProfileScreen> {
 
     try {
       final userProvider = context.read<UserProvider>();
-      final updatedUser = await userProvider.repository.deleteAvatar();
-
-      await userProvider.updateUser(updatedUser);
+      await userProvider.removeAvatar();
 
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Аватар успешно обновлен')));
     } catch (_) {

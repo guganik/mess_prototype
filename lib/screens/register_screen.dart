@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:mess_prototype/api/api_service.dart';
 
 import 'package:mess_prototype/controllers/auth_controller.dart';
-import 'package:mess_prototype/repositories/app_settings_repository.dart';
-import 'package:mess_prototype/repositories/user_repository.dart';
+import 'package:mess_prototype/providers/user_provider.dart';
 import 'package:mess_prototype/screens/auth_screen.dart';
+import 'package:provider/provider.dart';
 
 import 'package:mess_prototype/screens/main_screen.dart';
 
@@ -16,67 +15,48 @@ class RegisterScreen extends StatefulWidget {
 }
 class _RegisterScreenState extends State<RegisterScreen> {
   final controller = AuthController();
-  final apiService = ApiService();
 
   bool loading = false;
   
   bool hovered = false;
 
   Future<void> register() async {
+    if (loading) return;
+
     setState(() {
       loading = true;
     });
 
     try {
-      await apiService.register(
+      final userProvider = context.read<UserProvider>();
+      await userProvider.register(
         username: controller.username,
-        firstName: controller.firstName,
-        email: controller.email,
-        phone: controller.phone,
-        password: controller.password
+        firstName: controller.firstName.isEmpty ? null : controller.firstName,
+        email: controller.email.isEmpty ? null : controller.email,
+        phone: controller.phone.isEmpty ? null : controller.phone,
+        password: controller.password,
       );
-
-      final authResponse = await apiService.login(
-        username: controller.username,
-        password: controller.password
-      );
-
-      final serverUser = await apiService.getCurrentUser(token: authResponse.accessToken);
-      final user = serverUser.copyWith(token: authResponse.accessToken);
-
-      final userRepository = UserRepository();
-      await userRepository.saveUser(user); 
-      
-      final settingsRepository = SettingsRepository();
-      final settings = await settingsRepository.getAppSettings();
 
       if (!mounted) return;
 
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (_) => MainScreen(
-            user: user,
-            settings: settings,
-          )
-        )
+          builder: (_) => const MainScreen(),
+        ),
       );
-    }
+    } catch (e) {
+      if (!mounted) return;
 
-    catch(e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            e.toString()
-          )
-        )
+        SnackBar(content: Text(e.toString())),
       );
-    }
-
-    finally {
-      setState(() {
-        loading = false;
-      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          loading = false;
+        });
+      }
     }
   }
 

@@ -1,11 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-
-import 'package:mess_prototype/database/database_provider.dart';
-import 'package:mess_prototype/models/app_settings.dart';
 import 'package:mess_prototype/models/user.dart';
-import 'package:mess_prototype/api/api_service.dart';
+
 import 'package:mess_prototype/providers/user_provider.dart';
 import 'package:mess_prototype/screens/auth_screen.dart';
 
@@ -20,14 +17,7 @@ import 'package:mess_prototype/widgets/default_button.dart';
 import 'package:provider/provider.dart';
 
 class MainScreen extends StatefulWidget {
-  final User user;
-  final Settings settings;
-
-  const MainScreen({
-    super.key,
-    required this.user,
-    required this.settings
-  });
+  const MainScreen({super.key});
 
   @override
   MainScreenState createState() => MainScreenState();
@@ -90,14 +80,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
 
     try {
       if (state == AppLifecycleState.resumed) {
-        final updatedUser = await ApiService().updateCurrentUser(
-          token: user.token!,
-          status: user.status
-        );
-
-        final syncedUser = updatedUser.copyWith(token: user.token);
-
-        await userProvider.updateUser(syncedUser);
+        await userProvider.updatePresence();
 
         if (!mounted) return;
       }
@@ -357,7 +340,7 @@ class LeftPanelState extends State<LeftPanel> {
   @override
   void initState() {
     super.initState();
-    currentStatusColor = statusColors[widget.user?.status ?? 'offline'];
+    currentStatusColor = statusColors[context.read<UserProvider>().user?.status ?? 'offline'];
   }
 
   Future<void> changeStatus(String status, BuildContext context) async {
@@ -368,11 +351,7 @@ class LeftPanelState extends State<LeftPanel> {
     if(user == null || user.token == null) return;
 
     try {
-      final updatedUser = await ApiService().updateCurrentUser(token: user.token!, status: status);
-
-      final syncedUser = updatedUser.copyWith(token: user.token);
-
-      await userProvider.updateUser(syncedUser);
+      await userProvider.changeStatus(status);
 
       setState(() {
         currentStatusColor = statusColors[status];
@@ -445,36 +424,27 @@ class LeftPanelState extends State<LeftPanel> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        widget.user != null
-                        ? widget.user!.firstName != ''
-                          ? Column(
+                        user.firstName != null && user.firstName!.isNotEmpty
+                        ? Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                widget.user!.firstName!,
-                                style: TextStyle(
-                                  fontSize: 20,
-                                ),
+                                user.firstName!,
+                                style: TextStyle(fontSize: 20),
                               ),
                               Text(
-                                '@${widget.user!.username}',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                ),
-                              )
+                                '@${user.username}',
+                                style: TextStyle(fontSize: 12),
+                              ),
                             ],
                           )
-                          : Text(
-                              widget.user!.username,
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold
-                              ),
-                            )
-                        : Container(
-                          height: 16,
-                          color: const Color.fromRGBO(75, 75, 75, 0.35),
-                        ),
+                        : Text(
+                            '@${user.username}',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                       ],
                     )
                   )
@@ -674,13 +644,17 @@ class LeftPanelState extends State<LeftPanel> {
               DefaultButton(funTap: () => print(""), label: ""),
               SizedBox(height: 8,),
               DefaultButton(
-                funTap: () {
-                  database.deleteUser();
-                  Navigator.push(
+                funTap: () async {
+                  await userProvider.logout();
+
+                  if (!mounted) return;
+
+                  Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => AuthScreen()
-                    )
+                      builder: (_) => const AuthScreen(),
+                    ),
+                    (_) => false,
                   );
                 },
                 label: "Выйти",

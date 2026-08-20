@@ -5,48 +5,32 @@ import 'package:mess_prototype/database/database_provider.dart';
 import 'package:mess_prototype/models/user.dart';
 import 'package:mess_prototype/services/avatar_cache.dart';
 
+/// Единственная точка работы с данными пользователя.
+///
+/// Repository решает ОТКУДА взять/куда сохранить данные:
+/// - HTTP через ApiService;
+/// - локально через Drift;
+/// - локальный кэш аватара через AvatarCache.
+///
+/// UI и Provider не должны обращаться к этим источникам напрямую.
 class UserRepository {
-  final ApiService apiService = ApiService();
-  final AvatarCache avatarCache = AvatarCache();
+  final ApiService apiService;
+  final AvatarCache avatarCache;
+  final AppDatabase database;
 
-  Future<User?> getCurrentUser() async {
+  UserRepository({
+    required this.apiService,
+    required this.avatarCache,
+    required this.database,
+  });
+
+  Future<User?> getLocalUser() async {
     final data = await database.getUser();
-
-    if (data == null) {
-      return null;
-    }
-
-    return User(
-      id: data.id,
-      username: data.username,
-      firstName: data.firstName,
-      email: data.email,
-      phone: data.phone,
-      avatarFileId: data.avatarFileId,
-      avatarLocalPath: data.avatarLocalPath,
-      status: data.status,
-      presence: data.presence,
-      lastSeen: data.lastSeen,
-      isActive: data.isActive,
-      token: data.token
-    );
+    if (data == null) return null;
+    return _fromLocal(data);
   }
 
-  Future<User> getCurrentUserFromServer() async {
-    final localUser = await getCurrentUser();
-
-    if (localUser == null) throw Exception('Пользователь не найден');
-
-    final token = localUser.token;
-
-    if (token == null || token.isEmpty) throw Exception('Токен авторизации отсутствует');
-
-    final serverUser = await apiService.getCurrentUser(token: token);
-
-    return serverUser.copyWith(token: localUser.token);
-  }
-
-  Future<void> saveUser(User user) async {
+  Future<void> saveLocalUser(User user) async {
     await database.deleteUser();
 
     await database.saveUser(
@@ -63,22 +47,18 @@ class UserRepository {
         lastSeen: Value(user.lastSeen),
         isActive: Value(user.isActive),
         token: Value(user.token),
-      )
+      ),
     );
   }
 
-  Future<void> syncUser(User user) async {
-    final existingUser = await getCurrentUser();
+  Future<void> updateLocalUser(User user) async {
+    final localUser = await getLocalUser();
 
-    if (existingUser == null) {
-      await saveUser(user);
+    if (localUser == null) {
+      await saveLocalUser(user);
       return;
     }
 
-    await updateUser(user);
-  }
-
-  Future<void> updateUser(User user) async {
     await database.updateUser(
       user.id,
       username: user.username,
@@ -95,103 +75,237 @@ class UserRepository {
     );
   }
 
-  Future<String> uploadAvatar({
-    required List<int> imageBytes,
-    required String fileName
+  Future<void> clearLocalUser() => database.deleteUser();
+
+  Future<User> login({
+    required String username,
+    required String password,
   }) async {
-    final user = await getCurrentUser();
+    final auth = await apiService.login(
+      username: username,
+      password: password,
+    );
 
-    if (user == null) throw Exception('Пользователь не найден');
+    final serverUser = await apiService.getCurrentUser(
+      token: auth.accessToken,
+    );
 
-    final token = user.token;
+    final user = serverUser.copyWith(token: auth.accessToken);
+    final userWithAvatar = await _syncAvatar(null, user);
 
-    if (token == null || token.isEmpty) throw Exception('Токен авторизации отсутствует');
-
-    return await apiService.uploadAvatar(
-      token: token,
-      imageBytes: imageBytes,
-      fileName: fileName
-    ); 
+    await saveLocalUser(userWithAvatar);
+    return userWithAvatar;
   }
 
-  Future<User> updateAvatar({
-    required String fileId
+  Future<User> register({
+    required String username,
+    required String password,
+    String? firstName,
+    String? email,
+    String? phone,
   }) async {
-    final user = await getCurrentUser();
+    await apiService.register(
+      username: username,
+      password: password,
+      firstName: firstName,
+      email: email,
+      phone: phone,
+    );
 
-    if (user == null) throw Exception('Пользователь не найден');
-
-    final token = user.token;
-
-    if (token == null || token.isEmpty) throw Exception('Токен авторизации отсутствует');
-
-    return await apiService.updateAvatar(
-      token: token,
-      fileId: fileId
+    // Сервер регистрации не возвращает токен, поэтому после регистрации
+    // авторизуемся обычным способом и сохраняем единственную актуальную сессию.
+    return login(
+      username: username,
+      password: password,
     );
   }
 
-  Future<User> syncAvatar(User localUser, User serverUser) async {
-    final localAvatarId = localUser.avatarFileId;
+  Future<User> refreshFromServer() async {
+    final localUser = await getLocalUser();
+
+    if (localUser == null) {
+      throw StateError('Пользователь не найден локально');
+    }
+
+    final token = localUser.token;
+    if (token == null || token.isEmpty) {
+      throw StateError('Токен авторизации отсутствует');
+    }
+
+    final serverUser = await apiService.getCurrentUser(token: token);
+    final updatedUser = await _syncAvatar(localUser, serverUser.copyWith(token: token));
+
+    await updateLocalUser(updatedUser);
+    return updatedUser;
+  }
+
+  Future<User> updateProfile({
+    required User currentUser,
+    String? username,
+    String? firstName,
+    String? email,
+    String? phone,
+    String? status,
+  }) async {
+    final token = _requireToken(currentUser);
+
+    final serverUser = await apiService.updateCurrentUser(
+      token: token,
+      username: username,
+      firstName: firstName,
+      email: email,
+      phone: phone,
+      status: status,
+    );
+
+    final updatedUser = serverUser.copyWith(
+      token: token,
+      avatarLocalPath: currentUser.avatarLocalPath,
+    );
+
+    await updateLocalUser(updatedUser);
+    return updatedUser;
+  }
+
+  Future<User> updatePresence(User currentUser) async {
+    final token = _requireToken(currentUser);
+
+    final serverUser = await apiService.updatePresence(token: token);
+    final updatedUser = serverUser.copyWith(
+      token: token,
+      avatarLocalPath: currentUser.avatarLocalPath,
+    );
+
+    await updateLocalUser(updatedUser);
+    return updatedUser;
+  }
+
+  Future<User> setAvatar({
+    required User currentUser,
+    required List<int> imageBytes,
+    required String fileName,
+  }) async {
+    final token = _requireToken(currentUser);
+
+    final fileId = await apiService.uploadAvatar(
+      token: token,
+      imageBytes: imageBytes,
+      fileName: fileName,
+    );
+
+    final serverUser = await apiService.updateAvatar(
+      token: token,
+      fileId: fileId,
+    );
+
+    final localPath = await avatarCache.downloadAvatar(
+      fileId: fileId,
+      token: token,
+    );
+
+    if (currentUser.avatarFileId != null && currentUser.avatarFileId != fileId) {
+      final oldPath = await avatarCache.getAvatarPath(currentUser.avatarFileId!);
+      await avatarCache.deleteAvatar(oldPath);
+    }
+
+    final updatedUser = serverUser.copyWith(
+      token: token,
+      avatarLocalPath: localPath,
+    );
+
+    await updateLocalUser(updatedUser);
+    return updatedUser;
+  }
+
+  Future<User> removeAvatar(User currentUser) async {
+    final token = _requireToken(currentUser);
+    final oldAvatarId = currentUser.avatarFileId;
+
+    final serverUser = await apiService.deleteAvatar(token: token);
+
+    if (oldAvatarId != null) {
+      final oldPath = await avatarCache.getAvatarPath(oldAvatarId);
+      await avatarCache.deleteAvatar(oldPath);
+    }
+
+    final updatedUser = serverUser.copyWith(
+      token: token,
+      avatarFileId: null,
+      avatarLocalPath: null,
+    );
+
+    await updateLocalUser(updatedUser);
+    return updatedUser;
+  }
+
+  User _fromLocal(LocalUser data) {
+    return User(
+      id: data.id,
+      username: data.username,
+      firstName: data.firstName,
+      email: data.email,
+      phone: data.phone,
+      avatarFileId: data.avatarFileId,
+      avatarLocalPath: data.avatarLocalPath,
+      status: data.status,
+      presence: data.presence,
+      lastSeen: data.lastSeen,
+      isActive: data.isActive,
+      token: data.token,
+    );
+  }
+
+  Future<User> _syncAvatar(User? localUser, User serverUser) async {
     final serverAvatarId = serverUser.avatarFileId;
+    final localAvatarId = localUser?.avatarFileId;
 
     if (serverAvatarId == null) {
       if (localAvatarId != null) {
-        final localPath = await avatarCache.getAvatarPath(localAvatarId);
-
-        await avatarCache.deleteAvatar(localPath);
+        final oldPath = await avatarCache.getAvatarPath(localAvatarId);
+        await avatarCache.deleteAvatar(oldPath);
       }
 
-      return User(
-        id: serverUser.id,
-        username: serverUser.username,
-        firstName: serverUser.firstName,
-        email: serverUser.email,
-        phone: serverUser.phone,
+      return serverUser.copyWith(
         avatarFileId: null,
         avatarLocalPath: null,
-        status: serverUser.status,
-        presence: serverUser.presence,
-        lastSeen: serverUser.lastSeen,
-        isActive: serverUser.isActive,
-        token: serverUser.token,
       );
     }
 
-    final localPath = await avatarCache.getAvatarPath(serverAvatarId);
+    final cachedPath = await avatarCache.getAvatarPath(serverAvatarId);
+    if (cachedPath != null) {
+      if (localAvatarId != null && localAvatarId != serverAvatarId) {
+        final oldPath = await avatarCache.getAvatarPath(localAvatarId);
+        await avatarCache.deleteAvatar(oldPath);
+      }
 
-    if (localPath != null) {
-      return serverUser.copyWith(token: localUser.token, avatarLocalPath: localPath);
+      return serverUser.copyWith(avatarLocalPath: cachedPath);
     }
 
-    final newPath = await avatarCache.downloadAvatar(fileId: serverAvatarId, token: localUser.token!);
+    final token = _requireToken(serverUser);
+    final newPath = await avatarCache.downloadAvatar(
+      fileId: serverAvatarId,
+      token: token,
+    );
 
     if (newPath == null) {
-      return localUser;
+      return serverUser.copyWith(
+        avatarLocalPath: localUser?.avatarLocalPath,
+      );
     }
 
     if (localAvatarId != null && localAvatarId != serverAvatarId) {
       final oldPath = await avatarCache.getAvatarPath(localAvatarId);
-
       await avatarCache.deleteAvatar(oldPath);
     }
 
-    return serverUser.copyWith(token: localUser.token, avatarLocalPath: newPath);
+    return serverUser.copyWith(avatarLocalPath: newPath);
   }
 
-  Future<User> deleteAvatar() async {
-    final user = await getCurrentUser();
-
-    if (user == null) throw Exception('Пользователь не найден');
-
+  String _requireToken(User user) {
     final token = user.token;
-
-    if (token == null || token.isEmpty) throw Exception('Токен авторизации отсутствует');
-
-    return await apiService.deleteAvatar(token: token);
-  }
-
-  Future<void> deleteUser() {
-    return database.deleteUser();
+    if (token == null || token.isEmpty) {
+      throw StateError('Токен авторизации отсутствует');
+    }
+    return token;
   }
 }
