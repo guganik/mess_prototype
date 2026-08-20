@@ -1,7 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:mess_prototype/api/api_service.dart';
 import 'package:mess_prototype/database/app_database.dart';
-import 'package:mess_prototype/database/database_provider.dart';
 import 'package:mess_prototype/models/user.dart';
 import 'package:mess_prototype/services/avatar_cache.dart';
 

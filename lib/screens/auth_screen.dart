@@ -32,7 +32,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
     try {
       final userProvider = context.read<UserProvider>();
-      final user = await userProvider.login(
+      await userProvider.login(
         username: controller.username,
         password: controller.password,
       );

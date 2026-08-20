@@ -394,7 +394,7 @@ class LeftPanelState extends State<LeftPanel> {
                           color: const Color.fromRGBO(75, 75, 75, 0.35),
                         ),
                         clipBehavior: Clip.antiAlias,
-                        child: user!.avatarLocalPath != null
+                        child: user != null && user.avatarLocalPath != null
                           ? Image.file(
                               File(user.avatarLocalPath!),
                               fit: BoxFit.cover,
@@ -424,27 +424,29 @@ class LeftPanelState extends State<LeftPanel> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        user.firstName != null && user.firstName!.isNotEmpty
-                        ? Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                user.firstName!,
-                                style: TextStyle(fontSize: 20),
+                        user != null
+                        ? user.firstName != null && user.firstName!.isNotEmpty
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  user.firstName!,
+                                  style: TextStyle(fontSize: 20),
+                                ),
+                                Text(
+                                  '@${user.username}',
+                                  style: TextStyle(fontSize: 12),
+                                ),
+                              ],
+                            )
+                          : Text(
+                              '@${user.username}',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
                               ),
-                              Text(
-                                '@${user.username}',
-                                style: TextStyle(fontSize: 12),
-                              ),
-                            ],
-                          )
-                        : Text(
-                            '@${user.username}',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                            )
+                        : Container()
                       ],
                     )
                   )

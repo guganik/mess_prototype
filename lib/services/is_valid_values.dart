@@ -1,5 +1,3 @@
-import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-
 class IsValidValues {
   static const int usernameMinLength = 3;
   static const int usernameMaxLength = 32;

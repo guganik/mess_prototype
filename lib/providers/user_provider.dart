@@ -234,6 +234,7 @@ class UserProvider extends ChangeNotifier {
   }
 
   void _sendPresenceSafely() {
+    // ignore: body_might_complete_normally_catch_error
     updatePresence().catchError((_) {
       // Presence не должна ломать основную сессию пользователя.
     });
