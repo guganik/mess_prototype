@@ -754,15 +754,13 @@ class _ChatList extends StatelessWidget {
         context,
         snapshot,
       ) {
-        if (snapshot.connectionState ==
-            ConnectionState.waiting) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
             child: CircularProgressIndicator(),
           );
         }
 
-        final chats =
-            snapshot.data ?? const [];
+        final chats = snapshot.data ?? const [];
 
         if (chats.isEmpty) {
           return const Center(
