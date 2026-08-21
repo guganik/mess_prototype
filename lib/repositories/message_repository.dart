@@ -1,7 +1,6 @@
 import 'package:drift/drift.dart';
 
 import 'package:mess_prototype/database/app_database.dart';
-import 'package:mess_prototype/models/local_message.dart';
 
 class MessageRepository {
   final AppDatabase database;
@@ -14,7 +13,7 @@ class MessageRepository {
     required int chatId,
     required int senderId,
     required String clientMessageId,
-    required String text,
+    required String messageText,
     required DateTime createdAt,
   }) async {
     return database.into(
@@ -24,7 +23,7 @@ class MessageRepository {
         chatId: chatId,
         senderId: senderId,
         clientMessageId: clientMessageId,
-        text: text,
+        messageText: messageText,
         createdAt: createdAt,
         sendStatus: const Value('sending'),
       ),
@@ -67,8 +66,8 @@ class MessageRepository {
 
   Future<LocalMessage?> findByClientMessageId(
     String clientMessageId,
-  ) async {
-    final row = await (
+  ) {
+    return (
       database.select(
         database.localMessages,
       )..where(
@@ -78,12 +77,6 @@ class MessageRepository {
             ),
       )
     ).getSingleOrNull();
-
-    if (row == null) {
-      return null;
-    }
-
-    return _map(row);
   }
 
   Future<void> insertServerMessage({
@@ -91,7 +84,7 @@ class MessageRepository {
     required int chatId,
     required int senderId,
     required String clientMessageId,
-    required String text,
+    required String messageText,
     required DateTime createdAt,
     DateTime? editedAt,
     bool isDeleted = false,
@@ -118,7 +111,7 @@ class MessageRepository {
         chatId: chatId,
         senderId: senderId,
         clientMessageId: clientMessageId,
-        text: text,
+        messageText: messageText,
         createdAt: createdAt,
         editedAt: Value(editedAt),
         isDeleted: Value(isDeleted),
@@ -133,38 +126,14 @@ class MessageRepository {
     return (
       database.select(
         database.localMessages,
-      )
-        ..where(
-          (table) => table.chatId.equals(chatId),
-        )
-        ..orderBy([
-          (table) => OrderingTerm(
-                expression: table.createdAt,
-                mode: OrderingMode.asc,
-              ),
-        ])
-    ).watch().map(
-      (rows) => rows.map(_map).toList(),
-    );
-  }
-
-  LocalMessage _map(
-    LocalMessageData row,
-  ) {
-    return LocalMessage(
-      localId: row.localId,
-      serverId: row.serverId,
-      chatId: row.chatId,
-      senderId: row.senderId,
-      clientMessageId: row.clientMessageId,
-      text: row.text,
-      createdAt: row.createdAt,
-      editedAt: row.editedAt,
-      isDeleted: row.isDeleted,
-      sendStatus: MessageSendStatus.values.firstWhere(
-        (value) => value.name == row.sendStatus,
-        orElse: () => MessageSendStatus.sent,
-      ),
-    );
+      )..where(
+        (table) => table.chatId.equals(chatId),
+      )..orderBy([
+        (table) => OrderingTerm(
+          expression: table.createdAt,
+          mode: OrderingMode.asc,
+        ),
+      ])
+    ).watch();
   }
 }

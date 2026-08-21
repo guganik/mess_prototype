@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mess_prototype/database/app_database.dart';
 import 'package:mess_prototype/providers/chat_provider.dart';
 import 'package:mess_prototype/providers/friend_provider.dart';
 import 'package:mess_prototype/repositories/chat_repository.dart';
 import 'package:mess_prototype/repositories/device_repository.dart';
 import 'package:mess_prototype/repositories/friend_repository.dart';
+import 'package:mess_prototype/repositories/message_repository.dart';
 import 'package:mess_prototype/services/device_info_service.dart';
 import 'package:provider/provider.dart';
 
@@ -32,11 +34,26 @@ void main() {
   runApp(
     MultiProvider(
       providers: [
+        Provider<MessageRepository>(
+          create: (context) => MessageRepository(
+            database: context.read<AppDatabase>(),
+          ),
+        ),
+        Provider<ChatRepository>(
+          create: (context) => ChatRepository(
+            apiService: context.read<ApiService>(),
+            userRepository:
+                context.read<UserRepository>(),
+            messageRepository:
+                context.read<MessageRepository>(),
+          ),
+        ),
         ChangeNotifierProvider(
           create: (context) => ChatProvider(
-            repository: ChatRepository(
-              apiService: context.read<ApiService>(),
-            ),
+            repository:
+                context.read<ChatRepository>(),
+            messageRepository:
+                context.read<MessageRepository>(),
             userRepository:
                 context.read<UserRepository>(),
             realtimeService:
@@ -56,6 +73,7 @@ void main() {
         ),
         Provider<DeviceRepository>(create: (_) => DeviceRepository(apiService: apiService),),
         Provider<DeviceInfoService>(create: (_) => DeviceInfoService()),
+        Provider<AppDatabase>(create: (_) => AppDatabase()),
         Provider<ApiService>.value(value: apiService),
         Provider<UserRepository>(
           create: (context) => UserRepository(

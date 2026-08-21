@@ -1,13 +1,16 @@
 import 'package:mess_prototype/api/api_service.dart';
 import 'package:mess_prototype/models/chat.dart';
 import 'package:mess_prototype/repositories/message_repository.dart';
+import 'package:mess_prototype/repositories/user_repository.dart';
 
 class ChatRepository {
   final ApiService apiService;
+  final UserRepository userRepository;
   final MessageRepository messageRepository;
 
   ChatRepository({
     required this.apiService,
+    required this.userRepository,
     required this.messageRepository,
   });
 
@@ -29,25 +32,12 @@ class ChatRepository {
     );
   }
 
-  Future<List<ChatMessage>> getMessages({
-    required String token,
-    required int chatId,
-    int limit = 50,
-    int? beforeId,
-  }) {
-    return apiService.getMessages(
-      token: token,
-      chatId: chatId,
-      limit: limit,
-      beforeId: beforeId,
-    );
-  }
-
-  Future<List<ChatMessage>> loadMessages(
+  Future<void> loadMessages(
     int chatId, {
     int? beforeId,
   }) async {
-    final user = await userRepository.getCurrentUser();
+    final user =
+        await userRepository.getCurrentUser();
 
     final token = user?.token;
 
@@ -69,15 +59,12 @@ class ChatRepository {
         serverId: message.id,
         chatId: message.chatId,
         senderId: message.senderId,
-        clientMessageId:
-            message.clientMessageId,
-        text: message.text,
+        clientMessageId: message.clientMessageId,
+        messageText: message.text,
         createdAt: message.createdAt,
         editedAt: message.editedAt,
         isDeleted: message.isDeleted,
       );
     }
-
-    return messages;
   }
 }

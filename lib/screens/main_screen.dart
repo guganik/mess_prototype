@@ -10,7 +10,6 @@ import 'package:mess_prototype/screens/auth_screen.dart';
 import 'package:mess_prototype/screens/profile_screen.dart';
 import 'package:mess_prototype/screens/settings_screen.dart';
 import 'package:mess_prototype/services/connection_checker.dart';
-import 'package:mess_prototype/services/realtime_service.dart';
 import 'package:mess_prototype/widgets/app_text_field.dart';
 
 import 'package:mess_prototype/widgets/change_status_button.dart';

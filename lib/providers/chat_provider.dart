@@ -8,6 +8,7 @@ import 'package:mess_prototype/repositories/chat_repository.dart';
 import 'package:mess_prototype/repositories/message_repository.dart';
 import 'package:mess_prototype/repositories/user_repository.dart';
 import 'package:mess_prototype/services/realtime_service.dart';
+import 'package:mess_prototype/database/app_database.dart';
 
 class ChatProvider extends ChangeNotifier {
   final ChatRepository repository;
