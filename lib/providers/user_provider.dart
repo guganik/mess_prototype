@@ -127,7 +127,7 @@ class UserProvider extends ChangeNotifier {
 
     final syncedUser = await repository.syncAvatar(user, user);
 
-    await repository.saveUser(user);
+    await repository.saveUser(syncedUser);
     _user = syncedUser;
     notifyListeners();
 
@@ -306,91 +306,118 @@ class UserProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> _handleRealtimeEvent(Map<String, dynamic> event) async {
+  Future<void> _handleRealtimeEvent(
+    Map<String, dynamic> event,
+  ) async {
     final currentUser = _user;
-    if (currentUser == null) return;
+
+    if (currentUser == null) {
+      return;
+    }
 
     final type = event['type'];
     final data = event['data'];
-    if (data is! Map<String, dynamic>) return;
 
-    if (type != 'presence.updated' && type != 'status.updated') return;
-    if (data['user_id'] != currentUser.id) return;
-
-    if (type == 'presence.updated') {
-      final presence = data['presence'];
-      if (presence is! String) return;
-
-      DateTime? lastSeen;
-      final rawLastSeen = data['last_seen'];
-      if (rawLastSeen is String) {
-        lastSeen = DateTime.tryParse(rawLastSeen);
-      }
-
-      _user = currentUser.copyWith(
-        presence: presence,
-        lastSeen: lastSeen,
-      );
-    } else {
-      final status = data['status'];
-      if (status is! String) return;
-
-      _user = currentUser.copyWith(status: status);
-    }
-
-    if (type == 'profile.updated') {
-      final userId = data['user_id'];
-
-      if (userId != currentUser.id) {
-        return;
-      }
-
-      final updatedUser = currentUser.copyWith(
-        username: data['username'] as String?,
-        firstName: data['first_name'] as String?,
-        email: data['email'] as String?,
-        phone: data['phone'] as String?,
-        status: data['status'] as String?,
-        presence: data['presence'] as String?,
-        lastSeen: data['last_seen'] != null
-            ? DateTime.tryParse(
-                data['last_seen'] as String,
-              )
-            : null,
-        isActive: data['is_active'] as bool?,
-      );
-
-      _user = updatedUser;
-
-      await repository.updateUser(
-        updatedUser,
-      );
-
-      notifyListeners();
-
+    if (type is! String ||
+        data is! Map<String, dynamic>) {
       return;
     }
 
-    if (type == 'avatar.updated') {
-      final userId = data['user_id'];
+    final userId = data['user_id'];
 
-      if (userId != currentUser.id) {
-        return;
-      }
-
-      final avatarFileId = data['avatar_file_id'] as String?;
-
-      final updatedUser = await repository.applyRemoteAvatar(avatarFileId,);
-
-      _user = updatedUser;
-
-      notifyListeners();
-
+    if (userId != currentUser.id) {
       return;
     }
 
-    notifyListeners();
-    _persistPresence();
+    switch (type) {
+      case 'presence.updated':
+        final presence = data['presence'];
+
+        if (presence is! String) {
+          return;
+        }
+
+        DateTime? lastSeen;
+
+        final rawLastSeen = data['last_seen'];
+
+        if (rawLastSeen is String) {
+          lastSeen = DateTime.tryParse(rawLastSeen);
+        }
+
+        _user = currentUser.copyWith(
+          presence: presence,
+          lastSeen: lastSeen,
+        );
+
+        await _persistPresence();
+        notifyListeners();
+        return;
+
+      case 'status.updated':
+        final status = data['status'];
+
+        if (status is! String) {
+          return;
+        }
+
+        _user = currentUser.copyWith(
+          status: status,
+        );
+
+        await _persistPresence();
+        notifyListeners();
+        return;
+
+      case 'profile.updated':
+        DateTime? lastSeen;
+
+        final rawLastSeen = data['last_seen'];
+
+        if (rawLastSeen is String) {
+          lastSeen = DateTime.tryParse(rawLastSeen);
+        }
+
+        final updatedUser = currentUser.copyWith(
+          username: data['username'] as String?,
+          firstName: data['first_name'] as String?,
+          email: data['email'] as String?,
+          phone: data['phone'] as String?,
+          status: data['status'] as String?,
+          presence: data['presence'] as String?,
+          lastSeen: lastSeen,
+          isActive: data['is_active'] as bool?,
+        );
+
+        _user = updatedUser;
+
+        await repository.updateUser(
+          updatedUser,
+        );
+
+        notifyListeners();
+        return;
+
+      case 'avatar.updated':
+        final avatarFileId =
+            data['avatar_file_id'] as String?;
+
+        final updatedUser =
+            await repository.applyRemoteAvatar(
+          avatarFileId,
+        );
+
+        _user = updatedUser;
+
+        notifyListeners();
+        return;
+
+      default:
+        debugPrint(
+          'Неизвестное realtime-событие: $type',
+        );
+        return;
+    }
   }
 
   Future<void> _persistPresence() async {
