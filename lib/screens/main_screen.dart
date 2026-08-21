@@ -14,7 +14,6 @@ import 'package:mess_prototype/screens/friends_screen.dart';
 import 'package:mess_prototype/screens/profile_screen.dart';
 import 'package:mess_prototype/screens/settings_screen.dart';
 import 'package:mess_prototype/services/connection_checker.dart';
-import 'package:mess_prototype/widgets/app_text_field.dart';
 
 import 'package:mess_prototype/widgets/change_status_button.dart';
 import 'package:mess_prototype/widgets/default_button.dart';
@@ -223,7 +222,9 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                         ),
                         child: isSearching
                           ? const _FriendSearchResults()
-                          : _buildCurrentChatsContent(),
+                          : Center(
+                              child: Text('Здесь пока тихо...'),
+                            ),
                       ),
                     ),
                     Row(
@@ -342,8 +343,6 @@ class LeftPanelState extends State<LeftPanel> {
     final userProvider = context.watch<UserProvider>();
 
     final user = userProvider.user;
-
-    print(user!.firstName);
     return SafeArea(
       child: Drawer(
         width: 300,
