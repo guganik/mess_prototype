@@ -21,6 +21,8 @@ class _AuthScreenState extends State<AuthScreen> {
   
   bool hovered = false;
 
+  bool hidingPassword = true;
+
   String? errorText;
 
   Future<void> authorization() async {
@@ -95,10 +97,20 @@ class _AuthScreenState extends State<AuthScreen> {
                   ),
                   TextField(
                     controller: controller.passwordController,
-                    obscureText: true,
+                    obscureText: hidingPassword,
                     decoration: InputDecoration(
-                      hintText: 'Пароль'
-                    ),
+                      hintText: 'Пароль',
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            hidingPassword = !hidingPassword;
+                          });
+                        },
+                        icon: hidingPassword
+                          ? Icon(Icons.visibility_outlined)
+                          : Icon(Icons.visibility_off_outlined)
+                      )
+                    )
                   ),
                   SizedBox(height: 20,),
                   Row(
