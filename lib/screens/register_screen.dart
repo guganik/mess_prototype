@@ -21,6 +21,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   
   bool hovered = false;
 
+  bool hidingPassword = false;
+
   Future<void> register() async {
     setState(() {
       loading = true;
@@ -116,7 +118,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     controller: controller.passwordController,
                     obscureText: true,
                     decoration: InputDecoration(
-                      hintText: 'Пароль'
+                      hintText: 'Пароль',
+                      suffixIcon: IconButton(
+                        onPressed: () => hidingPassword = !hidingPassword,
+                        icon: hidingPassword
+                          ? Icon(Icons.)
+                          : Icon(Icons.remove_red_eye_outlined)
+                      )
                     ),
                   ),
                   SizedBox(height: 20,),
