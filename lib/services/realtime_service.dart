@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -14,7 +15,7 @@ enum RealtimeConnectionState {
   reconnecting,
 }
 
-class RealtimeService extends ChangeNotifier {
+class RealtimeService extends ChangeNotifier with WidgetsBindingObserver {
   WebSocketChannel? _channel;
   StreamSubscription? _subscription;
   Timer? _reconnectTimer;
@@ -41,6 +42,62 @@ class RealtimeService extends ChangeNotifier {
   Stream<Map<String, dynamic>> get events => _events.stream;
 
   String? get deviceId => _deviceId;
+
+  RealtimeService() {
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(
+    AppLifecycleState state,
+  ) {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        _resumeFromBackground();
+        break;
+
+      case AppLifecycleState.paused:
+      case AppLifecycleState.hidden:
+        _pauseForBackground();
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  void _pauseForBackground() {
+    if (!_shouldReconnect &&
+        _channel == null) {
+      return;
+    }
+
+    _shouldReconnect = false;
+
+    _reconnectTimer?.cancel();
+    _reconnectTimer = null;
+
+    unawaited(_closeChannel());
+
+    _setState(
+      RealtimeConnectionState.disconnected,
+    );
+  }
+
+  void _resumeFromBackground() {
+    if (_token == null ||
+        _token!.isEmpty ||
+        _deviceId == null ||
+        _deviceId!.isEmpty) {
+      return;
+    }
+
+    _shouldReconnect = true;
+
+    unawaited(
+      _connectNow(),
+    );
+  }
 
   Future<bool> connect({
     required String token,
@@ -342,6 +399,10 @@ class RealtimeService extends ChangeNotifier {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(
+      this,
+    );
+
     _shouldReconnect = false;
 
     _reconnectTimer?.cancel();
