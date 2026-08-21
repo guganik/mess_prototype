@@ -56,14 +56,6 @@ class UserProvider extends ChangeNotifier {
       try {
         final syncedUser = await repository.synchronizeAccount();
 
-        try {
-          await _chatProvider?.sync();
-        } catch (error) {
-          debugPrint(
-            'Chat sync failed: $error',
-          );
-        }
-
         _user = syncedUser;
         notifyListeners();
       } on ApiException catch (error) {

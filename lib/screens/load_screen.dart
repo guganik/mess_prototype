@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mess_prototype/providers/chat_provider.dart';
 import 'package:mess_prototype/services/device_info_service.dart';
 import 'package:provider/provider.dart';
 
@@ -50,12 +51,15 @@ class _LoadScreenState extends State<LoadScreen> {
 
     if (!mounted) return;
 
+    final chatProvider = context.read<ChatProvider>();
+    print(chatProvider.chats);
+
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (_) => user != null
-            ? MainScreen(settings: settings)
-            : const AuthScreen(),
+          ? MainScreen(settings: settings)
+          : const AuthScreen(),
       ),
     );
   }
