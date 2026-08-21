@@ -39,6 +39,7 @@ void main() {
             database: context.read<AppDatabase>(),
           ),
         ),
+
         Provider<ChatRepository>(
           create: (context) => ChatRepository(
             apiService: context.read<ApiService>(),
@@ -48,6 +49,7 @@ void main() {
                 context.read<MessageRepository>(),
           ),
         ),
+
         ChangeNotifierProvider(
           create: (context) => ChatProvider(
             repository:
@@ -60,6 +62,7 @@ void main() {
                 context.read<RealtimeService>(),
           ),
         ),
+
         ChangeNotifierProvider(
           create: (context) => FriendProvider(
             repository: FriendRepository(
@@ -71,10 +74,15 @@ void main() {
                 context.read<RealtimeService>(),
           ),
         ),
+
         Provider<DeviceRepository>(create: (_) => DeviceRepository(apiService: apiService),),
+
         Provider<DeviceInfoService>(create: (_) => DeviceInfoService()),
+
         Provider<AppDatabase>(create: (_) => AppDatabase()),
+
         Provider<ApiService>.value(value: apiService),
+
         Provider<UserRepository>(
           create: (context) => UserRepository(
             apiService: context.read<ApiService>(),
@@ -82,7 +90,9 @@ void main() {
               context.read<DeviceInfoService>(),
           ),
         ),
+
         ChangeNotifierProvider<RealtimeService>.value(value: realtimeService),
+        
         ChangeNotifierProvider(
           create: (context) => UserProvider(
             repository: context.read<UserRepository>(),
@@ -91,6 +101,7 @@ void main() {
             deviceInfoService: context.read<DeviceInfoService>(),
           ),
         ),
+        
         ChangeNotifierProvider(
           create: (_) => ConnectionChecker(
             pingUrl: '$serverUrl/health',

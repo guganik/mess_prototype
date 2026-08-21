@@ -20,6 +20,8 @@ class FriendProvider extends ChangeNotifier {
   List<FriendRequest> _incomingRequests = [];
   List<FriendRequest> _outgoingRequests = [];
 
+  String _lastSearchQuery = '';
+
   bool _loading = false;
 
   FriendProvider({
@@ -51,6 +53,42 @@ class FriendProvider extends ChangeNotifier {
   List<FriendSearchResult> get searchResults => List.unmodifiable(_searchResults);
 
   bool get searchLoading => _searchLoading;
+
+  Future<void> searchUsers(
+    String query,
+  ) async {
+    final normalized = query.trim();
+
+    _lastSearchQuery = normalized;
+
+    if (normalized.isEmpty) {
+      _searchResults = [];
+      _searchLoading = false;
+      notifyListeners();
+      return;
+    }
+
+    final user = await userRepository.getCurrentUser();
+
+    final token = user?.token;
+
+    if (token == null || token.isEmpty) {
+      return;
+    }
+
+    _searchLoading = true;
+    notifyListeners();
+
+    try {
+      _searchResults = await repository.searchUsers(
+        token: token,
+        query: normalized,
+      );
+    } finally {
+      _searchLoading = false;
+      notifyListeners();
+    }
+  }
 
   Future<void> refresh() async {
     final user =
@@ -99,6 +137,14 @@ class FriendProvider extends ChangeNotifier {
     );
 
     await refresh();
+
+    final currentQuery = _lastSearchQuery;
+
+    if (currentQuery.isNotEmpty) {
+      await searchUsers(
+        currentQuery,
+      );
+    }
   }
 
   Future<void> acceptRequest(

@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 
 import 'package:mess_prototype/models/app_settings.dart';
 import 'package:mess_prototype/models/user.dart';
+import 'package:mess_prototype/providers/friend_provider.dart';
 import 'package:mess_prototype/providers/user_provider.dart';
 import 'package:mess_prototype/screens/auth_screen.dart';
 
@@ -38,6 +40,12 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   List chats = [];
   bool loadingFriends = true;
   String? friendsError;
+
+  final TextEditingController _searchController = TextEditingController();
+
+  Timer? _searchDebounce;
+
+  bool get isSearching => _searchController.text.trim().isNotEmpty;
   
   @override
   void initState() {
@@ -46,6 +54,8 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
 
     loadFriends();
+
+    _searchController.addListener(_onSearchChanged);
   }
 
   Future<void> loadFriends() async {
@@ -59,9 +69,37 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
     });
   }
 
+  void _onSearchChanged() {
+    setState(() {});
+
+    _searchDebounce?.cancel();
+
+    final query =
+        _searchController.text.trim();
+
+    if (query.isEmpty) {
+      context.read<FriendProvider>().searchUsers('');
+
+      return;
+    }
+
+    _searchDebounce = Timer(
+      const Duration(milliseconds: 350),
+      () {
+        if (!mounted) {
+          return;
+        }
+
+        context.read<FriendProvider>().searchUsers(query);
+      },
+    );
+  }
+
   @override
   void dispose() async {
     WidgetsBinding.instance.removeObserver(this);
+    _searchDebounce?.cancel();
+    _searchController.dispose();
     super.dispose();
   }
 
@@ -127,17 +165,18 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                                   children: [
                                     Expanded(
                                       child: TextField(
+                                        controller: _searchController,
                                         textAlignVertical: TextAlignVertical.center,
-                                        decoration: InputDecoration(
+                                        decoration: const InputDecoration(
                                           border: InputBorder.none,
                                           contentPadding: EdgeInsets.only(
                                             top: 0,
                                             bottom: 0,
                                           ),
                                           isDense: true,
-                                          hintText: "Поиск"
+                                          hintText: 'Поиск пользователей',
                                         ),
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontSize: 14,
                                         ),
                                       ),
