@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 import 'package:mess_prototype/controllers/auth_controller.dart';
 import 'package:mess_prototype/providers/user_provider.dart';
@@ -22,6 +23,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool hovered = false;
 
   bool hidingPassword = true;
+
+  final MaskTextInputFormatter phoneFormatter = MaskTextInputFormatter(
+    mask: '+7 ### ### ##-##',
+    filter: {"#": RegExp(r'[0-9]')}
+  );
 
   Future<void> register() async {
     setState(() {
@@ -109,6 +115,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                   ),
                   TextField(
+                    inputFormatters: [phoneFormatter],
+                    keyboardType: TextInputType.phone,
                     controller: controller.phoneController,
                     decoration: InputDecoration(
                       hintText: 'Номер телефона'

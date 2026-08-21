@@ -177,6 +177,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
   Widget build(BuildContext context) {
     final user = currentUser;
 
+
     if (user == null) {
       return Scaffold(
         body: Center(
