@@ -154,7 +154,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
         username: changes['username'],
         firstName: changes['first_name'],
         email: changes['email'],
-        phone: phoneFormatter.unmaskText(changes['phone']),
+        phone: changes['phone'] != null || changes['phone'] != '' ? phoneFormatter.unmaskText(changes['phone']!) : '',
       );
 
       if (!mounted) return;
