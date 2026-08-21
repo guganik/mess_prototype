@@ -78,7 +78,7 @@ class _Presence extends StatelessWidget {
   Widget build(BuildContext context) {
     Color color;
     String text;
-    if (user.status != 'offline') {
+    if (user.status != 'offline' && user.presence != 'offline') {
       color = switch (user.status) {
         'online' => Colors.greenAccent,
         'away' => Colors.yellowAccent,

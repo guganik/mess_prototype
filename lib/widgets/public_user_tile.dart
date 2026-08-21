@@ -17,11 +17,9 @@ class PublicUserTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final displayName =
-        user.firstName != null &&
-                user.firstName!.trim().isNotEmpty
-            ? user.firstName!.trim()
-            : '@${user.username}';
+    final displayName = user.firstName != null && user.firstName!.trim().isNotEmpty
+      ? user.firstName!.trim()
+      : '@${user.username}';
 
     return ListTile(
       leading: PublicUserAvatar(
@@ -57,7 +55,7 @@ class PublicUserTile extends StatelessWidget {
   }
 
   String _statusText() {
-    if (user.presence != 'offline') {
+    if (user.presence != 'offline' && user.presence != 'offline') {
       switch (user.status) {
         case 'online':
           return 'В сети';

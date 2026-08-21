@@ -102,7 +102,7 @@ class _ChatScreenState extends State<ChatScreen> {
       appBar: AppBar(
         titleSpacing: 0,
         title: _ChatHeader(
-          user: widget.otherUser,
+          user: otherUser,
         ),
       ),
       body: Column(
@@ -336,12 +336,39 @@ class _ChatHeader extends StatelessWidget {
         showModalBottomSheet(
           context: context,
           showDragHandle: true,
-          builder: (_) {
-            return Padding(
-              padding: const EdgeInsets.fromLTRB(24, 12, 24, 32),
-              child: PublicUserProfile(
-                user: user!,
-              ),
+          builder: (sheetContext) {
+            return Consumer<FriendProvider>(
+              builder: (
+                context,
+                friendProvider,
+                child,
+              ) {
+                PublicUser? currentUser = user;
+
+                for (final friend
+                    in friendProvider.friends) {
+                  if (friend.user.id == user!.id) {
+                    currentUser = friend.user;
+                    break;
+                  }
+                }
+
+                if (currentUser == null) {
+                  return const SizedBox.shrink();
+                }
+
+                return Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                    24,
+                    12,
+                    24,
+                    32,
+                  ),
+                  child: PublicUserProfile(
+                    user: currentUser,
+                  ),
+                );
+              },
             );
           },
         );
@@ -394,7 +421,7 @@ class _ChatHeader extends StatelessWidget {
                         width: 5,
                       ),
                       Text(
-                        _presenceText(
+                        _statusText(
                           user!.presence,
                           user!.status
                         ),
@@ -418,7 +445,7 @@ class _ChatHeader extends StatelessWidget {
     String presence,
     String status
   ) {
-    if (status != 'offline') {
+    if (status != 'offline' && presence != 'offline') {
       return switch (status) {
         'online' => Colors.greenAccent,
         'away' => Colors.yellowAccent,
@@ -430,11 +457,11 @@ class _ChatHeader extends StatelessWidget {
     }
   }
 
-  String _presenceText(
+  String _statusText(
     String presence,
     String status
   ) {
-    if (status != 'offline') {
+    if (status != 'offline' && presence != 'offline') {
       return switch (status) {
         'online' => 'В сети',
         'away' => 'Отошел',
