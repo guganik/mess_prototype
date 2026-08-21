@@ -76,17 +76,26 @@ class _Presence extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = switch (user.presence) {
-      'online' => Colors.greenAccent,
-      'away' => Colors.yellowAccent,
-      _ => Colors.grey,
-    };
+    Color color;
+    String text;
+    if (user.status != 'offline') {
+      color = switch (user.status) {
+        'online' => Colors.greenAccent,
+        'away' => Colors.yellowAccent,
+        'do_not_disturb' => Colors.redAccent,
+        _ => Colors.grey,
+      };
 
-    final text = switch (user.presence) {
-      'online' => 'В сети',
-      'away' => 'Отошел',
-      _ => 'Не в сети',
-    };
+      text = switch (user.status) {
+        'online' => 'В сети',
+        'away' => 'Отошел',
+        'do_not_disturb' => 'Не беспокоить',
+        _ => 'Не в сети',
+      };
+    } else {
+      color = Colors.grey;
+      text = 'Не в сети';
+    }
 
     return Row(
       mainAxisSize: MainAxisSize.min,

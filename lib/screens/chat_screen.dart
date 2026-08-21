@@ -398,8 +398,9 @@ class _ChatHeader extends StatelessWidget {
                           shape:
                               BoxShape.circle,
                           color:
-                              _presenceColor(
+                              _statusColor(
                             user!.presence,
+                            user!.status
                           ),
                         ),
                       ),
@@ -409,6 +410,7 @@ class _ChatHeader extends StatelessWidget {
                       Text(
                         _presenceText(
                           user!.presence,
+                          user!.status
                         ),
                         style:
                             const TextStyle(
@@ -426,23 +428,35 @@ class _ChatHeader extends StatelessWidget {
     );
   }
 
-  Color _presenceColor(
+  Color _statusColor(
     String presence,
+    String status
   ) {
-    return switch (presence) {
-      'online' => Colors.greenAccent,
-      'away' => Colors.yellowAccent,
-      _ => Colors.grey,
-    };
+    if (status != 'offline') {
+      return switch (presence) {
+        'online' => Colors.greenAccent,
+        'away' => Colors.yellowAccent,
+        'do_not_disturb' => Colors.redAccent,
+        _ => Colors.grey,
+      };
+    } else {
+      return Colors.grey;
+    }
   }
 
   String _presenceText(
     String presence,
+    String status
   ) {
-    return switch (presence) {
-      'online' => 'В сети',
-      'away' => 'Отошел',
-      _ => 'Не в сети',
-    };
+    if (status != 'offline') {
+      return switch (presence) {
+        'online' => 'В сети',
+        'away' => 'Отошел',
+        'do_not_disturb' => 'Не беспокоить',
+        _ => 'Не в сети',
+      };
+    } else {
+      return 'Не в сети';
+    }
   }
 }
