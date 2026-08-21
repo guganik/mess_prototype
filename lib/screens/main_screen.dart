@@ -213,7 +213,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                           )
                         ),
                         child: _searchController.text.trim().isNotEmpty
-                          ? 
+                          ? _FriendSearchResults()
                           : _ChatList(),
                       ),
                     ),
