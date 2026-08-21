@@ -28,14 +28,15 @@ class AppDatabase extends _$AppDatabase {
     },
 
     onUpgrade: (Migrator m, int from, int to) async {
-      if (from < 7) {
+      if (from < 8) {
         await m.addColumn(
-          localUsers,
-          localUsers.avatarFileId
+          localMessages,
+          localMessages.serverId,
         );
+
         await m.addColumn(
-          localUsers,
-          localUsers.avatarLocalPath
+          localMessages,
+          localMessages.sendStatus,
         );
       }
     }
@@ -45,7 +46,7 @@ class AppDatabase extends _$AppDatabase {
     : super(_openConnection());
 
   @override
-  int get schemaVersion => 7;
+  int get schemaVersion => 8;
 
   Future<int> saveUser(LocalUsersCompanion user) {
     return into(localUsers).insert(user);

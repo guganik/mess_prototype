@@ -83,15 +83,23 @@ class LocalChatMembers extends Table {
 
 
 class LocalMessages extends Table {
-  IntColumn get id => integer()();
+  IntColumn get localId =>
+      integer().autoIncrement()();
 
-  IntColumn get chatId => integer()();
+  IntColumn get serverId =>
+      integer().nullable()();
 
-  IntColumn get senderId => integer()();
+  IntColumn get chatId =>
+      integer()();
 
-  TextColumn get clientMessageId => text()();
+  IntColumn get senderId =>
+      integer()();
 
-  TextColumn get messageText => text()();
+  TextColumn get clientMessageId =>
+      text()();
+
+  TextColumn get messageText =>
+      text()();
 
   DateTimeColumn get createdAt =>
       dateTime()();
@@ -104,6 +112,8 @@ class LocalMessages extends Table {
         const Constant(false),
       )();
 
-  @override
-  Set<Column> get primaryKey => {id};
+  TextColumn get sendStatus =>
+      text().withDefault(
+        const Constant('sent'),
+      )();
 }
