@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:mess_prototype/models/friend.dart';
 import 'package:mess_prototype/models/friend_request.dart';
 import 'package:mess_prototype/models/friend_search_result.dart';
+import 'package:mess_prototype/models/public_user.dart';
 import 'package:mess_prototype/repositories/friend_repository.dart';
 import 'package:mess_prototype/services/realtime_service.dart';
 import 'package:mess_prototype/repositories/user_repository.dart';
@@ -83,10 +84,26 @@ class FriendProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      _searchResults = await repository.searchUsers(
+      final results = await repository.searchUsers(
         token: token,
         query: normalized,
       );
+
+      final hydratedResults = <FriendSearchResult>[];
+
+      for (final result in results) {
+        hydratedResults.add(
+          FriendSearchResult(
+            user: await _hydrateUserAvatar(
+              result.user,
+              token,
+            ),
+            relation: result.relation,
+          ),
+        );
+      }
+
+      _searchResults = hydratedResults;
     } finally {
       _searchLoading = false;
       notifyListeners();
@@ -111,11 +128,60 @@ class FriendProvider extends ChangeNotifier {
         token: token,
       );
 
-      _friends = sync.friends;
-      _incomingRequests =
-          sync.incomingRequests;
-      _outgoingRequests =
-          sync.outgoingRequests;
+      final hydratedFriends = <Friend>[];
+
+      for (final friend in sync.friends) {
+        hydratedFriends.add(
+          Friend(
+            friendshipId: friend.friendshipId,
+            user: await _hydrateUserAvatar(
+              friend.user,
+              token,
+            ),
+            createdAt: friend.createdAt,
+          ),
+        );
+      }
+
+      final hydratedIncoming = <FriendRequest>[];
+
+      for (final request
+          in sync.incomingRequests) {
+        hydratedIncoming.add(
+          FriendRequest(
+            friendshipId:
+                request.friendshipId,
+            user: await _hydrateUserAvatar(
+              request.user,
+              token,
+            ),
+            createdAt:
+                request.createdAt,
+          ),
+        );
+      }
+
+      final hydratedOutgoing = <FriendRequest>[];
+
+      for (final request
+          in sync.outgoingRequests) {
+        hydratedOutgoing.add(
+          FriendRequest(
+            friendshipId:
+                request.friendshipId,
+            user: await _hydrateUserAvatar(
+              request.user,
+              token,
+            ),
+            createdAt:
+                request.createdAt,
+          ),
+        );
+      }
+
+      _friends = hydratedFriends;
+      _incomingRequests = hydratedIncoming;
+      _outgoingRequests = hydratedOutgoing;
     } finally {
       _loading = false;
       notifyListeners();
@@ -232,6 +298,37 @@ class FriendProvider extends ChangeNotifier {
       case 'friend.removed':
         await refresh();
         break;
+    }
+  }
+
+  Future<PublicUser> _hydrateUserAvatar(
+    PublicUser user,
+    String token,
+  ) async {
+    if (user.avatarFileId == null ||
+        user.avatarFileId!.isEmpty) {
+      return user.copyWith(
+        avatarLocalPath: null,
+      );
+    }
+
+    try {
+      final localPath =
+          await userRepository.avatarCache
+              .downloadAvatar(
+        fileId: user.avatarFileId!,
+        token: token,
+      );
+
+      return user.copyWith(
+        avatarLocalPath: localPath,
+      );
+    } catch (error) {
+      debugPrint(
+        'Не удалось загрузить аватар @${user.username}: $error',
+      );
+
+      return user;
     }
   }
 
