@@ -22,6 +22,12 @@ class FriendProvider extends ChangeNotifier {
 
   String _lastSearchQuery = '';
 
+  final Set<int> _sendingRequestUserIds = {};
+
+  bool isSendingRequest(int userId) {
+    return _sendingRequestUserIds.contains(userId);
+  }
+
   bool _loading = false;
 
   FriendProvider({
@@ -35,14 +41,11 @@ class FriendProvider extends ChangeNotifier {
     );
   }
 
-  List<Friend> get friends =>
-      List.unmodifiable(_friends);
+  List<Friend> get friends => List.unmodifiable(_friends);
 
-  List<FriendRequest> get incomingRequests =>
-      List.unmodifiable(_incomingRequests);
+  List<FriendRequest> get incomingRequests => List.unmodifiable(_incomingRequests);
 
-  List<FriendRequest> get outgoingRequests =>
-      List.unmodifiable(_outgoingRequests);
+  List<FriendRequest> get outgoingRequests => List.unmodifiable(_outgoingRequests);
 
   bool get loading => _loading;
 
@@ -122,6 +125,10 @@ class FriendProvider extends ChangeNotifier {
   Future<void> sendRequest(
     int userId,
   ) async {
+    if (_sendingRequestUserIds.contains(userId)) {
+      return;
+    }
+
     final user =
         await userRepository.getCurrentUser();
 
@@ -131,19 +138,25 @@ class FriendProvider extends ChangeNotifier {
       return;
     }
 
-    await repository.sendRequest(
-      token: token,
-      userId: userId,
-    );
+    _sendingRequestUserIds.add(userId);
+    notifyListeners();
 
-    await refresh();
-
-    final currentQuery = _lastSearchQuery;
-
-    if (currentQuery.isNotEmpty) {
-      await searchUsers(
-        currentQuery,
+    try {
+      await repository.sendRequest(
+        token: token,
+        userId: userId,
       );
+
+      await refresh();
+
+      final currentQuery = _lastSearchQuery;
+
+      if (currentQuery.isNotEmpty) {
+        await searchUsers(currentQuery);
+      }
+    } finally {
+      _sendingRequestUserIds.remove(userId);
+      notifyListeners();
     }
   }
 

@@ -668,14 +668,22 @@ class _FriendSearchTile extends StatelessWidget {
     switch (result.relation) {
       case FriendRelation.none:
         action = TextButton(
-          onPressed: () {
-            provider.sendRequest(
-              user.id,
-            );
-          },
-          child: const Text(
-            'Добавить',
-          ),
+          onPressed: provider.isSendingRequest(user.id)
+              ? null
+              : () {
+                  provider.sendRequest(user.id);
+                },
+          child: provider.isSendingRequest(user.id)
+              ? const SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                  ),
+                )
+              : const Text(
+                  'Добавить',
+                ),
         );
         break;
 

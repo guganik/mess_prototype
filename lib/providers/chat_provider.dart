@@ -161,8 +161,24 @@ class ChatProvider extends ChangeNotifier {
         serverId: message.id,
       );
 
+      await repository.updateChatPreview(
+        chatId: message.chatId,
+        messageId: message.id,
+        senderId: message.senderId,
+        text: message.text,
+        createdAt: message.createdAt,
+      );
+
       return;
     }
+
+    await repository.updateChatPreview(
+      chatId: message.chatId,
+      messageId: message.id,
+      senderId: message.senderId,
+      text: message.text,
+      createdAt: message.createdAt,
+    );
 
     await messageRepository.insertServerMessage(
       serverId: message.id,

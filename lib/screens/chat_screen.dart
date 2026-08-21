@@ -78,22 +78,23 @@ class _ChatScreenState extends State<ChatScreen> {
       body: Column(
         children: [
           Expanded(
-            child: StreamBuilder<
-                List<LocalMessage>>(
-              stream: chatProvider
-                  .watchMessages(widget.chatId),
+            child: StreamBuilder<List<LocalMessage>>(
+              stream: chatProvider.watchMessages(widget.chatId),
               builder: (
                 context,
                 snapshot,
               ) {
-                final messages =
-                    snapshot.data ?? const [];
+                final messages = snapshot.data ?? const [];
+
+                if (_loadingHistory && messages.isEmpty) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
 
                 if (messages.isEmpty) {
                   return const Center(
-                    child: Text(
-                      'Нет сообщений',
-                    ),
+                    child: Text('Нет сообщений'),
                   );
                 }
 

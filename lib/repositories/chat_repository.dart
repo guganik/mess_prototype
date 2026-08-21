@@ -84,4 +84,28 @@ class ChatRepository {
         ])
     ).watch();
   }
+
+  Future<void> updateChatPreview({
+    required int chatId,
+    required int messageId,
+    required int senderId,
+    required String text,
+    required DateTime createdAt,
+  }) async {
+    await (
+      database.update(
+        database.localChats,
+      )..where(
+        (table) => table.id.equals(chatId),
+      )
+    ).write(
+      LocalChatsCompanion(
+        updatedAt: Value(createdAt),
+        lastMessageId: Value(messageId),
+        lastMessageSenderId: Value(senderId),
+        lastMessageText: Value(text),
+        lastMessageCreatedAt: Value(createdAt),
+      ),
+    );
+  }
 }
