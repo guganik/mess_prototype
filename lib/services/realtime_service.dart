@@ -82,7 +82,11 @@ class RealtimeService extends ChangeNotifier with WidgetsBindingObserver {
     _reconnectTimer?.cancel();
     _reconnectTimer = null;
 
-    unawaited(_closeChannel());
+    _closeChannel().then((_) {
+      debugPrint(
+        'Realtime socket closed because app went to background',
+      );
+    });
 
     _setState(
       RealtimeConnectionState.disconnected,
@@ -416,13 +420,21 @@ class RealtimeService extends ChangeNotifier with WidgetsBindingObserver {
   }
 
   Future<void> _closeChannel() async {
+    debugPrint(
+      'Closing realtime channel...',
+    );
+
     final subscription = _subscription;
     _subscription = null;
 
     if (subscription != null) {
       try {
         await subscription.cancel();
-      } catch (_) {}
+      } catch (error) {
+        debugPrint(
+          'Realtime subscription cancel error: $error',
+        );
+      }
     }
 
     final channel = _channel;
@@ -431,7 +443,14 @@ class RealtimeService extends ChangeNotifier with WidgetsBindingObserver {
     if (channel != null) {
       try {
         await channel.sink.close();
-      } catch (_) {}
+        debugPrint(
+          'Realtime channel closed',
+        );
+      } catch (error) {
+        debugPrint(
+          'Realtime channel close error: $error',
+        );
+      }
     }
   }
 
