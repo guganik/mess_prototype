@@ -147,7 +147,7 @@ class MainScreenState extends State<MainScreen> {
                             ),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.all(Radius.circular(10)),
-                              color: const Color.fromRGBO(75, 75, 75, 0.25),
+                              color: const Color.fromRGBO(75, 75, 75, 0.15),
                             ),
                             child: SizedBox(
                               height: 32,
@@ -155,27 +155,34 @@ class MainScreenState extends State<MainScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Expanded(
-                                    child: TextField(
-                                      controller: _searchController,
-                                      textAlignVertical: TextAlignVertical.center,
-                                      decoration: const InputDecoration(
-                                        border: InputBorder.none,
-                                        isDense: true,
-                                        contentPadding: EdgeInsets.zero,
-                                        hintText: 'Поиск...',
-                                      ),
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        height: 1.0,
+                                    child: Transform.translate(
+                                      offset: Platform.isAndroid
+                                        ? const Offset(0, 0)
+                                        : const Offset(0, -4),
+                                      child: TextField(
+                                        controller: _searchController,
+                                        textAlignVertical: TextAlignVertical.center,
+                                        decoration: const InputDecoration(
+                                          border: InputBorder.none,
+                                          isDense: true,
+                                          contentPadding: EdgeInsets.zero,
+                                          hintText: 'Поиск...',
+                                          hint
+                                        ),
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          height: 1.0,
+                                        ),
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(width: 8),
+                                  const SizedBox(width: 4),
                                   const Icon(
                                     Icons.search,
                                     size: 24,
+                                    color: const Color.fromRGBO(75, 75, 75, 0.3),
                                   ),
-                                  const SizedBox(width: 8),
+                                  const SizedBox(width: 4),
                                 ],
                               ),
                             )
