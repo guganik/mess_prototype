@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mess_prototype/database/app_database.dart';
+import 'package:mess_prototype/models/message_send_status.dart';
 import 'package:provider/provider.dart';
 
 import 'package:mess_prototype/providers/chat_provider.dart';
@@ -200,8 +201,10 @@ class _MessageBubble
             ),
             const SizedBox(height: 4),
             _Status(
-              status:
-                  message.sendStatus,
+              status: MessageSendStatus.values.firstWhere(
+                (value) => value.name == message.sendStatus,
+                orElse: () => MessageSendStatus.sent,
+              ),
             ),
           ],
         ),
