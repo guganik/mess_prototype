@@ -121,11 +121,6 @@ class MainScreenState extends State<MainScreen> {
       
             return SafeArea(
               child: GestureDetector(
-                onHorizontalDragEnd: (details) {
-                  if ((details.primaryVelocity ?? 0) > 0) {
-                    _drawerController.open();
-                  }
-                },
                 child: Container(
                   padding: EdgeInsets.all(16),
                   child: Column(

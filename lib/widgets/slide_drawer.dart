@@ -29,7 +29,7 @@ class SlideDrawer extends StatefulWidget {
     required this.drawer,
     this.controller,
     this.drawerWidth = 300,
-    this.edgeDragWidth = 32,
+    this.edgeDragWidth = 100,
     this.animationDuration =
         const Duration(milliseconds: 220),
   });

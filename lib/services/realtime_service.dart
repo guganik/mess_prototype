@@ -171,7 +171,9 @@ class RealtimeService extends ChangeNotifier with WidgetsBindingObserver {
 
       _channel = channel;
 
-      await channel.ready;
+      await channel.ready.timeout(
+        const Duration(seconds: 10),
+      );
 
       if (!_shouldReconnect ||
           !identical(_channel, channel)) {
