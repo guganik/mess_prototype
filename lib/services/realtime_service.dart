@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -157,16 +158,20 @@ class RealtimeService extends ChangeNotifier with WidgetsBindingObserver {
           : RealtimeConnectionState.reconnecting,
     );
 
+    WebSocketChannel? channel;
+
     try {
       await _closeChannel();
 
-      final channel = IOWebSocketChannel.connect(
+      channel = IOWebSocketChannel.connect(
         uri,
         headers: {
           'Authorization': 'Bearer $token',
           'Origin': ServerConfig.apiBaseUrl,
         },
-        pingInterval: const Duration(seconds: 20),
+        pingInterval: const Duration(
+          seconds: 20,
+        ),
       );
 
       _channel = channel;
@@ -177,7 +182,9 @@ class RealtimeService extends ChangeNotifier with WidgetsBindingObserver {
 
       if (!_shouldReconnect ||
           !identical(_channel, channel)) {
-        await channel.sink.close();
+        try {
+          await channel.sink.close();
+        } catch (_) {}
 
         if (identical(_channel, channel)) {
           _channel = null;
@@ -194,11 +201,19 @@ class RealtimeService extends ChangeNotifier with WidgetsBindingObserver {
 
       _subscription = channel.stream.listen(
         _handleMessage,
-        onError: (Object error, StackTrace stackTrace) {
-          _handleConnectionError(channel, error);
+        onError: (
+          Object error,
+          StackTrace stackTrace,
+        ) {
+          _handleConnectionError(
+            channel!,
+            error,
+          );
         },
         onDone: () {
-          _handleConnectionDone(channel);
+          _handleConnectionDone(
+            channel!,
+          );
         },
         cancelOnError: false,
       );
@@ -207,19 +222,43 @@ class RealtimeService extends ChangeNotifier with WidgetsBindingObserver {
         RealtimeConnectionState.connected,
       );
 
+      _events.add({
+        'type': 'realtime.reconnected',
+        'data': {},
+      });
+
+      debugPrint(
+        'Realtime connected',
+      );
+
       return true;
-    } catch (error) {
+    } catch (error, stackTrace) {
       debugPrint(
         'Realtime connection error: $error',
+      );
+
+      debugPrint(
+        stackTrace.toString(),
+      );
+
+      if (channel != null &&
+          identical(_channel, channel)) {
+        _channel = null;
+
+        try {
+          await channel.sink.close();
+        } catch (_) {}
+      }
+
+      _subscription = null;
+
+      _setState(
+        RealtimeConnectionState.disconnected,
       );
 
       if (_shouldReconnect) {
         _scheduleReconnect();
       }
-
-      _setState(
-        RealtimeConnectionState.disconnected,
-      );
 
       return false;
     } finally {
@@ -349,8 +388,12 @@ class RealtimeService extends ChangeNotifier with WidgetsBindingObserver {
 
     _reconnectAttempts++;
 
-    final seconds =
-        _reconnectAttempts.clamp(1, 10);
+    final seconds = min(10, pow(2, _reconnectAttempts - 1,).toInt());
+
+    debugPrint(
+      'Realtime reconnect scheduled in ${seconds}s '
+      '(attempt $_reconnectAttempts)',
+    );
 
     _reconnectTimer = Timer(
       Duration(seconds: seconds),
