@@ -212,7 +212,9 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                             }),
                           )
                         ),
-                        child: _ChatList(),
+                        child: _searchController.text.trim().isNotEmpty
+                          ? 
+                          : _ChatList(),
                       ),
                     ),
                     Row(
