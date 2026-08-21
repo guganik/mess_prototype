@@ -24,6 +24,7 @@ import 'package:mess_prototype/widgets/default_button.dart';
 import 'package:mess_prototype/widgets/public_user_avatar.dart';
 import 'package:mess_prototype/widgets/public_user_profile.dart';
 import 'package:mess_prototype/widgets/public_user_tile.dart';
+import 'package:mess_prototype/widgets/slide_drawer.dart';
 
 import 'package:provider/provider.dart';
 
@@ -107,175 +108,175 @@ class MainScreenState extends State<MainScreen> {
     final checker = context.watch<ConnectionChecker>();
 
     return Scaffold(
-      body: Builder(
-        builder: (context) {
-          // final screenWidth = MediaQuery.of(context).size.width;
-          // final screenHeight = MediaQuery.of(context).size.height;
-    
-          return SafeArea(
-            child: GestureDetector(
-              onHorizontalDragEnd: (details) {
-                if ((details.primaryVelocity ?? 0) > 0) {
-                  Scaffold.of(context).openDrawer();
-                }
-              },
-              child: Container(
-                padding: EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        GestureDetector(
-                          child: SizedBox(
-                            width: 32,
-                            height: 32,
-                            child: Icon(
-                              Icons.density_medium,
-                              color: const Color.fromRGBO(75, 75, 75, 0.7),
-                            )
-                          ),
-                          onTap: () {
-                            Scaffold.of(context).openDrawer();
-                          },
-                        ),
-                        SizedBox(width: 16,),
-                        Expanded(
-                          child: Container(
-                            height: 32,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                            ),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.all(Radius.circular(10)),
-                              color: const Color.fromRGBO(75, 75, 75, 0.15),
-                            ),
+      body: SlideDrawer(
+        drawer: LeftPanel(user: currentUser),
+        child: Builder(
+          builder: (context) {
+            // final screenWidth = MediaQuery.of(context).size.width;
+            // final screenHeight = MediaQuery.of(context).size.height;
+      
+            return SafeArea(
+              child: GestureDetector(
+                onHorizontalDragEnd: (details) {
+                  if ((details.primaryVelocity ?? 0) > 0) {
+                    Scaffold.of(context).openDrawer();
+                  }
+                },
+                child: Container(
+                  padding: EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          GestureDetector(
                             child: SizedBox(
+                              width: 32,
                               height: 32,
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Expanded(
-                                    child: Transform.translate(
-                                      offset: Platform.isAndroid
-                                        ? const Offset(0, 0)
-                                        : const Offset(0, -4),
-                                      child: TextField(
-                                        controller: _searchController,
-                                        textAlignVertical: TextAlignVertical.center,
-                                        decoration: const InputDecoration(
-                                          border: InputBorder.none,
-                                          isDense: true,
-                                          contentPadding: EdgeInsets.zero,
-                                          hintText: 'Поиск...',
-                                          hintStyle: TextStyle(
-                                            color: Color.fromRGBO(75, 75, 75, 0.7)
-                                          )
-                                        ),
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                          height: 1.0,
+                              child: Icon(
+                                Icons.density_medium,
+                                color: const Color.fromRGBO(75, 75, 75, 0.7),
+                              )
+                            ),
+                            onTap: () {
+                              Scaffold.of(context).openDrawer();
+                            },
+                          ),
+                          SizedBox(width: 16,),
+                          Expanded(
+                            child: Container(
+                              height: 32,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                              ),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.all(Radius.circular(10)),
+                                color: const Color.fromRGBO(75, 75, 75, 0.15),
+                              ),
+                              child: SizedBox(
+                                height: 32,
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Expanded(
+                                      child: Transform.translate(
+                                        offset: Platform.isAndroid
+                                          ? const Offset(0, 0)
+                                          : const Offset(0, -4),
+                                        child: TextField(
+                                          controller: _searchController,
+                                          textAlignVertical: TextAlignVertical.center,
+                                          decoration: const InputDecoration(
+                                            border: InputBorder.none,
+                                            isDense: true,
+                                            contentPadding: EdgeInsets.zero,
+                                            hintText: 'Поиск...',
+                                            hintStyle: TextStyle(
+                                              color: Color.fromRGBO(75, 75, 75, 0.7)
+                                            )
+                                          ),
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                            height: 1.0,
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                  const SizedBox(width: 4),
-                                  const Icon(
-                                    Icons.search,
-                                    size: 24,
-                                    color: Color.fromRGBO(75, 75, 75, 0.5),
-                                  ),
-                                  const SizedBox(width: 4),
-                                ],
-                              ),
-                            )
-                          )
-                        )
-                      ],
-                    ),
-                    SizedBox(height: 16,),
-                    Expanded(
-                      child: Theme(
-                        data: Theme.of(context).copyWith(
-                          scrollbarTheme: ScrollbarThemeData(
-                            thumbColor: WidgetStateProperty.resolveWith((states) {
-                              if (states.contains(WidgetState.dragged)) {
-                                return const Color.fromARGB(115, 75, 75, 75);
-                              }
-                              if (states.contains(WidgetState.hovered)) {
-                                return const Color.fromARGB(100, 75, 75, 75);
-                              }
-                              return const Color.fromARGB(75, 75, 75, 75);
-                            }),
-                            thickness: WidgetStateProperty.resolveWith((states) {
-                              if (states.contains(WidgetState.dragged)) {
-                                return 5;
-                              }
-                              return 4;
-                            }),
-                          )
-                        ),
-                        child: _searchController.text.trim().isNotEmpty
-                          ? _FriendSearchResults()
-                          : _ChatList(),
-                      ),
-                    ),
-                    Row(
-                      children: [
-                        AnimatedSize(
-                          alignment: Alignment.centerRight,
-                          duration: Duration(milliseconds: 300),
-                          child: Container(
-                            padding: !checker.isConnected
-                              ? EdgeInsets.only(right: 9)
-                              : null,
-                            width: checker.isConnected
-                              ? 36
-                              : null,
-                            height: 36,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(30),
-                              color: Colors.white,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: const Color.fromRGBO(15, 15, 15, 0.2),
-                                  blurRadius: 7
-                                )
-                              ]
-                            ),
-                            child: checker.isConnected
-                            ? Icon(
-                                Icons.check_circle,
-                                color: Colors.greenAccent[400]!,
-                              )
-                            : Row(
-                              children: [
-                                SizedBox(
-                                  width: 38,
-                                  height: 38,
-                                  child: CircularProgressIndicator(
-                                    padding: EdgeInsets.all(9),
-                                  ),
+                                    const SizedBox(width: 4),
+                                    const Icon(
+                                      Icons.search,
+                                      size: 24,
+                                      color: Color.fromRGBO(75, 75, 75, 0.5),
+                                    ),
+                                    const SizedBox(width: 4),
+                                  ],
                                 ),
-                                SizedBox(width: 8,),
-                                Text('Соединение...')
-                              ],
+                              )
                             )
                           )
+                        ],
+                      ),
+                      SizedBox(height: 16,),
+                      Expanded(
+                        child: Theme(
+                          data: Theme.of(context).copyWith(
+                            scrollbarTheme: ScrollbarThemeData(
+                              thumbColor: WidgetStateProperty.resolveWith((states) {
+                                if (states.contains(WidgetState.dragged)) {
+                                  return const Color.fromARGB(115, 75, 75, 75);
+                                }
+                                if (states.contains(WidgetState.hovered)) {
+                                  return const Color.fromARGB(100, 75, 75, 75);
+                                }
+                                return const Color.fromARGB(75, 75, 75, 75);
+                              }),
+                              thickness: WidgetStateProperty.resolveWith((states) {
+                                if (states.contains(WidgetState.dragged)) {
+                                  return 5;
+                                }
+                                return 4;
+                              }),
+                            )
+                          ),
+                          child: _searchController.text.trim().isNotEmpty
+                            ? _FriendSearchResults()
+                            : _ChatList(),
                         ),
-                        Spacer()
-                      ],
-                    )
-                  ],
+                      ),
+                      Row(
+                        children: [
+                          AnimatedSize(
+                            alignment: Alignment.centerRight,
+                            duration: Duration(milliseconds: 300),
+                            child: Container(
+                              padding: !checker.isConnected
+                                ? EdgeInsets.only(right: 9)
+                                : null,
+                              width: checker.isConnected
+                                ? 36
+                                : null,
+                              height: 36,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(30),
+                                color: Colors.white,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: const Color.fromRGBO(15, 15, 15, 0.2),
+                                    blurRadius: 7
+                                  )
+                                ]
+                              ),
+                              child: checker.isConnected
+                              ? Icon(
+                                  Icons.check_circle,
+                                  color: Colors.greenAccent[400]!,
+                                )
+                              : Row(
+                                children: [
+                                  SizedBox(
+                                    width: 38,
+                                    height: 38,
+                                    child: CircularProgressIndicator(
+                                      padding: EdgeInsets.all(9),
+                                    ),
+                                  ),
+                                  SizedBox(width: 8,),
+                                  Text('Соединение...')
+                                ],
+                              )
+                            )
+                          ),
+                          Spacer()
+                        ],
+                      )
+                    ],
+                  )
                 )
-              )
-            ),
-          );
-        }
-      ),
-      drawer: LeftPanel(
-        user: currentUser,
-      ),
+              ),
+            );
+          }
+        ),
+      )
     );
   }
 }
