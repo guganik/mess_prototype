@@ -378,6 +378,10 @@ class FriendProvider extends ChangeNotifier {
         await refresh();
         break;
 
+      case 'realtime.reconnected':
+        await refresh();
+        break;
+
       case 'presence.updated':
         final userId = data['user_id'];
 

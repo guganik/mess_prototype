@@ -140,6 +140,10 @@ class ChatProvider extends ChangeNotifier {
       case 'chat.created':
         await sync();
         break;
+
+      case 'realtime.reconnected':
+        await sync();
+        break;
     }
   }
 
