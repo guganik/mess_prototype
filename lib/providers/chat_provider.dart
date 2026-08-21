@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 
 import 'package:mess_prototype/models/chat.dart';
 import 'package:mess_prototype/repositories/chat_repository.dart';
+import 'package:mess_prototype/repositories/message_repository.dart';
 import 'package:mess_prototype/repositories/user_repository.dart';
 import 'package:mess_prototype/services/realtime_service.dart';
 
@@ -12,6 +13,7 @@ class ChatProvider extends ChangeNotifier {
   final ChatRepository repository;
   final UserRepository userRepository;
   final RealtimeService realtimeService;
+  final MessageRepository messageRepository;
 
   StreamSubscription? _realtimeSubscription;
 
@@ -21,10 +23,19 @@ class ChatProvider extends ChangeNotifier {
     required this.repository,
     required this.userRepository,
     required this.realtimeService,
+    required this.messageRepository
   }) {
     _realtimeSubscription =
         realtimeService.events.listen(
       _handleEvent,
+    );
+  }
+
+  Stream<List<LocalMessage>> watchMessages(
+    int chatId,
+  ) {
+    return messageRepository.watchChat(
+      chatId,
     );
   }
 

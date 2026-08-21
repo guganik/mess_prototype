@@ -31,12 +31,12 @@ class AppDatabase extends _$AppDatabase {
       if (from < 8) {
         await m.addColumn(
           localMessages,
-          localMessages.serverId,
+          localMessages.serverId as GeneratedColumn<Object>,
         );
 
         await m.addColumn(
           localMessages,
-          localMessages.sendStatus,
+          localMessages.sendStatus as GeneratedColumn<Object>,
         );
       }
     }
