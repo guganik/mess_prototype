@@ -382,7 +382,7 @@ class UserProvider extends ChangeNotifier {
           status: data['status'] as String?,
           presence: data['presence'] as String?,
           lastSeen: lastSeen,
-          isActive: data['is_active'] as bool?,
+          isActive: data['is_active'] as bool? ?? currentUser.isActive,
         );
 
         _user = updatedUser;

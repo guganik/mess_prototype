@@ -1,8 +1,8 @@
-import 'user.dart';
+import 'public_user.dart';
 
 class Friend {
   final int friendshipId;
-  final User user;
+  final PublicUser user;
   final DateTime createdAt;
 
   const Friend({
@@ -17,7 +17,7 @@ class Friend {
     return Friend(
       friendshipId:
           json['friendship_id'] as int,
-      user: User.fromJson(
+      user: PublicUser.fromJson(
         json['user'] as Map<String, dynamic>,
       ),
       createdAt: DateTime.parse(

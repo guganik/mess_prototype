@@ -1,4 +1,4 @@
-import 'user.dart';
+import 'public_user.dart';
 
 class ChatMessage {
   final int id;
@@ -50,7 +50,7 @@ class Chat {
   final int id;
   final String type;
   final String? title;
-  final User? otherUser;
+  final PublicUser? otherUser;
   final DateTime createdAt;
   final DateTime updatedAt;
   final ChatMessage? lastMessage;
@@ -73,11 +73,11 @@ class Chat {
       type: json["type"] as String,
       title: json["title"] as String?,
       otherUser: json["other_user"] != null
-          ? User.fromJson(
-              json["other_user"]
-                  as Map<String, dynamic>,
-            )
-          : null,
+        ? PublicUser.fromJson(
+            json["other_user"]
+                as Map<String, dynamic>,
+          )
+        : null,
       createdAt: DateTime.parse(
         json["created_at"] as String,
       ),
