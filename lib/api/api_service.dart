@@ -46,6 +46,55 @@ class ApiService {
     http.Client? client,
   }) : _client = client ?? http.Client();
 
+  Future<Map<String, dynamic>> get({
+    required String path,
+    required String token,
+  }) async {
+    final response = await _client.get(
+      Uri.parse('$serverUrl$path'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    _checkResponse(response);
+
+    return _decodeJson(response);
+  }
+
+  Future<Map<String, dynamic>> post({
+    required String path,
+    required String token,
+    Map<String, dynamic>? body,
+  }) async {
+    final response = await _client.post(
+      Uri.parse('$serverUrl$path'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+      body: body == null ? null : jsonEncode(body),
+    );
+
+    _checkResponse(response);
+
+    return _decodeJson(response);
+  }
+
+  Future<void> delete({
+    required String path,
+    required String token,
+  }) async {
+    final response = await _client.delete(
+      Uri.parse('$serverUrl$path'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    _checkResponse(response);
+  }
+
   Future<User> register({
     required String username,
     required String password,
