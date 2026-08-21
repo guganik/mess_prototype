@@ -323,6 +323,16 @@ class LeftPanelState extends State<LeftPanel> {
     final userProvider = context.watch<UserProvider>();
 
     final user = userProvider.user;
+
+    if (user == null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => AuthScreen()
+        )
+      );
+    }
+
     return SafeArea(
       child: Drawer(
         width: 300,

@@ -67,6 +67,23 @@ void main() {
           ),
         ),
 
+        Provider<DeviceRepository>(create: (_) => DeviceRepository(apiService: apiService),),
+        
+        ChangeNotifierProvider(
+          create: (context) => UserProvider(
+            repository: context.read<UserRepository>(),
+            realtimeService: context.read<RealtimeService>(),
+            deviceRepository: context.read<DeviceRepository>(),
+            deviceInfoService: context.read<DeviceInfoService>(),
+          ),
+        ),
+
+        ChangeNotifierProvider(
+          create: (_) => ConnectionChecker(
+            pingUrl: '$serverUrl/health',
+          )..start(),
+        ),
+
         ChangeNotifierProvider(
           create: (context) => ChatProvider(
             repository:
@@ -90,23 +107,6 @@ void main() {
             realtimeService:
                 context.read<RealtimeService>(),
           ),
-        ),
-
-        Provider<DeviceRepository>(create: (_) => DeviceRepository(apiService: apiService),),
-        
-        ChangeNotifierProvider(
-          create: (context) => UserProvider(
-            repository: context.read<UserRepository>(),
-            realtimeService: context.read<RealtimeService>(),
-            deviceRepository: context.read<DeviceRepository>(),
-            deviceInfoService: context.read<DeviceInfoService>(),
-          ),
-        ),
-
-        ChangeNotifierProvider(
-          create: (_) => ConnectionChecker(
-            pingUrl: '$serverUrl/health',
-          )..start(),
         ),
       ],
       child: const MyApp(),
