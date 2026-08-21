@@ -2,13 +2,16 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:mess_prototype/database/app_database.dart';
 
 import 'package:mess_prototype/models/app_settings.dart';
 import 'package:mess_prototype/models/friend_search_result.dart';
 import 'package:mess_prototype/models/user.dart';
+import 'package:mess_prototype/providers/chat_provider.dart';
 import 'package:mess_prototype/providers/friend_provider.dart';
 import 'package:mess_prototype/providers/user_provider.dart';
 import 'package:mess_prototype/screens/auth_screen.dart';
+import 'package:mess_prototype/screens/chat_screen.dart';
 import 'package:mess_prototype/screens/friends_screen.dart';
 
 import 'package:mess_prototype/screens/profile_screen.dart';
@@ -36,12 +39,6 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   bool pressed = false;
   bool hovered = false;
 
-
-  List friends = [];
-  List chats = [];
-  bool loadingFriends = true;
-  String? friendsError;
-
   final TextEditingController _searchController = TextEditingController();
 
   Timer? _searchDebounce;
@@ -53,21 +50,16 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
     super.initState();
 
     WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
 
-    loadFriends();
+      context.read<ChatProvider>().sync();
+      context.read<FriendProvider>().refresh();
+    });
 
     _searchController.addListener(_onSearchChanged);
-  }
-
-  Future<void> loadFriends() async {
-    if (!mounted) return;
-
-    setState(() {
-      loadingFriends = false;
-      friendsError = null;
-      friends.clear();
-      chats.clear();
-    });
   }
 
   void _onSearchChanged() {
@@ -220,11 +212,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                             }),
                           )
                         ),
-                        child: isSearching
-                          ? const _FriendSearchResults()
-                          : Center(
-                              child: Text('Здесь пока тихо...'),
-                            ),
+                        child: _chatList(),
                       ),
                     ),
                     Row(
@@ -281,8 +269,6 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
         }
       ),
       drawer: LeftPanel(
-        loadFriends: loadFriends,
-        friends: friends,
         user: currentUser,
       ),
     );
@@ -290,14 +276,10 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
 }
 
 class LeftPanel extends StatefulWidget {
-  final Function loadFriends;
-  final List friends;
   final User? user;
 
   const LeftPanel({
     super.key,
-    required this.loadFriends,
-    required this.friends,
     required this.user,
   });
 
@@ -317,8 +299,6 @@ class LeftPanelState extends State<LeftPanel> {
     'do_not_disturb': Colors.red[400],
     'offline': Colors.grey[400],
   };
-
-  final TextEditingController searchUserController = TextEditingController();
 
   @override
   void initState() {
@@ -745,5 +725,161 @@ class _FriendSearchTile extends StatelessWidget {
       ),
       trailing: action,
     );
+  }
+}
+
+class _ChatList extends StatelessWidget {
+  const _ChatList();
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<List<LocalChat>>(
+      stream: context.read<ChatProvider>().watchChats(),
+      builder: (
+        context,
+        snapshot,
+      ) {
+        if (snapshot.connectionState ==
+            ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+
+        final chats =
+            snapshot.data ?? const [];
+
+        if (chats.isEmpty) {
+          return const Center(
+            child: Text(
+              'Здесь пока тихо...',
+            ),
+          );
+        }
+
+        return ListView.separated(
+          padding: const EdgeInsets.only(
+            bottom: 8,
+          ),
+          itemCount: chats.length,
+          separatorBuilder: (
+            context,
+            index,
+          ) {
+            return const Divider(
+              height: 1,
+            );
+          },
+          itemBuilder: (
+            context,
+            index,
+          ) {
+            final chat = chats[index];
+
+            return _ChatListTile(
+              chat: chat,
+            );
+          },
+        );
+      },
+    );
+  }
+}
+
+class _ChatListTile extends StatelessWidget {
+  final LocalChat chat;
+
+  const _ChatListTile({
+    required this.chat,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final title =
+        chat.title ??
+        (
+          chat.otherUserId != null
+              ? '@${chat.otherUserId}'
+              : 'Чат'
+        );
+
+    return ListTile(
+      contentPadding:
+          const EdgeInsets.symmetric(
+        horizontal: 8,
+        vertical: 4,
+      ),
+      leading: const CircleAvatar(
+        child: Icon(
+          Icons.person,
+        ),
+      ),
+      title: Text(
+        title,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
+      subtitle: chat.lastMessageText != null
+          ? Text(
+              chat.lastMessageText!,
+              maxLines: 1,
+              overflow:
+                  TextOverflow.ellipsis,
+            )
+          : const Text(
+              'Нет сообщений',
+            ),
+      trailing: chat.lastMessageCreatedAt != null
+          ? Text(
+              _formatChatTime(
+                chat.lastMessageCreatedAt!,
+              ),
+              style: const TextStyle(
+                fontSize: 11,
+              ),
+            )
+          : null,
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => ChatScreen(
+              chatId: chat.id,
+              currentUserId: context
+                  .read<UserProvider>()
+                  .user!
+                  .id,
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  String _formatChatTime(
+    DateTime dateTime,
+  ) {
+    final now = DateTime.now();
+
+    final sameDay =
+        now.year == dateTime.year &&
+        now.month == dateTime.month &&
+        now.day == dateTime.day;
+
+    if (sameDay) {
+      final hour =
+          dateTime.hour
+              .toString()
+              .padLeft(2, '0');
+
+      final minute =
+          dateTime.minute
+              .toString()
+              .padLeft(2, '0');
+
+      return '$hour:$minute';
+    }
+
+    return '${dateTime.day}.${dateTime.month}';
   }
 }
