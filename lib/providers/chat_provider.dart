@@ -86,28 +86,44 @@ class ChatProvider extends ChangeNotifier {
     return chatId;
   }
 
-  bool sendMessage({
+  Future<void> sendMessage({
     required int chatId,
+    required int senderId,
     required String text,
-  }) {
+  }) async {
     final trimmed = text.trim();
 
     if (trimmed.isEmpty) {
-      return false;
+      return;
     }
 
     final clientMessageId =
         _generateClientMessageId();
 
-    return realtimeService.send(
-      type: "message.send",
+    final localId =
+        await messageRepository.insertSendingMessage(
+      chatId: chatId,
+      senderId: senderId,
+      clientMessageId: clientMessageId,
+      messageText: trimmed,
+      createdAt: DateTime.now(),
+    );
+
+    final sent = realtimeService.send(
+      type: 'message.send',
       data: {
-        "chat_id": chatId,
-        "client_message_id":
+        'chat_id': chatId,
+        'client_message_id':
             clientMessageId,
-        "text": trimmed,
+        'text': trimmed,
       },
     );
+
+    if (!sent) {
+      await messageRepository.markAsFailed(
+        localId,
+      );
+    }
   }
 
   String _generateClientMessageId() {
@@ -121,14 +137,54 @@ class ChatProvider extends ChangeNotifier {
   }
 
   Future<void> _handleEvent(
-    Map<String, dynamic> event,
+  Map<String, dynamic> event,
   ) async {
-    switch (event["type"]) {
-      case "message.created":
-      case "chat.created":
+    switch (event['type']) {
+      case 'message.created':
+        await _handleMessageCreated(
+          event['data']
+            as Map<String, dynamic>,
+        );
+        break;
+
+      case 'chat.created':
         await sync();
         break;
     }
+  }
+
+  Future<void> _handleMessageCreated(
+    Map<String, dynamic> data,
+  ) async {
+    final message =
+        ChatMessage.fromJson(data);
+
+    final existing =
+        await messageRepository
+            .findByClientMessageId(
+      message.clientMessageId,
+    );
+
+    if (existing != null) {
+      await messageRepository.markAsSent(
+        localId: existing.localId,
+        serverId: message.id,
+      );
+
+      return;
+    }
+
+    await messageRepository.insertServerMessage(
+      serverId: message.id,
+      chatId: message.chatId,
+      senderId: message.senderId,
+      clientMessageId:
+          message.clientMessageId,
+      messageText: message.text,
+      createdAt: message.createdAt,
+      editedAt: message.editedAt,
+      isDeleted: message.isDeleted,
+    );
   }
 
   void _replaceChats(
