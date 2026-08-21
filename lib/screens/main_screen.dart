@@ -39,7 +39,7 @@ class MainScreen extends StatefulWidget {
   MainScreenState createState() => MainScreenState();
 }
 
-class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
+class MainScreenState extends State<MainScreen> {
   bool pressed = false;
   bool hovered = false;
 
@@ -53,7 +53,6 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) {
         return;
@@ -94,16 +93,9 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
     _searchDebounce?.cancel();
     _searchController.dispose();
     super.dispose();
-  }
-
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    // RealtimeService owns the connection/presence lifecycle.
   }
 
   @override

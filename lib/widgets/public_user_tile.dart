@@ -45,7 +45,7 @@ class PublicUserTile extends StatelessWidget {
           ),
           const SizedBox(height: 2),
           Text(
-            _presenceText(),
+            _statusText(),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
@@ -56,19 +56,26 @@ class PublicUserTile extends StatelessWidget {
     );
   }
 
-  String _presenceText() {
-    switch (user.presence) {
-      case 'online':
-        return 'В сети';
+  String _statusText() {
+    if (user.presence == 'online') {
+      switch (user.status) {
+        case 'online':
+          return 'В сети';
 
-      case 'offline':
-        return 'Не в сети';
+        case 'away':
+          return 'Отошел';
 
-      case 'away':
-        return 'Отошел';
+        case 'do_not_disturb':
+          return 'Не беспокоить';
 
-      default:
-        return user.presence;
+        case 'offline':
+          return 'Не в сети';
+
+        default:
+          return user.status;
+      }
+    } else {
+      return 'Не в сети';
     }
   }
 }
