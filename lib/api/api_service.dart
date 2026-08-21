@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:mess_prototype/models/account_sync.dart';
+import 'package:mess_prototype/models/chat.dart';
 import 'package:mess_prototype/models/device_session.dart';
 
 import '../models/user.dart';
@@ -416,6 +417,116 @@ class ApiService {
     return AccountSync.fromJson(
       _decodeJson(response),
     );
+  }
+
+  Future<List<Chat>> syncChats({
+    required String token,
+  }) async {
+    final response = await _client.get(
+      Uri.parse('$serverUrl/chats/sync'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    _checkResponse(response);
+
+    final decoded = jsonDecode(
+      response.body,
+    );
+
+    if (decoded is! Map<String, dynamic>) {
+      throw ApiException(
+        statusCode: response.statusCode,
+        message: 'Invalid chats response',
+      );
+    }
+
+    final chats = decoded["chats"];
+
+    if (chats is! List) {
+      throw ApiException(
+        statusCode: response.statusCode,
+        message: 'Invalid chats list',
+      );
+    }
+
+    return chats
+        .map(
+          (item) => Chat.fromJson(
+            item as Map<String, dynamic>,
+          ),
+        )
+        .toList();
+  }
+
+
+  Future<int> createDirectChat({
+    required String token,
+    required int userId,
+  }) async {
+    final response = await _client.post(
+      Uri.parse('$serverUrl/chats/direct'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'user_id': userId,
+      }),
+    );
+
+    _checkResponse(response);
+
+    final data = _decodeJson(response);
+
+    return data["chat_id"] as int;
+  }
+
+
+  Future<List<ChatMessage>> getMessages({
+    required String token,
+    required int chatId,
+    int limit = 50,
+    int? beforeId,
+  }) async {
+    final uri = Uri.parse(
+      '$serverUrl/chats/$chatId/messages',
+    ).replace(
+      queryParameters: {
+        "limit": limit.toString(),
+        if (beforeId != null)
+          "before_id": beforeId.toString(),
+      },
+    );
+
+    final response = await _client.get(
+      uri,
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    _checkResponse(response);
+
+    final data = _decodeJson(response);
+
+    final messages = data["messages"];
+
+    if (messages is! List) {
+      throw ApiException(
+        statusCode: response.statusCode,
+        message: 'Invalid messages response',
+      );
+    }
+
+    return messages
+        .map(
+          (item) => ChatMessage.fromJson(
+            item as Map<String, dynamic>,
+          ),
+        )
+        .toList();
   }
 
   void dispose() {

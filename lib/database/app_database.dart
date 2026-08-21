@@ -13,8 +13,11 @@ part 'app_database.g.dart';
 @DriftDatabase(
   tables: [
     LocalUsers,
-    AppSettings
-  ]
+    AppSettings,
+    LocalChats,
+    LocalChatMembers,
+    LocalMessages,
+  ],
 )
 
 class AppDatabase extends _$AppDatabase {
@@ -25,7 +28,7 @@ class AppDatabase extends _$AppDatabase {
     },
 
     onUpgrade: (Migrator m, int from, int to) async {
-      if (from < 6) {
+      if (from < 7) {
         await m.addColumn(
           localUsers,
           localUsers.avatarFileId
@@ -42,7 +45,7 @@ class AppDatabase extends _$AppDatabase {
     : super(_openConnection());
 
   @override
-  int get schemaVersion => 6;
+  int get schemaVersion => 7;
 
   Future<int> saveUser(LocalUsersCompanion user) {
     return into(localUsers).insert(user);

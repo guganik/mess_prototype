@@ -30,3 +30,80 @@ class AppSettings extends Table {
   
   BoolColumn get notifications => boolean().withDefault(const Constant(true))();
 }
+
+class LocalChats extends Table {
+  IntColumn get id => integer()();
+
+  TextColumn get type => text()();
+
+  IntColumn get otherUserId =>
+      integer().nullable()();
+
+  TextColumn get title =>
+      text().nullable()();
+
+  DateTimeColumn get createdAt =>
+      dateTime()();
+
+  DateTimeColumn get updatedAt =>
+      dateTime()();
+
+  IntColumn get lastMessageId =>
+      integer().nullable()();
+
+  TextColumn get lastMessageText =>
+      text().nullable()();
+
+  IntColumn get lastMessageSenderId =>
+      integer().nullable()();
+
+  DateTimeColumn get lastMessageCreatedAt =>
+      dateTime().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+
+class LocalChatMembers extends Table {
+  IntColumn get id =>
+      integer().autoIncrement()();
+
+  IntColumn get chatId =>
+      integer()();
+
+  IntColumn get userId =>
+      integer()();
+
+  BoolColumn get isActive =>
+      boolean().withDefault(
+        const Constant(true),
+      )();
+}
+
+
+class LocalMessages extends Table {
+  IntColumn get id => integer()();
+
+  IntColumn get chatId => integer()();
+
+  IntColumn get senderId => integer()();
+
+  TextColumn get clientMessageId => text()();
+
+  TextColumn get messageText => text()();
+
+  DateTimeColumn get createdAt =>
+      dateTime()();
+
+  DateTimeColumn get editedAt =>
+      dateTime().nullable()();
+
+  BoolColumn get isDeleted =>
+      boolean().withDefault(
+        const Constant(false),
+      )();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}

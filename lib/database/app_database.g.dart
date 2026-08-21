@@ -1016,16 +1016,1470 @@ class AppSettingsCompanion extends UpdateCompanion<AppSetting> {
   }
 }
 
+class $LocalChatsTable extends LocalChats
+    with TableInfo<$LocalChatsTable, LocalChat> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $LocalChatsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _typeMeta = const VerificationMeta('type');
+  @override
+  late final GeneratedColumn<String> type = GeneratedColumn<String>(
+    'type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _otherUserIdMeta = const VerificationMeta(
+    'otherUserId',
+  );
+  @override
+  late final GeneratedColumn<int> otherUserId = GeneratedColumn<int>(
+    'other_user_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _titleMeta = const VerificationMeta('title');
+  @override
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+    'title',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _lastMessageIdMeta = const VerificationMeta(
+    'lastMessageId',
+  );
+  @override
+  late final GeneratedColumn<int> lastMessageId = GeneratedColumn<int>(
+    'last_message_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _lastMessageTextMeta = const VerificationMeta(
+    'lastMessageText',
+  );
+  @override
+  late final GeneratedColumn<String> lastMessageText = GeneratedColumn<String>(
+    'last_message_text',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _lastMessageSenderIdMeta =
+      const VerificationMeta('lastMessageSenderId');
+  @override
+  late final GeneratedColumn<int> lastMessageSenderId = GeneratedColumn<int>(
+    'last_message_sender_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _lastMessageCreatedAtMeta =
+      const VerificationMeta('lastMessageCreatedAt');
+  @override
+  late final GeneratedColumn<DateTime> lastMessageCreatedAt =
+      GeneratedColumn<DateTime>(
+        'last_message_created_at',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+      );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    type,
+    otherUserId,
+    title,
+    createdAt,
+    updatedAt,
+    lastMessageId,
+    lastMessageText,
+    lastMessageSenderId,
+    lastMessageCreatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'local_chats';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<LocalChat> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('type')) {
+      context.handle(
+        _typeMeta,
+        type.isAcceptableOrUnknown(data['type']!, _typeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_typeMeta);
+    }
+    if (data.containsKey('other_user_id')) {
+      context.handle(
+        _otherUserIdMeta,
+        otherUserId.isAcceptableOrUnknown(
+          data['other_user_id']!,
+          _otherUserIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('title')) {
+      context.handle(
+        _titleMeta,
+        title.isAcceptableOrUnknown(data['title']!, _titleMeta),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('last_message_id')) {
+      context.handle(
+        _lastMessageIdMeta,
+        lastMessageId.isAcceptableOrUnknown(
+          data['last_message_id']!,
+          _lastMessageIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('last_message_text')) {
+      context.handle(
+        _lastMessageTextMeta,
+        lastMessageText.isAcceptableOrUnknown(
+          data['last_message_text']!,
+          _lastMessageTextMeta,
+        ),
+      );
+    }
+    if (data.containsKey('last_message_sender_id')) {
+      context.handle(
+        _lastMessageSenderIdMeta,
+        lastMessageSenderId.isAcceptableOrUnknown(
+          data['last_message_sender_id']!,
+          _lastMessageSenderIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('last_message_created_at')) {
+      context.handle(
+        _lastMessageCreatedAtMeta,
+        lastMessageCreatedAt.isAcceptableOrUnknown(
+          data['last_message_created_at']!,
+          _lastMessageCreatedAtMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  LocalChat map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LocalChat(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      type: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}type'],
+      )!,
+      otherUserId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}other_user_id'],
+      ),
+      title: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}title'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      lastMessageId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}last_message_id'],
+      ),
+      lastMessageText: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}last_message_text'],
+      ),
+      lastMessageSenderId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}last_message_sender_id'],
+      ),
+      lastMessageCreatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}last_message_created_at'],
+      ),
+    );
+  }
+
+  @override
+  $LocalChatsTable createAlias(String alias) {
+    return $LocalChatsTable(attachedDatabase, alias);
+  }
+}
+
+class LocalChat extends DataClass implements Insertable<LocalChat> {
+  final int id;
+  final String type;
+  final int? otherUserId;
+  final String? title;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final int? lastMessageId;
+  final String? lastMessageText;
+  final int? lastMessageSenderId;
+  final DateTime? lastMessageCreatedAt;
+  const LocalChat({
+    required this.id,
+    required this.type,
+    this.otherUserId,
+    this.title,
+    required this.createdAt,
+    required this.updatedAt,
+    this.lastMessageId,
+    this.lastMessageText,
+    this.lastMessageSenderId,
+    this.lastMessageCreatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['type'] = Variable<String>(type);
+    if (!nullToAbsent || otherUserId != null) {
+      map['other_user_id'] = Variable<int>(otherUserId);
+    }
+    if (!nullToAbsent || title != null) {
+      map['title'] = Variable<String>(title);
+    }
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || lastMessageId != null) {
+      map['last_message_id'] = Variable<int>(lastMessageId);
+    }
+    if (!nullToAbsent || lastMessageText != null) {
+      map['last_message_text'] = Variable<String>(lastMessageText);
+    }
+    if (!nullToAbsent || lastMessageSenderId != null) {
+      map['last_message_sender_id'] = Variable<int>(lastMessageSenderId);
+    }
+    if (!nullToAbsent || lastMessageCreatedAt != null) {
+      map['last_message_created_at'] = Variable<DateTime>(lastMessageCreatedAt);
+    }
+    return map;
+  }
+
+  LocalChatsCompanion toCompanion(bool nullToAbsent) {
+    return LocalChatsCompanion(
+      id: Value(id),
+      type: Value(type),
+      otherUserId: otherUserId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(otherUserId),
+      title: title == null && nullToAbsent
+          ? const Value.absent()
+          : Value(title),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      lastMessageId: lastMessageId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastMessageId),
+      lastMessageText: lastMessageText == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastMessageText),
+      lastMessageSenderId: lastMessageSenderId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastMessageSenderId),
+      lastMessageCreatedAt: lastMessageCreatedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastMessageCreatedAt),
+    );
+  }
+
+  factory LocalChat.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LocalChat(
+      id: serializer.fromJson<int>(json['id']),
+      type: serializer.fromJson<String>(json['type']),
+      otherUserId: serializer.fromJson<int?>(json['otherUserId']),
+      title: serializer.fromJson<String?>(json['title']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      lastMessageId: serializer.fromJson<int?>(json['lastMessageId']),
+      lastMessageText: serializer.fromJson<String?>(json['lastMessageText']),
+      lastMessageSenderId: serializer.fromJson<int?>(
+        json['lastMessageSenderId'],
+      ),
+      lastMessageCreatedAt: serializer.fromJson<DateTime?>(
+        json['lastMessageCreatedAt'],
+      ),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'type': serializer.toJson<String>(type),
+      'otherUserId': serializer.toJson<int?>(otherUserId),
+      'title': serializer.toJson<String?>(title),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'lastMessageId': serializer.toJson<int?>(lastMessageId),
+      'lastMessageText': serializer.toJson<String?>(lastMessageText),
+      'lastMessageSenderId': serializer.toJson<int?>(lastMessageSenderId),
+      'lastMessageCreatedAt': serializer.toJson<DateTime?>(
+        lastMessageCreatedAt,
+      ),
+    };
+  }
+
+  LocalChat copyWith({
+    int? id,
+    String? type,
+    Value<int?> otherUserId = const Value.absent(),
+    Value<String?> title = const Value.absent(),
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    Value<int?> lastMessageId = const Value.absent(),
+    Value<String?> lastMessageText = const Value.absent(),
+    Value<int?> lastMessageSenderId = const Value.absent(),
+    Value<DateTime?> lastMessageCreatedAt = const Value.absent(),
+  }) => LocalChat(
+    id: id ?? this.id,
+    type: type ?? this.type,
+    otherUserId: otherUserId.present ? otherUserId.value : this.otherUserId,
+    title: title.present ? title.value : this.title,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    lastMessageId: lastMessageId.present
+        ? lastMessageId.value
+        : this.lastMessageId,
+    lastMessageText: lastMessageText.present
+        ? lastMessageText.value
+        : this.lastMessageText,
+    lastMessageSenderId: lastMessageSenderId.present
+        ? lastMessageSenderId.value
+        : this.lastMessageSenderId,
+    lastMessageCreatedAt: lastMessageCreatedAt.present
+        ? lastMessageCreatedAt.value
+        : this.lastMessageCreatedAt,
+  );
+  LocalChat copyWithCompanion(LocalChatsCompanion data) {
+    return LocalChat(
+      id: data.id.present ? data.id.value : this.id,
+      type: data.type.present ? data.type.value : this.type,
+      otherUserId: data.otherUserId.present
+          ? data.otherUserId.value
+          : this.otherUserId,
+      title: data.title.present ? data.title.value : this.title,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      lastMessageId: data.lastMessageId.present
+          ? data.lastMessageId.value
+          : this.lastMessageId,
+      lastMessageText: data.lastMessageText.present
+          ? data.lastMessageText.value
+          : this.lastMessageText,
+      lastMessageSenderId: data.lastMessageSenderId.present
+          ? data.lastMessageSenderId.value
+          : this.lastMessageSenderId,
+      lastMessageCreatedAt: data.lastMessageCreatedAt.present
+          ? data.lastMessageCreatedAt.value
+          : this.lastMessageCreatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LocalChat(')
+          ..write('id: $id, ')
+          ..write('type: $type, ')
+          ..write('otherUserId: $otherUserId, ')
+          ..write('title: $title, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('lastMessageId: $lastMessageId, ')
+          ..write('lastMessageText: $lastMessageText, ')
+          ..write('lastMessageSenderId: $lastMessageSenderId, ')
+          ..write('lastMessageCreatedAt: $lastMessageCreatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    type,
+    otherUserId,
+    title,
+    createdAt,
+    updatedAt,
+    lastMessageId,
+    lastMessageText,
+    lastMessageSenderId,
+    lastMessageCreatedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LocalChat &&
+          other.id == this.id &&
+          other.type == this.type &&
+          other.otherUserId == this.otherUserId &&
+          other.title == this.title &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.lastMessageId == this.lastMessageId &&
+          other.lastMessageText == this.lastMessageText &&
+          other.lastMessageSenderId == this.lastMessageSenderId &&
+          other.lastMessageCreatedAt == this.lastMessageCreatedAt);
+}
+
+class LocalChatsCompanion extends UpdateCompanion<LocalChat> {
+  final Value<int> id;
+  final Value<String> type;
+  final Value<int?> otherUserId;
+  final Value<String?> title;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<int?> lastMessageId;
+  final Value<String?> lastMessageText;
+  final Value<int?> lastMessageSenderId;
+  final Value<DateTime?> lastMessageCreatedAt;
+  const LocalChatsCompanion({
+    this.id = const Value.absent(),
+    this.type = const Value.absent(),
+    this.otherUserId = const Value.absent(),
+    this.title = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.lastMessageId = const Value.absent(),
+    this.lastMessageText = const Value.absent(),
+    this.lastMessageSenderId = const Value.absent(),
+    this.lastMessageCreatedAt = const Value.absent(),
+  });
+  LocalChatsCompanion.insert({
+    this.id = const Value.absent(),
+    required String type,
+    this.otherUserId = const Value.absent(),
+    this.title = const Value.absent(),
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    this.lastMessageId = const Value.absent(),
+    this.lastMessageText = const Value.absent(),
+    this.lastMessageSenderId = const Value.absent(),
+    this.lastMessageCreatedAt = const Value.absent(),
+  }) : type = Value(type),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<LocalChat> custom({
+    Expression<int>? id,
+    Expression<String>? type,
+    Expression<int>? otherUserId,
+    Expression<String>? title,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? lastMessageId,
+    Expression<String>? lastMessageText,
+    Expression<int>? lastMessageSenderId,
+    Expression<DateTime>? lastMessageCreatedAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (type != null) 'type': type,
+      if (otherUserId != null) 'other_user_id': otherUserId,
+      if (title != null) 'title': title,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (lastMessageId != null) 'last_message_id': lastMessageId,
+      if (lastMessageText != null) 'last_message_text': lastMessageText,
+      if (lastMessageSenderId != null)
+        'last_message_sender_id': lastMessageSenderId,
+      if (lastMessageCreatedAt != null)
+        'last_message_created_at': lastMessageCreatedAt,
+    });
+  }
+
+  LocalChatsCompanion copyWith({
+    Value<int>? id,
+    Value<String>? type,
+    Value<int?>? otherUserId,
+    Value<String?>? title,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<int?>? lastMessageId,
+    Value<String?>? lastMessageText,
+    Value<int?>? lastMessageSenderId,
+    Value<DateTime?>? lastMessageCreatedAt,
+  }) {
+    return LocalChatsCompanion(
+      id: id ?? this.id,
+      type: type ?? this.type,
+      otherUserId: otherUserId ?? this.otherUserId,
+      title: title ?? this.title,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      lastMessageId: lastMessageId ?? this.lastMessageId,
+      lastMessageText: lastMessageText ?? this.lastMessageText,
+      lastMessageSenderId: lastMessageSenderId ?? this.lastMessageSenderId,
+      lastMessageCreatedAt: lastMessageCreatedAt ?? this.lastMessageCreatedAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (type.present) {
+      map['type'] = Variable<String>(type.value);
+    }
+    if (otherUserId.present) {
+      map['other_user_id'] = Variable<int>(otherUserId.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (lastMessageId.present) {
+      map['last_message_id'] = Variable<int>(lastMessageId.value);
+    }
+    if (lastMessageText.present) {
+      map['last_message_text'] = Variable<String>(lastMessageText.value);
+    }
+    if (lastMessageSenderId.present) {
+      map['last_message_sender_id'] = Variable<int>(lastMessageSenderId.value);
+    }
+    if (lastMessageCreatedAt.present) {
+      map['last_message_created_at'] = Variable<DateTime>(
+        lastMessageCreatedAt.value,
+      );
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LocalChatsCompanion(')
+          ..write('id: $id, ')
+          ..write('type: $type, ')
+          ..write('otherUserId: $otherUserId, ')
+          ..write('title: $title, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('lastMessageId: $lastMessageId, ')
+          ..write('lastMessageText: $lastMessageText, ')
+          ..write('lastMessageSenderId: $lastMessageSenderId, ')
+          ..write('lastMessageCreatedAt: $lastMessageCreatedAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $LocalChatMembersTable extends LocalChatMembers
+    with TableInfo<$LocalChatMembersTable, LocalChatMember> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $LocalChatMembersTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _chatIdMeta = const VerificationMeta('chatId');
+  @override
+  late final GeneratedColumn<int> chatId = GeneratedColumn<int>(
+    'chat_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
+  @override
+  late final GeneratedColumn<int> userId = GeneratedColumn<int>(
+    'user_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _isActiveMeta = const VerificationMeta(
+    'isActive',
+  );
+  @override
+  late final GeneratedColumn<bool> isActive = GeneratedColumn<bool>(
+    'is_active',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_active" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, chatId, userId, isActive];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'local_chat_members';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<LocalChatMember> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('chat_id')) {
+      context.handle(
+        _chatIdMeta,
+        chatId.isAcceptableOrUnknown(data['chat_id']!, _chatIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_chatIdMeta);
+    }
+    if (data.containsKey('user_id')) {
+      context.handle(
+        _userIdMeta,
+        userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_userIdMeta);
+    }
+    if (data.containsKey('is_active')) {
+      context.handle(
+        _isActiveMeta,
+        isActive.isAcceptableOrUnknown(data['is_active']!, _isActiveMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  LocalChatMember map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LocalChatMember(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      chatId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}chat_id'],
+      )!,
+      userId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}user_id'],
+      )!,
+      isActive: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_active'],
+      )!,
+    );
+  }
+
+  @override
+  $LocalChatMembersTable createAlias(String alias) {
+    return $LocalChatMembersTable(attachedDatabase, alias);
+  }
+}
+
+class LocalChatMember extends DataClass implements Insertable<LocalChatMember> {
+  final int id;
+  final int chatId;
+  final int userId;
+  final bool isActive;
+  const LocalChatMember({
+    required this.id,
+    required this.chatId,
+    required this.userId,
+    required this.isActive,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['chat_id'] = Variable<int>(chatId);
+    map['user_id'] = Variable<int>(userId);
+    map['is_active'] = Variable<bool>(isActive);
+    return map;
+  }
+
+  LocalChatMembersCompanion toCompanion(bool nullToAbsent) {
+    return LocalChatMembersCompanion(
+      id: Value(id),
+      chatId: Value(chatId),
+      userId: Value(userId),
+      isActive: Value(isActive),
+    );
+  }
+
+  factory LocalChatMember.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LocalChatMember(
+      id: serializer.fromJson<int>(json['id']),
+      chatId: serializer.fromJson<int>(json['chatId']),
+      userId: serializer.fromJson<int>(json['userId']),
+      isActive: serializer.fromJson<bool>(json['isActive']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'chatId': serializer.toJson<int>(chatId),
+      'userId': serializer.toJson<int>(userId),
+      'isActive': serializer.toJson<bool>(isActive),
+    };
+  }
+
+  LocalChatMember copyWith({
+    int? id,
+    int? chatId,
+    int? userId,
+    bool? isActive,
+  }) => LocalChatMember(
+    id: id ?? this.id,
+    chatId: chatId ?? this.chatId,
+    userId: userId ?? this.userId,
+    isActive: isActive ?? this.isActive,
+  );
+  LocalChatMember copyWithCompanion(LocalChatMembersCompanion data) {
+    return LocalChatMember(
+      id: data.id.present ? data.id.value : this.id,
+      chatId: data.chatId.present ? data.chatId.value : this.chatId,
+      userId: data.userId.present ? data.userId.value : this.userId,
+      isActive: data.isActive.present ? data.isActive.value : this.isActive,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LocalChatMember(')
+          ..write('id: $id, ')
+          ..write('chatId: $chatId, ')
+          ..write('userId: $userId, ')
+          ..write('isActive: $isActive')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, chatId, userId, isActive);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LocalChatMember &&
+          other.id == this.id &&
+          other.chatId == this.chatId &&
+          other.userId == this.userId &&
+          other.isActive == this.isActive);
+}
+
+class LocalChatMembersCompanion extends UpdateCompanion<LocalChatMember> {
+  final Value<int> id;
+  final Value<int> chatId;
+  final Value<int> userId;
+  final Value<bool> isActive;
+  const LocalChatMembersCompanion({
+    this.id = const Value.absent(),
+    this.chatId = const Value.absent(),
+    this.userId = const Value.absent(),
+    this.isActive = const Value.absent(),
+  });
+  LocalChatMembersCompanion.insert({
+    this.id = const Value.absent(),
+    required int chatId,
+    required int userId,
+    this.isActive = const Value.absent(),
+  }) : chatId = Value(chatId),
+       userId = Value(userId);
+  static Insertable<LocalChatMember> custom({
+    Expression<int>? id,
+    Expression<int>? chatId,
+    Expression<int>? userId,
+    Expression<bool>? isActive,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (chatId != null) 'chat_id': chatId,
+      if (userId != null) 'user_id': userId,
+      if (isActive != null) 'is_active': isActive,
+    });
+  }
+
+  LocalChatMembersCompanion copyWith({
+    Value<int>? id,
+    Value<int>? chatId,
+    Value<int>? userId,
+    Value<bool>? isActive,
+  }) {
+    return LocalChatMembersCompanion(
+      id: id ?? this.id,
+      chatId: chatId ?? this.chatId,
+      userId: userId ?? this.userId,
+      isActive: isActive ?? this.isActive,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (chatId.present) {
+      map['chat_id'] = Variable<int>(chatId.value);
+    }
+    if (userId.present) {
+      map['user_id'] = Variable<int>(userId.value);
+    }
+    if (isActive.present) {
+      map['is_active'] = Variable<bool>(isActive.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LocalChatMembersCompanion(')
+          ..write('id: $id, ')
+          ..write('chatId: $chatId, ')
+          ..write('userId: $userId, ')
+          ..write('isActive: $isActive')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $LocalMessagesTable extends LocalMessages
+    with TableInfo<$LocalMessagesTable, LocalMessage> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $LocalMessagesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _chatIdMeta = const VerificationMeta('chatId');
+  @override
+  late final GeneratedColumn<int> chatId = GeneratedColumn<int>(
+    'chat_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _senderIdMeta = const VerificationMeta(
+    'senderId',
+  );
+  @override
+  late final GeneratedColumn<int> senderId = GeneratedColumn<int>(
+    'sender_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _clientMessageIdMeta = const VerificationMeta(
+    'clientMessageId',
+  );
+  @override
+  late final GeneratedColumn<String> clientMessageId = GeneratedColumn<String>(
+    'client_message_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _messageTextMeta = const VerificationMeta(
+    'messageText',
+  );
+  @override
+  late final GeneratedColumn<String> messageText = GeneratedColumn<String>(
+    'message_text',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _editedAtMeta = const VerificationMeta(
+    'editedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> editedAt = GeneratedColumn<DateTime>(
+    'edited_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _isDeletedMeta = const VerificationMeta(
+    'isDeleted',
+  );
+  @override
+  late final GeneratedColumn<bool> isDeleted = GeneratedColumn<bool>(
+    'is_deleted',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_deleted" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    chatId,
+    senderId,
+    clientMessageId,
+    messageText,
+    createdAt,
+    editedAt,
+    isDeleted,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'local_messages';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<LocalMessage> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('chat_id')) {
+      context.handle(
+        _chatIdMeta,
+        chatId.isAcceptableOrUnknown(data['chat_id']!, _chatIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_chatIdMeta);
+    }
+    if (data.containsKey('sender_id')) {
+      context.handle(
+        _senderIdMeta,
+        senderId.isAcceptableOrUnknown(data['sender_id']!, _senderIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_senderIdMeta);
+    }
+    if (data.containsKey('client_message_id')) {
+      context.handle(
+        _clientMessageIdMeta,
+        clientMessageId.isAcceptableOrUnknown(
+          data['client_message_id']!,
+          _clientMessageIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_clientMessageIdMeta);
+    }
+    if (data.containsKey('message_text')) {
+      context.handle(
+        _messageTextMeta,
+        messageText.isAcceptableOrUnknown(
+          data['message_text']!,
+          _messageTextMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_messageTextMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('edited_at')) {
+      context.handle(
+        _editedAtMeta,
+        editedAt.isAcceptableOrUnknown(data['edited_at']!, _editedAtMeta),
+      );
+    }
+    if (data.containsKey('is_deleted')) {
+      context.handle(
+        _isDeletedMeta,
+        isDeleted.isAcceptableOrUnknown(data['is_deleted']!, _isDeletedMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  LocalMessage map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LocalMessage(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      chatId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}chat_id'],
+      )!,
+      senderId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}sender_id'],
+      )!,
+      clientMessageId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}client_message_id'],
+      )!,
+      messageText: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}message_text'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      editedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}edited_at'],
+      ),
+      isDeleted: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_deleted'],
+      )!,
+    );
+  }
+
+  @override
+  $LocalMessagesTable createAlias(String alias) {
+    return $LocalMessagesTable(attachedDatabase, alias);
+  }
+}
+
+class LocalMessage extends DataClass implements Insertable<LocalMessage> {
+  final int id;
+  final int chatId;
+  final int senderId;
+  final String clientMessageId;
+  final String messageText;
+  final DateTime createdAt;
+  final DateTime? editedAt;
+  final bool isDeleted;
+  const LocalMessage({
+    required this.id,
+    required this.chatId,
+    required this.senderId,
+    required this.clientMessageId,
+    required this.messageText,
+    required this.createdAt,
+    this.editedAt,
+    required this.isDeleted,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['chat_id'] = Variable<int>(chatId);
+    map['sender_id'] = Variable<int>(senderId);
+    map['client_message_id'] = Variable<String>(clientMessageId);
+    map['message_text'] = Variable<String>(messageText);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    if (!nullToAbsent || editedAt != null) {
+      map['edited_at'] = Variable<DateTime>(editedAt);
+    }
+    map['is_deleted'] = Variable<bool>(isDeleted);
+    return map;
+  }
+
+  LocalMessagesCompanion toCompanion(bool nullToAbsent) {
+    return LocalMessagesCompanion(
+      id: Value(id),
+      chatId: Value(chatId),
+      senderId: Value(senderId),
+      clientMessageId: Value(clientMessageId),
+      messageText: Value(messageText),
+      createdAt: Value(createdAt),
+      editedAt: editedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(editedAt),
+      isDeleted: Value(isDeleted),
+    );
+  }
+
+  factory LocalMessage.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LocalMessage(
+      id: serializer.fromJson<int>(json['id']),
+      chatId: serializer.fromJson<int>(json['chatId']),
+      senderId: serializer.fromJson<int>(json['senderId']),
+      clientMessageId: serializer.fromJson<String>(json['clientMessageId']),
+      messageText: serializer.fromJson<String>(json['messageText']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      editedAt: serializer.fromJson<DateTime?>(json['editedAt']),
+      isDeleted: serializer.fromJson<bool>(json['isDeleted']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'chatId': serializer.toJson<int>(chatId),
+      'senderId': serializer.toJson<int>(senderId),
+      'clientMessageId': serializer.toJson<String>(clientMessageId),
+      'messageText': serializer.toJson<String>(messageText),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'editedAt': serializer.toJson<DateTime?>(editedAt),
+      'isDeleted': serializer.toJson<bool>(isDeleted),
+    };
+  }
+
+  LocalMessage copyWith({
+    int? id,
+    int? chatId,
+    int? senderId,
+    String? clientMessageId,
+    String? messageText,
+    DateTime? createdAt,
+    Value<DateTime?> editedAt = const Value.absent(),
+    bool? isDeleted,
+  }) => LocalMessage(
+    id: id ?? this.id,
+    chatId: chatId ?? this.chatId,
+    senderId: senderId ?? this.senderId,
+    clientMessageId: clientMessageId ?? this.clientMessageId,
+    messageText: messageText ?? this.messageText,
+    createdAt: createdAt ?? this.createdAt,
+    editedAt: editedAt.present ? editedAt.value : this.editedAt,
+    isDeleted: isDeleted ?? this.isDeleted,
+  );
+  LocalMessage copyWithCompanion(LocalMessagesCompanion data) {
+    return LocalMessage(
+      id: data.id.present ? data.id.value : this.id,
+      chatId: data.chatId.present ? data.chatId.value : this.chatId,
+      senderId: data.senderId.present ? data.senderId.value : this.senderId,
+      clientMessageId: data.clientMessageId.present
+          ? data.clientMessageId.value
+          : this.clientMessageId,
+      messageText: data.messageText.present
+          ? data.messageText.value
+          : this.messageText,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      editedAt: data.editedAt.present ? data.editedAt.value : this.editedAt,
+      isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LocalMessage(')
+          ..write('id: $id, ')
+          ..write('chatId: $chatId, ')
+          ..write('senderId: $senderId, ')
+          ..write('clientMessageId: $clientMessageId, ')
+          ..write('messageText: $messageText, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('editedAt: $editedAt, ')
+          ..write('isDeleted: $isDeleted')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    chatId,
+    senderId,
+    clientMessageId,
+    messageText,
+    createdAt,
+    editedAt,
+    isDeleted,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LocalMessage &&
+          other.id == this.id &&
+          other.chatId == this.chatId &&
+          other.senderId == this.senderId &&
+          other.clientMessageId == this.clientMessageId &&
+          other.messageText == this.messageText &&
+          other.createdAt == this.createdAt &&
+          other.editedAt == this.editedAt &&
+          other.isDeleted == this.isDeleted);
+}
+
+class LocalMessagesCompanion extends UpdateCompanion<LocalMessage> {
+  final Value<int> id;
+  final Value<int> chatId;
+  final Value<int> senderId;
+  final Value<String> clientMessageId;
+  final Value<String> messageText;
+  final Value<DateTime> createdAt;
+  final Value<DateTime?> editedAt;
+  final Value<bool> isDeleted;
+  const LocalMessagesCompanion({
+    this.id = const Value.absent(),
+    this.chatId = const Value.absent(),
+    this.senderId = const Value.absent(),
+    this.clientMessageId = const Value.absent(),
+    this.messageText = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.editedAt = const Value.absent(),
+    this.isDeleted = const Value.absent(),
+  });
+  LocalMessagesCompanion.insert({
+    this.id = const Value.absent(),
+    required int chatId,
+    required int senderId,
+    required String clientMessageId,
+    required String messageText,
+    required DateTime createdAt,
+    this.editedAt = const Value.absent(),
+    this.isDeleted = const Value.absent(),
+  }) : chatId = Value(chatId),
+       senderId = Value(senderId),
+       clientMessageId = Value(clientMessageId),
+       messageText = Value(messageText),
+       createdAt = Value(createdAt);
+  static Insertable<LocalMessage> custom({
+    Expression<int>? id,
+    Expression<int>? chatId,
+    Expression<int>? senderId,
+    Expression<String>? clientMessageId,
+    Expression<String>? messageText,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? editedAt,
+    Expression<bool>? isDeleted,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (chatId != null) 'chat_id': chatId,
+      if (senderId != null) 'sender_id': senderId,
+      if (clientMessageId != null) 'client_message_id': clientMessageId,
+      if (messageText != null) 'message_text': messageText,
+      if (createdAt != null) 'created_at': createdAt,
+      if (editedAt != null) 'edited_at': editedAt,
+      if (isDeleted != null) 'is_deleted': isDeleted,
+    });
+  }
+
+  LocalMessagesCompanion copyWith({
+    Value<int>? id,
+    Value<int>? chatId,
+    Value<int>? senderId,
+    Value<String>? clientMessageId,
+    Value<String>? messageText,
+    Value<DateTime>? createdAt,
+    Value<DateTime?>? editedAt,
+    Value<bool>? isDeleted,
+  }) {
+    return LocalMessagesCompanion(
+      id: id ?? this.id,
+      chatId: chatId ?? this.chatId,
+      senderId: senderId ?? this.senderId,
+      clientMessageId: clientMessageId ?? this.clientMessageId,
+      messageText: messageText ?? this.messageText,
+      createdAt: createdAt ?? this.createdAt,
+      editedAt: editedAt ?? this.editedAt,
+      isDeleted: isDeleted ?? this.isDeleted,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (chatId.present) {
+      map['chat_id'] = Variable<int>(chatId.value);
+    }
+    if (senderId.present) {
+      map['sender_id'] = Variable<int>(senderId.value);
+    }
+    if (clientMessageId.present) {
+      map['client_message_id'] = Variable<String>(clientMessageId.value);
+    }
+    if (messageText.present) {
+      map['message_text'] = Variable<String>(messageText.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (editedAt.present) {
+      map['edited_at'] = Variable<DateTime>(editedAt.value);
+    }
+    if (isDeleted.present) {
+      map['is_deleted'] = Variable<bool>(isDeleted.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LocalMessagesCompanion(')
+          ..write('id: $id, ')
+          ..write('chatId: $chatId, ')
+          ..write('senderId: $senderId, ')
+          ..write('clientMessageId: $clientMessageId, ')
+          ..write('messageText: $messageText, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('editedAt: $editedAt, ')
+          ..write('isDeleted: $isDeleted')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $LocalUsersTable localUsers = $LocalUsersTable(this);
   late final $AppSettingsTable appSettings = $AppSettingsTable(this);
+  late final $LocalChatsTable localChats = $LocalChatsTable(this);
+  late final $LocalChatMembersTable localChatMembers = $LocalChatMembersTable(
+    this,
+  );
+  late final $LocalMessagesTable localMessages = $LocalMessagesTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities => [localUsers, appSettings];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [
+    localUsers,
+    appSettings,
+    localChats,
+    localChatMembers,
+    localMessages,
+  ];
 }
 
 typedef $$LocalUsersTableCreateCompanionBuilder =
@@ -1539,6 +2993,738 @@ typedef $$AppSettingsTableProcessedTableManager =
       AppSetting,
       PrefetchHooks Function()
     >;
+typedef $$LocalChatsTableCreateCompanionBuilder =
+    LocalChatsCompanion Function({
+      Value<int> id,
+      required String type,
+      Value<int?> otherUserId,
+      Value<String?> title,
+      required DateTime createdAt,
+      required DateTime updatedAt,
+      Value<int?> lastMessageId,
+      Value<String?> lastMessageText,
+      Value<int?> lastMessageSenderId,
+      Value<DateTime?> lastMessageCreatedAt,
+    });
+typedef $$LocalChatsTableUpdateCompanionBuilder =
+    LocalChatsCompanion Function({
+      Value<int> id,
+      Value<String> type,
+      Value<int?> otherUserId,
+      Value<String?> title,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<int?> lastMessageId,
+      Value<String?> lastMessageText,
+      Value<int?> lastMessageSenderId,
+      Value<DateTime?> lastMessageCreatedAt,
+    });
+
+class $$LocalChatsTableFilterComposer
+    extends Composer<_$AppDatabase, $LocalChatsTable> {
+  $$LocalChatsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get type => $composableBuilder(
+    column: $table.type,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get otherUserId => $composableBuilder(
+    column: $table.otherUserId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get title => $composableBuilder(
+    column: $table.title,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get lastMessageId => $composableBuilder(
+    column: $table.lastMessageId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get lastMessageText => $composableBuilder(
+    column: $table.lastMessageText,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get lastMessageSenderId => $composableBuilder(
+    column: $table.lastMessageSenderId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get lastMessageCreatedAt => $composableBuilder(
+    column: $table.lastMessageCreatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$LocalChatsTableOrderingComposer
+    extends Composer<_$AppDatabase, $LocalChatsTable> {
+  $$LocalChatsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get type => $composableBuilder(
+    column: $table.type,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get otherUserId => $composableBuilder(
+    column: $table.otherUserId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get title => $composableBuilder(
+    column: $table.title,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get lastMessageId => $composableBuilder(
+    column: $table.lastMessageId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get lastMessageText => $composableBuilder(
+    column: $table.lastMessageText,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get lastMessageSenderId => $composableBuilder(
+    column: $table.lastMessageSenderId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get lastMessageCreatedAt => $composableBuilder(
+    column: $table.lastMessageCreatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$LocalChatsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $LocalChatsTable> {
+  $$LocalChatsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get type =>
+      $composableBuilder(column: $table.type, builder: (column) => column);
+
+  GeneratedColumn<int> get otherUserId => $composableBuilder(
+    column: $table.otherUserId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get title =>
+      $composableBuilder(column: $table.title, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<int> get lastMessageId => $composableBuilder(
+    column: $table.lastMessageId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get lastMessageText => $composableBuilder(
+    column: $table.lastMessageText,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get lastMessageSenderId => $composableBuilder(
+    column: $table.lastMessageSenderId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get lastMessageCreatedAt => $composableBuilder(
+    column: $table.lastMessageCreatedAt,
+    builder: (column) => column,
+  );
+}
+
+class $$LocalChatsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $LocalChatsTable,
+          LocalChat,
+          $$LocalChatsTableFilterComposer,
+          $$LocalChatsTableOrderingComposer,
+          $$LocalChatsTableAnnotationComposer,
+          $$LocalChatsTableCreateCompanionBuilder,
+          $$LocalChatsTableUpdateCompanionBuilder,
+          (
+            LocalChat,
+            BaseReferences<_$AppDatabase, $LocalChatsTable, LocalChat>,
+          ),
+          LocalChat,
+          PrefetchHooks Function()
+        > {
+  $$LocalChatsTableTableManager(_$AppDatabase db, $LocalChatsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$LocalChatsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$LocalChatsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$LocalChatsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> type = const Value.absent(),
+                Value<int?> otherUserId = const Value.absent(),
+                Value<String?> title = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<int?> lastMessageId = const Value.absent(),
+                Value<String?> lastMessageText = const Value.absent(),
+                Value<int?> lastMessageSenderId = const Value.absent(),
+                Value<DateTime?> lastMessageCreatedAt = const Value.absent(),
+              }) => LocalChatsCompanion(
+                id: id,
+                type: type,
+                otherUserId: otherUserId,
+                title: title,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                lastMessageId: lastMessageId,
+                lastMessageText: lastMessageText,
+                lastMessageSenderId: lastMessageSenderId,
+                lastMessageCreatedAt: lastMessageCreatedAt,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String type,
+                Value<int?> otherUserId = const Value.absent(),
+                Value<String?> title = const Value.absent(),
+                required DateTime createdAt,
+                required DateTime updatedAt,
+                Value<int?> lastMessageId = const Value.absent(),
+                Value<String?> lastMessageText = const Value.absent(),
+                Value<int?> lastMessageSenderId = const Value.absent(),
+                Value<DateTime?> lastMessageCreatedAt = const Value.absent(),
+              }) => LocalChatsCompanion.insert(
+                id: id,
+                type: type,
+                otherUserId: otherUserId,
+                title: title,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                lastMessageId: lastMessageId,
+                lastMessageText: lastMessageText,
+                lastMessageSenderId: lastMessageSenderId,
+                lastMessageCreatedAt: lastMessageCreatedAt,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$LocalChatsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $LocalChatsTable,
+      LocalChat,
+      $$LocalChatsTableFilterComposer,
+      $$LocalChatsTableOrderingComposer,
+      $$LocalChatsTableAnnotationComposer,
+      $$LocalChatsTableCreateCompanionBuilder,
+      $$LocalChatsTableUpdateCompanionBuilder,
+      (LocalChat, BaseReferences<_$AppDatabase, $LocalChatsTable, LocalChat>),
+      LocalChat,
+      PrefetchHooks Function()
+    >;
+typedef $$LocalChatMembersTableCreateCompanionBuilder =
+    LocalChatMembersCompanion Function({
+      Value<int> id,
+      required int chatId,
+      required int userId,
+      Value<bool> isActive,
+    });
+typedef $$LocalChatMembersTableUpdateCompanionBuilder =
+    LocalChatMembersCompanion Function({
+      Value<int> id,
+      Value<int> chatId,
+      Value<int> userId,
+      Value<bool> isActive,
+    });
+
+class $$LocalChatMembersTableFilterComposer
+    extends Composer<_$AppDatabase, $LocalChatMembersTable> {
+  $$LocalChatMembersTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get chatId => $composableBuilder(
+    column: $table.chatId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get userId => $composableBuilder(
+    column: $table.userId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isActive => $composableBuilder(
+    column: $table.isActive,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$LocalChatMembersTableOrderingComposer
+    extends Composer<_$AppDatabase, $LocalChatMembersTable> {
+  $$LocalChatMembersTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get chatId => $composableBuilder(
+    column: $table.chatId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get userId => $composableBuilder(
+    column: $table.userId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isActive => $composableBuilder(
+    column: $table.isActive,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$LocalChatMembersTableAnnotationComposer
+    extends Composer<_$AppDatabase, $LocalChatMembersTable> {
+  $$LocalChatMembersTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get chatId =>
+      $composableBuilder(column: $table.chatId, builder: (column) => column);
+
+  GeneratedColumn<int> get userId =>
+      $composableBuilder(column: $table.userId, builder: (column) => column);
+
+  GeneratedColumn<bool> get isActive =>
+      $composableBuilder(column: $table.isActive, builder: (column) => column);
+}
+
+class $$LocalChatMembersTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $LocalChatMembersTable,
+          LocalChatMember,
+          $$LocalChatMembersTableFilterComposer,
+          $$LocalChatMembersTableOrderingComposer,
+          $$LocalChatMembersTableAnnotationComposer,
+          $$LocalChatMembersTableCreateCompanionBuilder,
+          $$LocalChatMembersTableUpdateCompanionBuilder,
+          (
+            LocalChatMember,
+            BaseReferences<
+              _$AppDatabase,
+              $LocalChatMembersTable,
+              LocalChatMember
+            >,
+          ),
+          LocalChatMember,
+          PrefetchHooks Function()
+        > {
+  $$LocalChatMembersTableTableManager(
+    _$AppDatabase db,
+    $LocalChatMembersTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$LocalChatMembersTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$LocalChatMembersTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$LocalChatMembersTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<int> chatId = const Value.absent(),
+                Value<int> userId = const Value.absent(),
+                Value<bool> isActive = const Value.absent(),
+              }) => LocalChatMembersCompanion(
+                id: id,
+                chatId: chatId,
+                userId: userId,
+                isActive: isActive,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required int chatId,
+                required int userId,
+                Value<bool> isActive = const Value.absent(),
+              }) => LocalChatMembersCompanion.insert(
+                id: id,
+                chatId: chatId,
+                userId: userId,
+                isActive: isActive,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$LocalChatMembersTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $LocalChatMembersTable,
+      LocalChatMember,
+      $$LocalChatMembersTableFilterComposer,
+      $$LocalChatMembersTableOrderingComposer,
+      $$LocalChatMembersTableAnnotationComposer,
+      $$LocalChatMembersTableCreateCompanionBuilder,
+      $$LocalChatMembersTableUpdateCompanionBuilder,
+      (
+        LocalChatMember,
+        BaseReferences<_$AppDatabase, $LocalChatMembersTable, LocalChatMember>,
+      ),
+      LocalChatMember,
+      PrefetchHooks Function()
+    >;
+typedef $$LocalMessagesTableCreateCompanionBuilder =
+    LocalMessagesCompanion Function({
+      Value<int> id,
+      required int chatId,
+      required int senderId,
+      required String clientMessageId,
+      required String messageText,
+      required DateTime createdAt,
+      Value<DateTime?> editedAt,
+      Value<bool> isDeleted,
+    });
+typedef $$LocalMessagesTableUpdateCompanionBuilder =
+    LocalMessagesCompanion Function({
+      Value<int> id,
+      Value<int> chatId,
+      Value<int> senderId,
+      Value<String> clientMessageId,
+      Value<String> messageText,
+      Value<DateTime> createdAt,
+      Value<DateTime?> editedAt,
+      Value<bool> isDeleted,
+    });
+
+class $$LocalMessagesTableFilterComposer
+    extends Composer<_$AppDatabase, $LocalMessagesTable> {
+  $$LocalMessagesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get chatId => $composableBuilder(
+    column: $table.chatId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get senderId => $composableBuilder(
+    column: $table.senderId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get clientMessageId => $composableBuilder(
+    column: $table.clientMessageId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get messageText => $composableBuilder(
+    column: $table.messageText,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get editedAt => $composableBuilder(
+    column: $table.editedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isDeleted => $composableBuilder(
+    column: $table.isDeleted,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$LocalMessagesTableOrderingComposer
+    extends Composer<_$AppDatabase, $LocalMessagesTable> {
+  $$LocalMessagesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get chatId => $composableBuilder(
+    column: $table.chatId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get senderId => $composableBuilder(
+    column: $table.senderId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get clientMessageId => $composableBuilder(
+    column: $table.clientMessageId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get messageText => $composableBuilder(
+    column: $table.messageText,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get editedAt => $composableBuilder(
+    column: $table.editedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isDeleted => $composableBuilder(
+    column: $table.isDeleted,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$LocalMessagesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $LocalMessagesTable> {
+  $$LocalMessagesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get chatId =>
+      $composableBuilder(column: $table.chatId, builder: (column) => column);
+
+  GeneratedColumn<int> get senderId =>
+      $composableBuilder(column: $table.senderId, builder: (column) => column);
+
+  GeneratedColumn<String> get clientMessageId => $composableBuilder(
+    column: $table.clientMessageId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get messageText => $composableBuilder(
+    column: $table.messageText,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get editedAt =>
+      $composableBuilder(column: $table.editedAt, builder: (column) => column);
+
+  GeneratedColumn<bool> get isDeleted =>
+      $composableBuilder(column: $table.isDeleted, builder: (column) => column);
+}
+
+class $$LocalMessagesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $LocalMessagesTable,
+          LocalMessage,
+          $$LocalMessagesTableFilterComposer,
+          $$LocalMessagesTableOrderingComposer,
+          $$LocalMessagesTableAnnotationComposer,
+          $$LocalMessagesTableCreateCompanionBuilder,
+          $$LocalMessagesTableUpdateCompanionBuilder,
+          (
+            LocalMessage,
+            BaseReferences<_$AppDatabase, $LocalMessagesTable, LocalMessage>,
+          ),
+          LocalMessage,
+          PrefetchHooks Function()
+        > {
+  $$LocalMessagesTableTableManager(_$AppDatabase db, $LocalMessagesTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$LocalMessagesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$LocalMessagesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$LocalMessagesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<int> chatId = const Value.absent(),
+                Value<int> senderId = const Value.absent(),
+                Value<String> clientMessageId = const Value.absent(),
+                Value<String> messageText = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime?> editedAt = const Value.absent(),
+                Value<bool> isDeleted = const Value.absent(),
+              }) => LocalMessagesCompanion(
+                id: id,
+                chatId: chatId,
+                senderId: senderId,
+                clientMessageId: clientMessageId,
+                messageText: messageText,
+                createdAt: createdAt,
+                editedAt: editedAt,
+                isDeleted: isDeleted,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required int chatId,
+                required int senderId,
+                required String clientMessageId,
+                required String messageText,
+                required DateTime createdAt,
+                Value<DateTime?> editedAt = const Value.absent(),
+                Value<bool> isDeleted = const Value.absent(),
+              }) => LocalMessagesCompanion.insert(
+                id: id,
+                chatId: chatId,
+                senderId: senderId,
+                clientMessageId: clientMessageId,
+                messageText: messageText,
+                createdAt: createdAt,
+                editedAt: editedAt,
+                isDeleted: isDeleted,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$LocalMessagesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $LocalMessagesTable,
+      LocalMessage,
+      $$LocalMessagesTableFilterComposer,
+      $$LocalMessagesTableOrderingComposer,
+      $$LocalMessagesTableAnnotationComposer,
+      $$LocalMessagesTableCreateCompanionBuilder,
+      $$LocalMessagesTableUpdateCompanionBuilder,
+      (
+        LocalMessage,
+        BaseReferences<_$AppDatabase, $LocalMessagesTable, LocalMessage>,
+      ),
+      LocalMessage,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -1547,4 +3733,10 @@ class $AppDatabaseManager {
       $$LocalUsersTableTableManager(_db, _db.localUsers);
   $$AppSettingsTableTableManager get appSettings =>
       $$AppSettingsTableTableManager(_db, _db.appSettings);
+  $$LocalChatsTableTableManager get localChats =>
+      $$LocalChatsTableTableManager(_db, _db.localChats);
+  $$LocalChatMembersTableTableManager get localChatMembers =>
+      $$LocalChatMembersTableTableManager(_db, _db.localChatMembers);
+  $$LocalMessagesTableTableManager get localMessages =>
+      $$LocalMessagesTableTableManager(_db, _db.localMessages);
 }

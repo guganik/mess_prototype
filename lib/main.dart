@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mess_prototype/providers/chat_provider.dart';
 import 'package:mess_prototype/providers/friend_provider.dart';
+import 'package:mess_prototype/repositories/chat_repository.dart';
 import 'package:mess_prototype/repositories/device_repository.dart';
 import 'package:mess_prototype/repositories/friend_repository.dart';
 import 'package:mess_prototype/services/device_info_service.dart';
@@ -30,6 +32,17 @@ void main() {
   runApp(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider(
+          create: (context) => ChatProvider(
+            repository: ChatRepository(
+              apiService: context.read<ApiService>(),
+            ),
+            userRepository:
+                context.read<UserRepository>(),
+            realtimeService:
+                context.read<RealtimeService>(),
+          ),
+        ),
         ChangeNotifierProvider(
           create: (context) => FriendProvider(
             repository: FriendRepository(
