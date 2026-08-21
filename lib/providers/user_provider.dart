@@ -54,21 +54,9 @@ class UserProvider extends ChangeNotifier {
       notifyListeners();
 
       try {
-        final serverUser =
-            await repository.getCurrentUserFromServer();
-
-        final syncedUser =
-            await repository.syncAvatar(
-          localUser,
-          serverUser,
-        );
+        final syncedUser = await repository.synchronizeAccount();
 
         _user = syncedUser;
-
-        await repository.syncUser(
-          syncedUser,
-        );
-
         notifyListeners();
       } on ApiException catch (error) {
         if (error.statusCode == 401 ||
@@ -125,13 +113,20 @@ class UserProvider extends ChangeNotifier {
       password: password,
     );
 
-    final syncedUser = await repository.syncAvatar(user, user);
+    await repository.saveUser(user);
 
-    await repository.saveUser(syncedUser);
+    _user = user;
+    notifyListeners();
+
+    final syncedUser =
+        await repository.synchronizeAccount();
+
     _user = syncedUser;
     notifyListeners();
 
-    await _connectCurrentDevice(user.token ?? '');
+    await _connectCurrentDevice(
+      syncedUser.token ?? '',
+    );
   }
 
   Future<void> register({
