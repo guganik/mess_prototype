@@ -20,10 +20,41 @@ class ChatRepository {
 
   Future<List<Chat>> syncChats({
     required String token,
-  }) {
-    return apiService.syncChats(
+  }) async {
+    final chats = await apiService.syncChats(
       token: token,
     );
+
+    for (final chat in chats) {
+      await database
+          .into(database.localChats)
+          .insertOnConflictUpdate(
+        LocalChatsCompanion(
+          id: Value(chat.id),
+          type: Value(chat.type),
+          otherUserId: Value(
+            chat.otherUser?.id,
+          ),
+          title: Value(chat.title),
+          createdAt: Value(chat.createdAt),
+          updatedAt: Value(chat.updatedAt),
+          lastMessageId: Value(
+            chat.lastMessage?.id,
+          ),
+          lastMessageText: Value(
+            chat.lastMessage?.text,
+          ),
+          lastMessageSenderId: Value(
+            chat.lastMessage?.senderId,
+          ),
+          lastMessageCreatedAt: Value(
+            chat.lastMessage?.createdAt,
+          ),
+        ),
+      );
+    }
+
+    return chats;
   }
 
   Future<int> createDirectChat({
@@ -74,13 +105,12 @@ class ChatRepository {
 
   Stream<List<LocalChat>> watchChats() {
     return (
-      database.select(
-        database.localChats,
-      )..orderBy([
+      database.select(database.localChats)
+        ..orderBy([
           (table) => OrderingTerm(
-                expression: table.updatedAt,
-                mode: OrderingMode.desc,
-              ),
+            expression: table.updatedAt,
+            mode: OrderingMode.desc,
+          ),
         ])
     ).watch();
   }
