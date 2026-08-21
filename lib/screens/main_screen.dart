@@ -131,7 +131,8 @@ class MainScreenState extends State<MainScreen> {
                             width: 32,
                             height: 32,
                             child: Icon(
-                              Icons.density_medium
+                              Icons.density_medium,
+                              color: const Color.fromRGBO(75, 75, 75, 0.7),
                             )
                           ),
                           onTap: () {
@@ -167,7 +168,9 @@ class MainScreenState extends State<MainScreen> {
                                           isDense: true,
                                           contentPadding: EdgeInsets.zero,
                                           hintText: 'Поиск...',
-                                          hint
+                                          hintStyle: TextStyle(
+                                            color: Color.fromRGBO(75, 75, 75, 0.7)
+                                          )
                                         ),
                                         style: const TextStyle(
                                           fontSize: 14,
@@ -180,7 +183,7 @@ class MainScreenState extends State<MainScreen> {
                                   const Icon(
                                     Icons.search,
                                     size: 24,
-                                    color: const Color.fromRGBO(75, 75, 75, 0.3),
+                                    color: Color.fromRGBO(75, 75, 75, 0.5),
                                   ),
                                   const SizedBox(width: 4),
                                 ],
@@ -853,6 +856,9 @@ class _ChatListTile extends StatelessWidget {
       subtitle: chat.lastMessageText != null && chat.lastMessageText!.trim().isNotEmpty
         ? Text(
             chat.lastMessageText!,
+            style: TextStyle(
+              color: const Color.fromRGBO(75, 75, 75, 0.7)
+            ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           )
@@ -876,6 +882,7 @@ class _ChatListTile extends StatelessWidget {
               ),
               style: const TextStyle(
                 fontSize: 11,
+                color: const Color.fromRGBO(75, 75, 75, 0.7)
               ),
             ),
           if (otherUser != null)
