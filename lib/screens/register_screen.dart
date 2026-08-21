@@ -25,7 +25,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool hidingPassword = true;
 
   final MaskTextInputFormatter phoneFormatter = MaskTextInputFormatter(
-    mask: '+7 ### ### ##-##',
+    mask: '+# ### ### ##-##',
     filter: {"#": RegExp(r'[0-9]')}
   );
 
@@ -39,7 +39,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         username: controller.username,
         firstName: controller.firstName,
         email: controller.email,
-        phone: controller.phone,
+        phone: phoneFormatter.unmaskText(controller.phone),
         password: controller.password,
       );
 
@@ -121,6 +121,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     decoration: InputDecoration(
                       hintText: 'Номер телефона'
                     ),
+                    onChanged: (value) => print(phoneFormatter.unmaskText(controller.phone)),
                   ),
                   TextField(
                     controller: controller.passwordController,

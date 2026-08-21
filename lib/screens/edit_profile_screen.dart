@@ -19,7 +19,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
   final IsValidValues isValidValues = IsValidValues();
 
   final MaskTextInputFormatter phoneFormatter = MaskTextInputFormatter(
-    mask: '+7 ### ### ##-##',
+    mask: '+# ### ### ##-##',
     filter: {"#": RegExp(r'[0-9]')}
   );
 
@@ -154,7 +154,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
         username: changes['username'],
         firstName: changes['first_name'],
         email: changes['email'],
-        phone: changes['phone'],
+        phone: phoneFormatter.unmaskText(changes['phone']),
       );
 
       if (!mounted) return;

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 import 'package:mess_prototype/controllers/auth_controller.dart';
 import 'package:mess_prototype/providers/user_provider.dart';
@@ -22,6 +23,11 @@ class _AuthScreenState extends State<AuthScreen> {
   bool hovered = false;
 
   bool hidingPassword = true;
+
+  final MaskTextInputFormatter phoneFormatter = MaskTextInputFormatter(
+    mask: '+# ### ### ##-##',
+    filter: {"#": RegExp(r'[0-9]')}
+  );
 
   String? errorText;
 
