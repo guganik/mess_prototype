@@ -95,7 +95,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
       return;
     }
 
-    phoneError = isValidValues.phone(value) ?? '';
+    phoneError = isValidValues.phone(phoneFormatter) ?? '';
   }
 
   void _validateAll() {

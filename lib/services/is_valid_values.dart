@@ -1,3 +1,5 @@
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+
 class IsValidValues {
   static const int usernameMinLength = 3;
   static const int usernameMaxLength = 32;
@@ -54,17 +56,13 @@ class IsValidValues {
     return null;
   }
 
-  String? phone(String value) {
-    final phone = value.trim().replaceAll(RegExp(r'[\s()-]'), '');
+  String? phone(MaskTextInputFormatter formatter) {
+    final clearPhone = formatter.getUnmaskedText();
 
-    if (phone.isEmpty) return 'Номер телефона не может быть пустым';
-    if (!RegExp(r'^\+[0-9]+$').hasMatch(phone)) {
-      return 'Номер телефона должен начинаться с "+" и содержать только цифры';
-    }
+    if (clearPhone.isEmpty) return 'Номер телефона не может быть пустым';
 
-    final digitCount = phone.length - 1;
-    if (digitCount < 10) return 'Номер телефона слишком короткий';
-    if (digitCount > 15) return 'Номер телефона слишком длинный';
+    if (clearPhone.length < 10) return 'Номер телефона слишком короткий';
+    if (clearPhone.length > 15) return 'Номер телефона слишком длинный';
 
     return null;
   }
