@@ -4,10 +4,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 import 'package:mess_prototype/models/app_settings.dart';
+import 'package:mess_prototype/models/friend_search_result.dart';
 import 'package:mess_prototype/models/user.dart';
 import 'package:mess_prototype/providers/friend_provider.dart';
 import 'package:mess_prototype/providers/user_provider.dart';
 import 'package:mess_prototype/screens/auth_screen.dart';
+import 'package:mess_prototype/screens/friends_screen.dart';
 
 import 'package:mess_prototype/screens/profile_screen.dart';
 import 'package:mess_prototype/screens/settings_screen.dart';
@@ -219,46 +221,10 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                             }),
                           )
                         ),
-                        child: loadingFriends
-                          ? const Center(
-                              child: CircularProgressIndicator(),
-                            )
-                          : friendsError != null
-                            ? Center(
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text('Не удалось загрузить чаты'),
-                                    SizedBox(height: 8,),
-                                    TextButton(
-                                      onPressed: loadFriends,
-                                      child: Text('Повторить'),
-                                    ),
-                                  ],
-                                ),
-                              )
-                            : chats.isEmpty
-                              ? Center(
-                                  child: Text('Здесь пока тихо...'),
-                                )
-                              : SizedBox(),
-                              // : RefreshIndicator(
-                              //     onRefresh: loadFriends,
-                              //     child: ListView.separated(
-                              //       itemCount: chatSvc.chatList.length,
-                              //       separatorBuilder: (_, __) => CustomDivider(),
-                              //       itemBuilder: (context, index) {
-                              //         final chat = chatSvc.chatList[index];
-                                      
-                              //         return ChatPreview(
-                              //           key: ValueKey(chat.friendId),
-                              //           friend: chat.user,
-                              //           funTap: () => print('Открыть чат с ' + chat.user.username),
-                              //         );
-                              //       },
-                              //     ),
-                              //   ),
-                      )
+                        child: isSearching
+                          ? const _FriendSearchResults()
+                          : _buildCurrentChatsContent(),
+                      ),
                     ),
                     Row(
                       children: [
@@ -495,46 +461,12 @@ class LeftPanelState extends State<LeftPanel> {
               SizedBox(height: 4,),
               DefaultButton(
                 funTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (_) {
-                      String statusText = '';
-
-                      return StatefulBuilder(
-                        builder: (context, setDialogState) {
-                          return AlertDialog(
-                            title: Text('Друзья'),
-                            content: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text('Найти пользователя'),
-                                AppTextField(
-                                  controller: searchUserController,
-                                  hint: 'examp1e',
-                                  prefix: '@',
-                                ),
-                                Text(
-                                  statusText,
-                                  style: TextStyle(
-                                    color: Colors.grey[600]
-                                  ),
-                                ),
-                                SizedBox(height: 4,),
-                                TextButton(
-                                  onPressed: () {
-                                    setDialogState(() {
-                                      statusText = 'Поиск пользователей пока не реализован';
-                                    });
-                                  },
-                                  child: Text('Отправить приглашение')
-                                ),
-                              ],
-                            )
-                          );
-                        }
-                      );
-                    }
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) =>
+                          const FriendsScreen(),
+                    ),
                   );
                 },
                 label: 'Друзья',
@@ -678,6 +610,141 @@ class LeftPanelState extends State<LeftPanel> {
           ),
         ),
       )
+    );
+  }
+}
+
+class _FriendSearchResults
+    extends StatelessWidget {
+  const _FriendSearchResults();
+
+  @override
+  Widget build(
+    BuildContext context,
+  ) {
+    final provider =
+        context.watch<FriendProvider>();
+
+    if (provider.searchLoading) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
+    if (provider.searchResults.isEmpty) {
+      return const Center(
+        child: Text(
+          'Пользователи не найдены',
+        ),
+      );
+    }
+
+    return ListView.separated(
+      itemCount:
+          provider.searchResults.length,
+      separatorBuilder: (_, __) =>
+          const Divider(
+        height: 1,
+      ),
+      itemBuilder: (
+        context,
+        index,
+      ) {
+        final result =
+            provider.searchResults[index];
+
+        return _FriendSearchTile(
+          result: result,
+        );
+      },
+    );
+  }
+}
+
+class _FriendSearchTile extends StatelessWidget {
+  final FriendSearchResult result;
+
+  const _FriendSearchTile({
+    required this.result,
+  });
+
+  @override
+  Widget build(
+    BuildContext context,
+  ) {
+    final provider =
+        context.read<FriendProvider>();
+
+    final user = result.user;
+
+    Widget action;
+
+    switch (result.relation) {
+      case FriendRelation.none:
+        action = TextButton(
+          onPressed: () {
+            provider.sendRequest(
+              user.id,
+            );
+          },
+          child: const Text(
+            'Добавить',
+          ),
+        );
+        break;
+
+      case FriendRelation.pendingOutgoing:
+        action = const Text(
+          'Заявка отправлена',
+        );
+        break;
+
+      case FriendRelation.pendingIncoming:
+        action = TextButton(
+          onPressed: () {
+            // Здесь позже можно открыть
+            // конкретную заявку.
+          },
+          child: const Text(
+            'Есть заявка',
+          ),
+        );
+        break;
+
+      case FriendRelation.friends:
+        action = const Text(
+          'Друзья',
+        );
+        break;
+
+      case FriendRelation.rejected:
+        action = const Text(
+          'Отклонено',
+        );
+        break;
+
+      case FriendRelation.blocked:
+        action = const Text(
+          'Заблокирован',
+        );
+        break;
+    }
+
+    return ListTile(
+      leading: CircleAvatar(
+        child: Text(
+          user.username
+              .substring(0, 1)
+              .toUpperCase(),
+        ),
+      ),
+      title: Text(
+        '@${user.username}',
+      ),
+      subtitle: Text(
+        user.firstName ?? '',
+      ),
+      trailing: action,
     );
   }
 }
