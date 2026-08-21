@@ -833,8 +833,7 @@ class _ChatListTile extends StatelessWidget {
 
     final displayName = otherUser != null
         ? (
-            otherUser!.firstName != null &&
-                    otherUser.firstName!.trim().isNotEmpty
+            otherUser.firstName != null && otherUser.firstName!.trim().isNotEmpty
                 ? otherUser.firstName!.trim()
                 : '@${otherUser.username}'
           )
