@@ -48,6 +48,26 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
+  PublicUser? _getCurrentOtherUser(
+    BuildContext context,
+  ) {
+    final initialUser = widget.otherUser;
+
+    if (initialUser == null) {
+      return null;
+    }
+
+    final friends = context.watch<FriendProvider>().friends;
+
+    for (final friend in friends) {
+      if (friend.user.id == initialUser.id) {
+        return friend.user;
+      }
+    }
+
+    return initialUser;
+  }
+
   Future<void> _loadHistory() async {
     setState(() {
       _loadingHistory = true;
@@ -72,29 +92,11 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  PublicUser? _resolveOtherUser(
-    BuildContext context,
-  ) {
-    if (widget.otherUser != null) {
-      return widget.otherUser;
-    }
-
-    final friends = context.read<FriendProvider>().friends;
-
-    // Здесь chatId не содержит user_id,
-    // поэтому без переданного otherUser
-    // определить собеседника по одному chatId
-    // напрямую невозможно.
-    //
-    // Для direct-chat мы передаём otherUser
-    // из MainScreen.
-    return null;
-  }
-
   @override
   Widget build(BuildContext context) {
-    final chatProvider =
-        context.read<ChatProvider>();
+    final chatProvider = context.read<ChatProvider>();
+
+    final otherUser = _getCurrentOtherUser(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -323,11 +325,6 @@ class _ChatHeader extends StatelessWidget {
         'Чат',
       );
     }
-    
-    final friends = context.watch<FriendProvider>().friends;
-    final friend = friends[user!.id];
-    print(friend.user.id);
-    print(friend.user.username);
 
     final displayName = user!.firstName != null && user!.firstName!.trim().isNotEmpty
       ? user!.firstName!.trim()
