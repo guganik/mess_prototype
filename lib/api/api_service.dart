@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:mess_prototype/models/account_sync.dart';
 import 'package:mess_prototype/models/device_session.dart';
 
 import '../models/user.dart';
@@ -349,6 +350,23 @@ class ApiService {
     );
 
     _checkResponse(response);
+  }
+
+  Future<AccountSync> syncAccount({
+    required String token,
+  }) async {
+    final response = await _client.get(
+      Uri.parse('$serverUrl/users/me/sync'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    _checkResponse(response);
+
+    return AccountSync.fromJson(
+      _decodeJson(response),
+    );
   }
 
   void dispose() {

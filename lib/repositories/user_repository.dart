@@ -371,4 +371,39 @@ class UserRepository {
 
     return deviceInfo.deviceId;
   }
+
+  Future<User> synchronizeAccount() async {
+    final localUser = await getCurrentUser();
+
+    if (localUser == null) {
+      throw Exception(
+        'Пользователь не найден',
+      );
+    }
+
+    final token = localUser.token;
+
+    if (token == null || token.isEmpty) {
+      throw Exception(
+        'Токен авторизации отсутствует',
+      );
+    }
+
+    final syncResponse = await apiService.syncAccount(
+      token: token,
+    );
+
+    final serverUser = syncResponse.user.copyWith(
+      token: token,
+    );
+
+    final syncedUser = await syncAvatar(
+      localUser,
+      serverUser,
+    );
+
+    await syncUser(syncedUser);
+
+    return syncedUser;
+  }
 }
