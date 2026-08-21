@@ -163,7 +163,7 @@ class MainScreenState extends State<MainScreen> {
                                             bottom: 0,
                                           ),
                                           isDense: true,
-                                          hintText: 'Поиск пользователей',
+                                          hintText: 'Поиск...',
                                         ),
                                         style: const TextStyle(
                                           fontSize: 14,
@@ -354,7 +354,7 @@ class LeftPanelState extends State<LeftPanel> {
                           color: const Color.fromRGBO(75, 75, 75, 0.35),
                         ),
                         clipBehavior: Clip.antiAlias,
-                        child: user!.avatarLocalPath != null
+                        child: user.avatarLocalPath != null
                           ? Image.file(
                               File(user.avatarLocalPath!),
                               fit: BoxFit.cover,
