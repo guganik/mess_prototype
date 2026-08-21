@@ -1,5 +1,18 @@
 import 'package:flutter/material.dart';
 
+class SlideDrawerController extends ChangeNotifier {
+  VoidCallback? openCallback;
+  VoidCallback? closeCallback;
+
+  void open() {
+    openCallback?.call();
+  }
+
+  void close() {
+    closeCallback?.call();
+  }
+}
+
 class SlideDrawer extends StatefulWidget {
   final Widget child;
   final Widget drawer;
@@ -8,10 +21,13 @@ class SlideDrawer extends StatefulWidget {
   final double edgeDragWidth;
   final Duration animationDuration;
 
+  final SlideDrawerController? controller;
+
   const SlideDrawer({
     super.key,
     required this.child,
     required this.drawer,
+    this.controller,
     this.drawerWidth = 300,
     this.edgeDragWidth = 32,
     this.animationDuration =
@@ -23,21 +39,15 @@ class SlideDrawer extends StatefulWidget {
       _SlideDrawerState();
 }
 
-class _SlideDrawerState
-    extends State<SlideDrawer> {
+class _SlideDrawerState extends State<SlideDrawer> {
   double _offset = 0;
   bool _dragging = false;
 
-  double get _progress =>
-      (_offset / widget.drawerWidth)
-          .clamp(0.0, 1.0);
+  double get _progress => (_offset / widget.drawerWidth).clamp(0.0, 1.0);
 
-  bool get _isOpen =>
-      _offset >= widget.drawerWidth;
+  bool get _isOpen => _offset >= widget.drawerWidth;
 
-  void _startOpenDrag(
-    DragStartDetails details,
-  ) {
+  void _startOpenDrag(DragStartDetails details) {
     if (_offset != 0) {
       return;
     }
@@ -47,27 +57,19 @@ class _SlideDrawerState
     });
   }
 
-  void _updateOpenDrag(
-    DragUpdateDetails details,
-  ) {
+  void _updateOpenDrag(DragUpdateDetails details) {
     if (!_dragging) {
       return;
     }
 
-    final next =
-        _offset + details.delta.dx;
+    final next = _offset + details.delta.dx;
 
     setState(() {
-      _offset = next.clamp(
-        0.0,
-        widget.drawerWidth,
-      );
+      _offset = next.clamp(0.0, widget.drawerWidth);
     });
   }
 
-  void _endOpenDrag(
-    DragEndDetails details,
-  ) {
+  void _endOpenDrag(DragEndDetails details) {
     if (!_dragging) {
       return;
     }
@@ -142,6 +144,37 @@ class _SlideDrawerState
       _offset = 0;
       _dragging = false;
     });
+  }
+
+  @override
+  void didUpdateWidget(
+    covariant SlideDrawer oldWidget,
+  ) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.controller != widget.controller) {
+      widget.controller?.openCallback = null;
+      widget.controller?.closeCallback = null;
+
+    widget.controller?.openCallback = open;
+    widget.controller?.closeCallback = close;
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    widget.controller?.openCallback = open;
+    widget.controller?.closeCallback = close;
+  }
+
+  @override
+  void dispose() {
+    widget.controller?.openCallback = null;
+    widget.controller?.closeCallback = null;
+
+    super.dispose();
   }
 
   @override

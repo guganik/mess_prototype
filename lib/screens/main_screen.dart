@@ -49,6 +49,8 @@ class MainScreenState extends State<MainScreen> {
   Timer? _searchDebounce;
 
   bool get isSearching => _searchController.text.trim().isNotEmpty;
+
+  final SlideDrawerController _drawerController = SlideDrawerController();
   
   @override
   void initState() {
@@ -96,6 +98,7 @@ class MainScreenState extends State<MainScreen> {
   void dispose() {
     _searchDebounce?.cancel();
     _searchController.dispose();
+    _drawerController.dispose();
     super.dispose();
   }
 
@@ -109,6 +112,7 @@ class MainScreenState extends State<MainScreen> {
 
     return Scaffold(
       body: SlideDrawer(
+        controller: _drawerController,
         drawer: LeftPanel(user: currentUser),
         child: Builder(
           builder: (context) {
@@ -119,7 +123,7 @@ class MainScreenState extends State<MainScreen> {
               child: GestureDetector(
                 onHorizontalDragEnd: (details) {
                   if ((details.primaryVelocity ?? 0) > 0) {
-                    Scaffold.of(context).openDrawer();
+                    _drawerController.open();
                   }
                 },
                 child: Container(
@@ -139,7 +143,7 @@ class MainScreenState extends State<MainScreen> {
                               )
                             ),
                             onTap: () {
-                              Scaffold.of(context).openDrawer();
+                              _drawerController.open();
                             },
                           ),
                           SizedBox(width: 16,),
