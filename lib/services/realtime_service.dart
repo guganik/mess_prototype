@@ -52,6 +52,10 @@ class RealtimeService extends ChangeNotifier with WidgetsBindingObserver {
   void didChangeAppLifecycleState(
     AppLifecycleState state,
   ) {
+    debugPrint(
+      'Realtime lifecycle state: $state',
+    );
+
     switch (state) {
       case AppLifecycleState.resumed:
         _resumeFromBackground();
