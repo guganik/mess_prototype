@@ -118,6 +118,7 @@ class _FriendsScreenState
                             builder: (_) => ChatScreen(
                               chatId: chatId,
                               currentUserId: context.read<UserProvider>().user!.id,
+                              otherUser: user,
                           ),
                         ),
                       );

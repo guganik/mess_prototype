@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:mess_prototype/database/app_database.dart';
 import 'package:mess_prototype/models/message_send_status.dart';
+import 'package:mess_prototype/models/public_user.dart';
+import 'package:mess_prototype/providers/friend_provider.dart';
+import 'package:mess_prototype/widgets/public_user_avatar.dart';
+import 'package:mess_prototype/widgets/public_user_profile.dart';
 import 'package:provider/provider.dart';
 
 import 'package:mess_prototype/providers/chat_provider.dart';
@@ -14,7 +18,7 @@ class ChatScreen extends StatefulWidget {
     super.key,
     required this.chatId,
     required this.currentUserId,
-    final PublicUser 
+    this.otherUser
   });
 
   @override
@@ -68,6 +72,25 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
+  PublicUser? _resolveOtherUser(
+    BuildContext context,
+  ) {
+    if (widget.otherUser != null) {
+      return widget.otherUser;
+    }
+
+    final friends = context.read<FriendProvider>().friends;
+
+    // Здесь chatId не содержит user_id,
+    // поэтому без переданного otherUser
+    // определить собеседника по одному chatId
+    // напрямую невозможно.
+    //
+    // Для direct-chat мы передаём otherUser
+    // из MainScreen.
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     final chatProvider =
@@ -75,7 +98,10 @@ class _ChatScreenState extends State<ChatScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Чат'),
+        titleSpacing: 0,
+        title: _ChatHeader(
+          user: widget.otherUser,
+        ),
       ),
       body: Column(
         children: [
@@ -281,5 +307,142 @@ class _Status extends StatelessWidget {
           size: 14,
         );
     }
+  }
+}
+
+class _ChatHeader extends StatelessWidget {
+  final PublicUser? user;
+
+  const _ChatHeader({
+    required this.user,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (user == null) {
+      return const Text(
+        'Чат',
+      );
+    }
+
+    final displayName =
+        user!.firstName != null &&
+                user!.firstName!.trim().isNotEmpty
+            ? user!.firstName!.trim()
+            : '@${user!.username}';
+
+    return InkWell(
+      borderRadius: BorderRadius.circular(12),
+      onTap: () {
+        showModalBottomSheet(
+          context: context,
+          showDragHandle: true,
+          builder: (_) {
+            return Padding(
+              padding:
+                  const EdgeInsets.fromLTRB(
+                24,
+                12,
+                24,
+                32,
+              ),
+              child: PublicUserProfile(
+                user: user!,
+              ),
+            );
+          },
+        );
+      },
+      child: Padding(
+        padding:
+            const EdgeInsets.symmetric(
+          horizontal: 8,
+          vertical: 4,
+        ),
+        child: Row(
+          children: [
+            PublicUserAvatar(
+              localPath: user!.avatarLocalPath,
+              username: user!.username,
+              size: 40,
+            ),
+
+            const SizedBox(width: 10),
+
+            Expanded(
+              child: Column(
+                crossAxisAlignment:
+                    CrossAxisAlignment.start,
+                mainAxisSize:
+                    MainAxisSize.min,
+                children: [
+                  Text(
+                    displayName,
+                    maxLines: 1,
+                    overflow:
+                        TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight:
+                          FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Row(
+                    children: [
+                      Container(
+                        width: 7,
+                        height: 7,
+                        decoration:
+                            BoxDecoration(
+                          shape:
+                              BoxShape.circle,
+                          color:
+                              _presenceColor(
+                            user!.presence,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 5,
+                      ),
+                      Text(
+                        _presenceText(
+                          user!.presence,
+                        ),
+                        style:
+                            const TextStyle(
+                          fontSize: 11,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Color _presenceColor(
+    String presence,
+  ) {
+    return switch (presence) {
+      'online' => Colors.greenAccent,
+      'away' => Colors.yellowAccent,
+      _ => Colors.grey,
+    };
+  }
+
+  String _presenceText(
+    String presence,
+  ) {
+    return switch (presence) {
+      'online' => 'В сети',
+      'away' => 'Отошел',
+      _ => 'Не в сети',
+    };
   }
 }

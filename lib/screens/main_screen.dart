@@ -731,6 +731,25 @@ class _FriendSearchTile extends StatelessWidget {
     return PublicUserTile(
       user: user,
       trailing: action,
+      onTap: () {
+        showModalBottomSheet(
+          context: context,
+          showDragHandle: true,
+          builder: (_) {
+            return Padding(
+              padding: const EdgeInsets.fromLTRB(
+                24,
+                12,
+                24,
+                32,
+              ),
+              child: PublicUserProfile(
+                user: user,
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }
