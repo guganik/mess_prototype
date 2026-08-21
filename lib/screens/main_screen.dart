@@ -20,6 +20,7 @@ import 'package:mess_prototype/services/connection_checker.dart';
 
 import 'package:mess_prototype/widgets/change_status_button.dart';
 import 'package:mess_prototype/widgets/default_button.dart';
+import 'package:mess_prototype/widgets/public_user_tile.dart';
 
 import 'package:provider/provider.dart';
 
@@ -724,20 +725,8 @@ class _FriendSearchTile extends StatelessWidget {
         break;
     }
 
-    return ListTile(
-      leading: CircleAvatar(
-        child: Text(
-          user.username
-              .substring(0, 1)
-              .toUpperCase(),
-        ),
-      ),
-      title: Text(
-        '@${user.username}',
-      ),
-      subtitle: Text(
-        user.firstName ?? '',
-      ),
+    return PublicUserTile(
+      user: user,
       trailing: action,
     );
   }

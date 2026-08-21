@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mess_prototype/providers/chat_provider.dart';
 import 'package:mess_prototype/providers/user_provider.dart';
+import 'package:mess_prototype/widgets/public_user_tile.dart';
 import 'package:provider/provider.dart';
 
 import 'package:mess_prototype/providers/friend_provider.dart';
@@ -96,37 +97,16 @@ class _FriendsScreenState
             else
               ...provider.friends.map(
                 (friend) {
-                  final user =
-                      friend.user;
+                  final user = friend.user;
 
-                  return ListTile(
-                    leading:
-                        const CircleAvatar(
-                      child: Icon(
-                        Icons.person,
-                      ),
-                    ),
-                    title: Text(
-                      '@${user.username}',
-                    ),
-                    subtitle: Text(
-                      user.firstName ??
-                          '',
-                    ),
-                    trailing:
-                        IconButton(
-                      icon:
-                          const Icon(
+                  return PublicUserTile(
+                    user: user,
+                    trailing: IconButton(
+                      icon: const Icon(
                         Icons.message,
                       ),
                       onPressed: () async {
-                        final chatId =
-                            await context
-                                .read<
-                                    ChatProvider>()
-                                .createDirectChat(
-                                  user.id,
-                                );
+                        final chatId = await context.read<ChatProvider>().createDirectChat(user.id,);
 
                         if (!context.mounted) {
                           return;
@@ -135,24 +115,17 @@ class _FriendsScreenState
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) =>
-                                ChatScreen(
-                              chatId:
-                                  chatId,
-                              currentUserId:
-                                  context
-                                      .read<
-                                          UserProvider>()
-                                      .user!
-                                      .id,
-                            ),
+                            builder: (_) => ChatScreen(
+                              chatId: chatId,
+                              currentUserId: context.read<UserProvider>().user!.id,
                           ),
-                        );
-                      },
-                    ),
-                  );
-                },
-              ),
+                        ),
+                      );
+                    },
+                  ),
+                );
+              },
+            ),
           ],
         ),
       ),
@@ -190,25 +163,17 @@ class _IncomingRequests
             .incomingRequests
             .map(
               (request) => Card(
-                child: ListTile(
-                  title: Text(
-                    '@${request.user.username}',
-                  ),
-                  subtitle: Text(
-                    request.user.firstName ??
-                        '',
-                  ),
+                child: PublicUserTile(
+                  user: request.user,
                   trailing: Row(
-                    mainAxisSize:
-                        MainAxisSize.min,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       IconButton(
                         icon: const Icon(
                           Icons.check,
                         ),
                         onPressed: () {
-                          provider
-                              .acceptRequest(
+                          provider.acceptRequest(
                             request.friendshipId,
                           );
                         },
@@ -218,8 +183,7 @@ class _IncomingRequests
                           Icons.close,
                         ),
                         onPressed: () {
-                          provider
-                              .rejectRequest(
+                          provider.rejectRequest(
                             request.friendshipId,
                           );
                         },
@@ -264,17 +228,15 @@ class _OutgoingRequests
         const SizedBox(height: 8),
 
         ...provider
-            .outgoingRequests
-            .map(
-              (request) => ListTile(
-                title: Text(
-                  '@${request.user.username}',
-                ),
-                subtitle: const Text(
-                  'Ожидает ответа',
-                ),
+          .outgoingRequests
+          .map(
+            (request) => PublicUserTile(
+              user: request.user,
+              trailing: const Text(
+                'Ожидает ответа',
               ),
             ),
+          ),
       ],
     );
   }
