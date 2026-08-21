@@ -212,7 +212,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                             }),
                           )
                         ),
-                        child: _chatList(),
+                        child: _ChatList(),
                       ),
                     ),
                     Row(

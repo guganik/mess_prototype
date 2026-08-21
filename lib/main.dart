@@ -47,6 +47,7 @@ void main() {
                 context.read<UserRepository>(),
             messageRepository:
                 context.read<MessageRepository>(),
+            database: context.read<AppDatabase>(),
           ),
         ),
 
@@ -101,7 +102,7 @@ void main() {
             deviceInfoService: context.read<DeviceInfoService>(),
           ),
         ),
-        
+
         ChangeNotifierProvider(
           create: (_) => ConnectionChecker(
             pingUrl: '$serverUrl/health',

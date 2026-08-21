@@ -197,6 +197,10 @@ class ChatProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Stream<List<LocalChat>> watchChats() {
+    return repository.watchChats();
+  }
+
   @override
   void dispose() {
     _realtimeSubscription?.cancel();
