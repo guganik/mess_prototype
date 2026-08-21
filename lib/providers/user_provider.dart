@@ -276,7 +276,8 @@ class UserProvider extends ChangeNotifier {
 
   Future<void> logout() async {
     await realtimeService.disconnect();
-    await repository.deleteUser();
+
+    await repository.clearLocalUserData();
 
     _user = null;
     notifyListeners();

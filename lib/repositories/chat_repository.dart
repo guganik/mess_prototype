@@ -138,4 +138,18 @@ class ChatRepository {
       ),
     );
   }
+
+  Future<void> clearLocalChats() async {
+    await database.delete(
+      database.localMessages,
+    ).go();
+
+    await database.delete(
+      database.localChatMembers,
+    ).go();
+
+    await database.delete(
+      database.localChats,
+    ).go();
+  }
 }
