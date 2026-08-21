@@ -3,6 +3,7 @@ import 'package:mess_prototype/database/app_database.dart';
 import 'package:mess_prototype/models/message_send_status.dart';
 import 'package:mess_prototype/models/public_user.dart';
 import 'package:mess_prototype/providers/friend_provider.dart';
+import 'package:mess_prototype/providers/user_provider.dart';
 import 'package:mess_prototype/widgets/public_user_avatar.dart';
 import 'package:mess_prototype/widgets/public_user_profile.dart';
 import 'package:provider/provider.dart';
@@ -183,9 +184,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
                       _controller.clear();
 
-                      final user =
-                          context
-                              .read<ChatProvider>();
+                      final user = context.watch<ChatProvider>();
 
                       await user.sendMessage(
                         chatId: widget.chatId,
@@ -310,26 +309,25 @@ class _Status extends StatelessWidget {
   }
 }
 
-class _ChatHeader extends StatelessWidget {
-  final PublicUser? user;
+class _ChatHeader extends StatefulWidget {
+  @override
+  _ChatHeaderState createState() => _ChatHeaderState();
+}
 
-  const _ChatHeader({
-    required this.user,
-  });
-
+class _ChatHeaderState extends State<_ChatHeader> {
   @override
   Widget build(BuildContext context) {
+    final user = context.watch<FriendProvider>().user;
+
     if (user == null) {
       return const Text(
         'Чат',
       );
     }
 
-    final displayName =
-        user!.firstName != null &&
-                user!.firstName!.trim().isNotEmpty
-            ? user!.firstName!.trim()
-            : '@${user!.username}';
+    final displayName = user!.firstName != null && user!.firstName!.trim().isNotEmpty
+      ? user!.firstName!.trim()
+      : '@${user!.username}';
 
     return InkWell(
       borderRadius: BorderRadius.circular(12),
@@ -341,7 +339,7 @@ class _ChatHeader extends StatelessWidget {
             return Padding(
               padding: const EdgeInsets.fromLTRB(24, 12, 24, 32),
               child: PublicUserProfile(
-                user: user!,
+                user: user,
               ),
             );
           },
