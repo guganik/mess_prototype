@@ -141,50 +141,46 @@ class MainScreenState extends State<MainScreen> {
                         SizedBox(width: 16,),
                         Expanded(
                           child: Container(
-                            padding: EdgeInsets.symmetric(horizontal: 8),
                             height: 32,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                            ),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.all(Radius.circular(10)),
                               color: const Color.fromRGBO(75, 75, 75, 0.25),
                             ),
-                            child: Column(
-                              children: [
-                                SizedBox(height: 2,),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: SizedBox(
-                                        height: 30,
-                                        child: TextField(
-                                          controller: _searchController,
-                                          textAlignVertical: TextAlignVertical.center,
-                                          decoration: const InputDecoration(
-                                            border: InputBorder.none,
-                                            isDense: true,
-                                            contentPadding: EdgeInsets.zero,
-                                            hintText: 'Поиск...',
-                                          ),
-                                          style: const TextStyle(
-                                            fontSize: 14,
-                                            height: 1.0,
-                                          ),
-                                        ),
+                            child: SizedBox(
+                              height: 32,
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Expanded(
+                                    child: TextField(
+                                      controller: _searchController,
+                                      textAlignVertical: TextAlignVertical.center,
+                                      decoration: const InputDecoration(
+                                        border: InputBorder.none,
+                                        isDense: true,
+                                        contentPadding: EdgeInsets.zero,
+                                        hintText: 'Поиск...',
+                                      ),
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        height: 1.0,
                                       ),
                                     ),
-                                    SizedBox(
-                                      width: 16,
-                                      height: 16,
-                                      child: Icon(
-                                        Icons.search
-                                      )
-                                    ),
-                                    SizedBox(width: 8,)
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  const Icon(
+                                    Icons.search,
+                                    size: 24,
+                                  ),
+                                  const SizedBox(width: 8),
+                                ],
+                              ),
+                            )
+                          )
+                        )
                       ],
                     ),
                     SizedBox(height: 16,),
