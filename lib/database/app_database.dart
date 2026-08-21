@@ -28,16 +28,24 @@ class AppDatabase extends _$AppDatabase {
     },
 
     onUpgrade: (Migrator m, int from, int to) async {
-      if (from < 8) {
-        await m.addColumn(
-          localMessages,
-          localMessages.serverId as GeneratedColumn<Object>,
-        );
+      if (from < 9) {
+        await m.createTable(localChats);
+        await m.createTable(localChatMembers);
 
-        await m.addColumn(
-          localMessages,
-          localMessages.sendStatus as GeneratedColumn<Object>,
-        );
+        await customStatement('''
+          CREATE TABLE IF NOT EXISTS local_messages (
+            local_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            server_id INTEGER NULL,
+            chat_id INTEGER NOT NULL,
+            sender_id INTEGER NOT NULL,
+            client_message_id TEXT NOT NULL,
+            message_text TEXT NOT NULL,
+            created_at INTEGER NOT NULL,
+            edited_at INTEGER NULL,
+            is_deleted INTEGER NOT NULL DEFAULT 0,
+            send_status TEXT NOT NULL DEFAULT 'sent'
+          )
+        ''');
       }
     }
   );
@@ -46,7 +54,7 @@ class AppDatabase extends _$AppDatabase {
     : super(_openConnection());
 
   @override
-  int get schemaVersion => 8;
+  int get schemaVersion => 9;
 
   Future<int> saveUser(LocalUsersCompanion user) {
     return into(localUsers).insert(user);

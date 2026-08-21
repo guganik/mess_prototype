@@ -34,9 +34,25 @@ void main() {
   runApp(
     MultiProvider(
       providers: [
+        Provider<AppDatabase>(create: (_) => AppDatabase()),
+
+        Provider<ApiService>.value(value: apiService),
+
+        Provider<DeviceInfoService>(create: (_) => DeviceInfoService()),
+
+        ChangeNotifierProvider<RealtimeService>.value(value: realtimeService),
+
         Provider<MessageRepository>(
           create: (context) => MessageRepository(
             database: context.read<AppDatabase>(),
+          ),
+        ),
+
+        Provider<UserRepository>(
+          create: (context) => UserRepository(
+            apiService: context.read<ApiService>(),
+            deviceInfoService:
+              context.read<DeviceInfoService>(),
           ),
         ),
 
@@ -77,22 +93,6 @@ void main() {
         ),
 
         Provider<DeviceRepository>(create: (_) => DeviceRepository(apiService: apiService),),
-
-        Provider<DeviceInfoService>(create: (_) => DeviceInfoService()),
-
-        Provider<AppDatabase>(create: (_) => AppDatabase()),
-
-        Provider<ApiService>.value(value: apiService),
-
-        Provider<UserRepository>(
-          create: (context) => UserRepository(
-            apiService: context.read<ApiService>(),
-            deviceInfoService:
-              context.read<DeviceInfoService>(),
-          ),
-        ),
-
-        ChangeNotifierProvider<RealtimeService>.value(value: realtimeService),
         
         ChangeNotifierProvider(
           create: (context) => UserProvider(
