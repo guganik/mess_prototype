@@ -854,21 +854,21 @@ class _ChatListTile extends StatelessWidget {
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),
-      subtitle: otherUser != null
-          ? Text(
-              '@${otherUser.username}',
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            )
-          : chat.lastMessageText != null
-              ? Text(
-                  chat.lastMessageText!,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                )
-              : const Text(
-                  'Нет сообщений',
-                ),
+      subtitle: chat.lastMessageText != null && chat.lastMessageText!.trim().isNotEmpty
+        ? Text(
+            chat.lastMessageText!,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          )
+        : otherUser != null
+            ? Text(
+                '@${otherUser.username}',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              )
+            : const Text(
+                'Нет сообщений',
+              ),
       trailing: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.end,

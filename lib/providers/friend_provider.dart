@@ -188,6 +188,79 @@ class FriendProvider extends ChangeNotifier {
     }
   }
 
+  void _updatePublicUserInCollections(
+    int userId, {
+    String? presence,
+    String? status,
+    DateTime? lastSeen,
+  }) {
+    _friends = _friends.map((friend) {
+      if (friend.user.id != userId) {
+        return friend;
+      }
+
+      return Friend(
+        friendshipId: friend.friendshipId,
+        createdAt: friend.createdAt,
+        user: friend.user.copyWith(
+          presence: presence,
+          status: status,
+          lastSeen: lastSeen,
+        ),
+      );
+    }).toList();
+
+    _incomingRequests =
+        _incomingRequests.map((request) {
+      if (request.user.id != userId) {
+        return request;
+      }
+
+      return FriendRequest(
+        friendshipId: request.friendshipId,
+        createdAt: request.createdAt,
+        user: request.user.copyWith(
+          presence: presence,
+          status: status,
+          lastSeen: lastSeen,
+        ),
+      );
+    }).toList();
+
+    _outgoingRequests =
+        _outgoingRequests.map((request) {
+      if (request.user.id != userId) {
+        return request;
+      }
+
+      return FriendRequest(
+        friendshipId: request.friendshipId,
+        createdAt: request.createdAt,
+        user: request.user.copyWith(
+          presence: presence,
+          status: status,
+          lastSeen: lastSeen,
+        ),
+      );
+    }).toList();
+
+    _searchResults =
+        _searchResults.map((result) {
+      if (result.user.id != userId) {
+        return result;
+      }
+
+      return FriendSearchResult(
+        relation: result.relation,
+        user: result.user.copyWith(
+          presence: presence,
+          status: status,
+          lastSeen: lastSeen,
+        ),
+      );
+    }).toList();
+  }
+
   Future<void> sendRequest(
     int userId,
   ) async {
@@ -290,6 +363,12 @@ class FriendProvider extends ChangeNotifier {
     Map<String, dynamic> event,
   ) async {
     final type = event['type'];
+    final data = event['data'];
+
+    if (type is! String ||
+        data is! Map<String, dynamic>) {
+      return;
+    }
 
     switch (type) {
       case 'friend.requested':
@@ -297,6 +376,45 @@ class FriendProvider extends ChangeNotifier {
       case 'friend.request.rejected':
       case 'friend.removed':
         await refresh();
+        break;
+
+      case 'presence.updated':
+        final userId = data['user_id'];
+
+        if (userId is! int) {
+          return;
+        }
+
+        DateTime? lastSeen;
+
+        final rawLastSeen = data['last_seen'];
+
+        if (rawLastSeen is String) {
+          lastSeen = DateTime.tryParse(rawLastSeen);
+        }
+
+        _updatePublicUserInCollections(
+          userId,
+          presence: data['presence'] as String?,
+          lastSeen: lastSeen,
+        );
+
+        notifyListeners();
+        break;
+
+      case 'status.updated':
+        final userId = data['user_id'];
+
+        if (userId is! int) {
+          return;
+        }
+
+        _updatePublicUserInCollections(
+          userId,
+          status: data['status'] as String?,
+        );
+
+        notifyListeners();
         break;
     }
   }
