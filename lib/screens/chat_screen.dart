@@ -339,13 +339,7 @@ class _ChatHeader extends StatelessWidget {
           showDragHandle: true,
           builder: (_) {
             return Padding(
-              padding:
-                  const EdgeInsets.fromLTRB(
-                24,
-                12,
-                24,
-                32,
-              ),
+              padding: const EdgeInsets.fromLTRB(24, 12, 24, 32),
               child: PublicUserProfile(
                 user: user!,
               ),
@@ -371,20 +365,16 @@ class _ChatHeader extends StatelessWidget {
 
             Expanded(
               child: Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment.start,
-                mainAxisSize:
-                    MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
                     displayName,
                     maxLines: 1,
-                    overflow:
-                        TextOverflow.ellipsis,
+                    overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                       fontSize: 16,
-                      fontWeight:
-                          FontWeight.w500,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                   const SizedBox(height: 2),
@@ -393,12 +383,9 @@ class _ChatHeader extends StatelessWidget {
                       Container(
                         width: 7,
                         height: 7,
-                        decoration:
-                            BoxDecoration(
-                          shape:
-                              BoxShape.circle,
-                          color:
-                              _statusColor(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: _statusColor(
                             user!.presence,
                             user!.status
                           ),
@@ -433,7 +420,7 @@ class _ChatHeader extends StatelessWidget {
     String status
   ) {
     if (status != 'offline') {
-      return switch (presence) {
+      return switch (status) {
         'online' => Colors.greenAccent,
         'away' => Colors.yellowAccent,
         'do_not_disturb' => Colors.redAccent,
@@ -449,7 +436,7 @@ class _ChatHeader extends StatelessWidget {
     String status
   ) {
     if (status != 'offline') {
-      return switch (presence) {
+      return switch (status) {
         'online' => 'В сети',
         'away' => 'Отошел',
         'do_not_disturb' => 'Не беспокоить',

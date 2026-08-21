@@ -57,7 +57,7 @@ class PublicUserTile extends StatelessWidget {
   }
 
   String _statusText() {
-    if (user.presence == 'online') {
+    if (user.presence != 'offline') {
       switch (user.status) {
         case 'online':
           return 'В сети';
