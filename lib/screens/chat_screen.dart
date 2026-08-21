@@ -180,12 +180,11 @@ class _ChatScreenState extends State<ChatScreen> {
                       Icons.send,
                     ),
                     onPressed: () async {
-                      final text =
-                          _controller.text;
+                      final text = _controller.text;
 
                       _controller.clear();
 
-                      final user = context.watch<ChatProvider>();
+                      final user = context.read<ChatProvider>();
 
                       await user.sendMessage(
                         chatId: widget.chatId,
