@@ -824,12 +824,12 @@ class _ChatListTile extends StatelessWidget {
     }
 
     final displayName = otherUser != null
-        ? (
-            otherUser.firstName != null && otherUser.firstName!.trim().isNotEmpty
-                ? otherUser.firstName!.trim()
-                : '@${otherUser.username}'
-          )
-        : 'Чат';
+      ? (
+        otherUser.firstName != null && otherUser.firstName!.trim().isNotEmpty
+          ? otherUser.firstName!.trim()
+          : '@${otherUser.username}'
+      )
+      : 'Чат';
 
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(
@@ -877,7 +877,8 @@ class _ChatListTile extends StatelessWidget {
           if (otherUser != null)
             const SizedBox(height: 4),
           if (otherUser != null)
-            _PresenceDot(
+            _StatusDot(
+              status: otherUser.status,
               presence: otherUser.presence,
             ),
         ],
@@ -898,27 +899,27 @@ class _ChatListTile extends StatelessWidget {
         );
       },
       onLongPress: otherUser == null
-          ? null
-          : () {
-              showModalBottomSheet(
-                context: context,
-                showDragHandle: true,
-                builder: (_) {
-                  return Padding(
-                    padding:
-                        const EdgeInsets.fromLTRB(
-                      24,
-                      12,
-                      24,
-                      32,
-                    ),
-                    child: PublicUserProfile(
-                      user: otherUser!,
-                    ),
-                  );
-                },
-              );
-            },
+        ? null
+        : () {
+            showModalBottomSheet(
+              context: context,
+              showDragHandle: true,
+              builder: (_) {
+                return Padding(
+                  padding:
+                      const EdgeInsets.fromLTRB(
+                    24,
+                    12,
+                    24,
+                    32,
+                  ),
+                  child: PublicUserProfile(
+                    user: otherUser!,
+                  ),
+                );
+              },
+            );
+          },
     );
   }
 
@@ -948,20 +949,28 @@ class _ChatListTile extends StatelessWidget {
   }
 }
 
-class _PresenceDot extends StatelessWidget {
+class _StatusDot extends StatelessWidget {
+  final String status;
   final String presence;
 
-  const _PresenceDot({
-    required this.presence,
+  const _StatusDot({
+    required this.status,
+    required this.presence
   });
 
   @override
   Widget build(BuildContext context) {
-    final color = switch (presence) {
-      'online' => Colors.greenAccent,
-      'away' => Colors.yellowAccent,
-      _ => Colors.grey,
-    };
+    Color color;
+    if (presence == 'online') {
+      color = switch (status) {
+        'online' => Colors.greenAccent,
+        'away' => Colors.yellowAccent,
+        'do_not_disturb' => Colors.redAccent,
+        _ => Colors.grey
+      };
+    } else {
+      color = Colors.grey;
+    }
 
     return Container(
       width: 9,
