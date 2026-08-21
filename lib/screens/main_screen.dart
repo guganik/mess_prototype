@@ -300,8 +300,6 @@ class LeftPanel extends StatefulWidget {
 }
 
 class LeftPanelState extends State<LeftPanel> {
-  String? currentStatus;
-
   bool hovered = false;
   bool pressed = false;
 
@@ -313,16 +311,12 @@ class LeftPanelState extends State<LeftPanel> {
     'do_not_disturb': Colors.red[400],
     'offline': Colors.grey[400],
   };
-  
-  Color? currentStatusColor;
 
   final TextEditingController searchUserController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    final user = context.read<UserProvider>().user;
-    currentStatusColor = statusColors[user?.status ?? 'offline'];
   }
 
   Future<void> changeStatus(String status, BuildContext context) async {
@@ -331,7 +325,6 @@ class LeftPanelState extends State<LeftPanel> {
 
       if (!mounted) return;
       setState(() {
-        currentStatusColor = statusColors[status];
         pressedChangeStatus = false;
       });
     } catch (e) {
@@ -341,7 +334,9 @@ class LeftPanelState extends State<LeftPanel> {
 
   @override
   Widget build(BuildContext context) {
-    final user = context.watch<UserProvider>().user;
+    final userProvider = context.watch<UserProvider>();
+
+    final user = userProvider.user;
     return SafeArea(
       child: Drawer(
         width: 300,
@@ -386,7 +381,7 @@ class LeftPanelState extends State<LeftPanel> {
                         height: 16,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: currentStatusColor,
+                          color: statusColors[user.status],
                           border: BoxBorder.all(
                             color: Colors.white,
                             width: 2
