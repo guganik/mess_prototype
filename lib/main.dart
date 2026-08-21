@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mess_prototype/repositories/device_repository.dart';
+import 'package:mess_prototype/services/device_info_service.dart';
 import 'package:provider/provider.dart';
 
 import 'package:mess_prototype/api/api_service.dart';
@@ -21,20 +23,29 @@ void main() {
   );
 
   final apiService = ApiService();
-  final userRepository = UserRepository(apiService: apiService);
   final realtimeService = RealtimeService();
 
   runApp(
     MultiProvider(
       providers: [
+        Provider<DeviceRepository>(create: (_) => DeviceRepository(apiService: apiService),),
+        Provider<DeviceInfoService>(create: (_) => DeviceInfoService()),
         Provider<ApiService>.value(value: apiService),
-        Provider<UserRepository>.value(value: userRepository),
+        Provider<UserRepository>(
+          create: (context) => UserRepository(
+            apiService: context.read<ApiService>(),
+            deviceInfoService:
+              context.read<DeviceInfoService>(),
+          ),
+        ),
         ChangeNotifierProvider<RealtimeService>.value(value: realtimeService),
-        ChangeNotifierProvider<UserProvider>(
-          create: (_) => UserProvider(
-            repository: userRepository,
-            realtimeService: realtimeService,
-          )..loadUser(),
+        ChangeNotifierProvider(
+          create: (context) => UserProvider(
+            repository: context.read<UserRepository>(),
+            realtimeService: context.read<RealtimeService>(),
+            deviceRepository: context.read<DeviceRepository>(),
+            deviceInfoService: context.read<DeviceInfoService>(),
+          ),
         ),
         ChangeNotifierProvider(
           create: (_) => ConnectionChecker(

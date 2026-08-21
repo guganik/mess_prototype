@@ -5,13 +5,16 @@ import 'package:mess_prototype/database/app_database.dart';
 import 'package:mess_prototype/database/database_provider.dart';
 import 'package:mess_prototype/models/user.dart';
 import 'package:mess_prototype/services/avatar_cache.dart';
+import 'package:mess_prototype/services/device_info_service.dart';
 
 class UserRepository {
   final ApiService apiService;
   final AvatarCache avatarCache;
+  final DeviceInfoService deviceInfoService;
 
   UserRepository({
     required this.apiService,
+    required this.deviceInfoService,
     AvatarCache? avatarCache,
   }) : avatarCache = avatarCache ?? AvatarCache();
 
@@ -136,6 +139,8 @@ class UserRepository {
     String? phone,
     String? status,
   }) async {
+    final deviceId = await getCurrentDeviceId();
+
     final user = await getCurrentUser();
     if (user == null) throw Exception('Пользователь не найден');
 
@@ -148,6 +153,7 @@ class UserRepository {
       token: token,
       username: username,
       firstName: firstName,
+      deviceId: deviceId,
       email: email,
       phone: phone,
       status: status,
@@ -186,14 +192,19 @@ class UserRepository {
     if (token == null || token.isEmpty) {
       throw Exception('Токен авторизации отсутствует');
     }
+    
+    final deviceId = await getCurrentDeviceId();
 
     return apiService.updateAvatar(
       token: token,
       fileId: fileId,
-    ).then((updatedUser) => updatedUser.copyWith(
-          token: token,
-          avatarLocalPath: user.avatarLocalPath,
-        ));
+      deviceId: deviceId,
+    ).then(
+      (updatedUser) => updatedUser.copyWith(
+        token: token,
+        avatarLocalPath: user.avatarLocalPath,
+      ),
+    );
   }
 
   Future<User> syncAvatar(User localUser, User serverUser) async {
@@ -261,13 +272,103 @@ class UserRepository {
       throw Exception('Токен авторизации отсутствует');
     }
 
-    return apiService.deleteAvatar(token: token).then(
-          (updatedUser) => updatedUser.copyWith(
-            token: token,
-            avatarLocalPath: null,
-          ),
+    final deviceId = await getCurrentDeviceId();
+
+    return apiService.deleteAvatar(
+      token: token,
+      deviceId: deviceId,
+    ).then(
+      (updatedUser) => updatedUser.copyWith(
+        token: token,
+        avatarLocalPath: null,
+      ),
+    );
+  }
+
+  Future<User> applyRemoteAvatar(
+    String? avatarFileId,
+  ) async {
+    final currentUser =
+        await getCurrentUser();
+
+    if (currentUser == null) {
+      throw Exception(
+        'Пользователь не найден',
+      );
+    }
+
+    final oldAvatarId =
+        currentUser.avatarFileId;
+
+    if (avatarFileId == null) {
+      if (oldAvatarId != null) {
+        final oldPath =
+            await avatarCache.getAvatarPath(
+          oldAvatarId,
         );
+
+        await avatarCache.deleteAvatar(
+          oldPath,
+        );
+      }
+
+      final updatedUser = currentUser.copyWith(
+        avatarFileId: null,
+        avatarLocalPath: null,
+      );
+
+      await updateUser(updatedUser);
+
+      return updatedUser;
+    }
+
+    final token = currentUser.token;
+
+    if (token == null || token.isEmpty) {
+      throw Exception(
+        'Токен авторизации отсутствует',
+      );
+    }
+
+    final localPath =
+        await avatarCache.getAvatarPath(
+      avatarFileId,
+    );
+
+    final finalPath = localPath ??
+        await avatarCache.downloadAvatar(
+          fileId: avatarFileId,
+          token: token,
+        );
+
+    if (oldAvatarId != null &&
+        oldAvatarId != avatarFileId) {
+      final oldPath =
+          await avatarCache.getAvatarPath(
+        oldAvatarId,
+      );
+
+      await avatarCache.deleteAvatar(
+        oldPath,
+      );
+    }
+
+    final updatedUser = currentUser.copyWith(
+      avatarFileId: avatarFileId,
+      avatarLocalPath: finalPath,
+    );
+
+    await updateUser(updatedUser);
+
+    return updatedUser;
   }
 
   Future<void> deleteUser() => database.deleteUser();
+
+  Future<String> getCurrentDeviceId() async {
+    final deviceInfo =
+        await deviceInfoService.getDeviceInfo();
+
+    return deviceInfo.deviceId;
+  }
 }

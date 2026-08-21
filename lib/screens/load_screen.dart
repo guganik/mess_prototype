@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mess_prototype/services/device_info_service.dart';
 import 'package:provider/provider.dart';
 
 import 'package:mess_prototype/providers/user_provider.dart';
@@ -24,6 +25,13 @@ class _LoadScreenState extends State<LoadScreen> {
   }
 
   Future<void> _startApp() async {
+    final deviceInfo = await context
+      .read<DeviceInfoService>()
+      .getDeviceInfo();
+
+    debugPrint('DEVICE ID: ${deviceInfo.deviceId}');
+    debugPrint('DEVICE NAME: ${deviceInfo.deviceName}');
+    debugPrint('PLATFORM: ${deviceInfo.platform}');
     final checker = context.read<ConnectionChecker>();
 
     while (!checker.isConnected) {
@@ -32,10 +40,10 @@ class _LoadScreenState extends State<LoadScreen> {
     }
 
     final userProvider = context.read<UserProvider>();
-    while (!userProvider.isInitialized) {
-      await Future.delayed(const Duration(milliseconds: 100));
-      if (!mounted) return;
-    }
+
+    await userProvider.loadUser();
+
+    if (!mounted) return;
 
     final settings = await settingsRepository.getAppSettings();
     final user = userProvider.user;

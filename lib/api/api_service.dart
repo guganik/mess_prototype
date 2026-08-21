@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:mess_prototype/models/device_session.dart';
 
 import '../models/user.dart';
 import '../services/server_config.dart';
@@ -121,6 +122,7 @@ class ApiService {
     required String token,
     String? username,
     String? firstName,
+    String? deviceId,
     String? email,
     String? phone,
     String? status
@@ -152,7 +154,9 @@ class ApiService {
 
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token'
+        'Authorization': 'Bearer $token',
+        if (deviceId != null && deviceId.isNotEmpty)
+          'X-Device-ID': deviceId,
       },
 
       body: jsonEncode(data)
@@ -199,12 +203,14 @@ class ApiService {
     return fileId;
   }
 
-  Future<User> updateAvatar({required String token, required String fileId}) async {
+  Future<User> updateAvatar({required String token, required String fileId, String? deviceId,}) async {
     final response = await _client.patch(
       Uri.parse('$serverUrl/users/me/avatar'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
+        if (deviceId != null && deviceId.isNotEmpty)
+          'X-Device-ID': deviceId,
       },
       body: jsonEncode({'file_id': fileId})
     );
@@ -216,11 +222,13 @@ class ApiService {
     return User.fromJson(data);
   }
 
-  Future<User> deleteAvatar({required String token}) async {
+  Future<User> deleteAvatar({required String token, String? deviceId,}) async {
     final response = await _client.delete(
       Uri.parse('$serverUrl/users/me/avatar'),
       headers: {
         'Authorization': 'Bearer $token',
+        if (deviceId != null && deviceId.isNotEmpty)
+          'X-Device-ID': deviceId,
       },
     );
 
@@ -271,6 +279,76 @@ class ApiService {
     }
 
     return decoded;
+  }
+
+  Future<DeviceSession> registerDevice({
+    required String token,
+    required String deviceId,
+    required String deviceName,
+    required String platform,
+  }) async {
+    final response = await _client.post(
+      Uri.parse('$serverUrl/users/me/devices'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({
+        'device_id': deviceId,
+        'device_name': deviceName,
+        'platform': platform,
+      }),
+    );
+
+    _checkResponse(response);
+
+    final data = _decodeJson(response);
+
+    return DeviceSession.fromJson(data);
+  }
+
+  Future<List<DeviceSession>> getMyDevices({
+    required String token,
+  }) async {
+    final response = await _client.get(
+      Uri.parse('$serverUrl/users/me/devices'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    _checkResponse(response);
+
+    final decoded = jsonDecode(response.body);
+
+    if (decoded is! List) {
+      throw ApiException(
+        statusCode: response.statusCode,
+        message: 'Invalid devices response',
+      );
+    }
+
+    return decoded
+        .map(
+          (item) => DeviceSession.fromJson(
+            item as Map<String, dynamic>,
+          ),
+        )
+        .toList();
+  }
+
+  Future<void> deleteDevice({
+    required String token,
+    required String sessionId,
+  }) async {
+    final response = await _client.delete(
+      Uri.parse('$serverUrl/users/me/devices/$sessionId'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    _checkResponse(response);
   }
 
   void dispose() {

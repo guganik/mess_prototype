@@ -29,12 +29,12 @@ class ChatService extends ChangeNotifier {
 
     try {
       // Формируем URL с токеном (если есть)
-      final url = 'wss://${VlessConfig.serverAddress}:${VlessConfig.serverPort}/messenger-ws?user_id=$userId';
+      final url = '${ServerConfig.wsUrl}?user_id=$userId';
       
       _channel = IOWebSocketChannel.connect(
         url,
         headers: {
-          'Origin': 'https://${VlessConfig.serverAddress}',
+          'Origin': serverUrl,
         },
       );
 

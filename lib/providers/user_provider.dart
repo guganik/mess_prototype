@@ -4,18 +4,24 @@ import 'package:flutter/foundation.dart';
 
 import 'package:mess_prototype/api/api_service.dart';
 import 'package:mess_prototype/models/user.dart';
+import 'package:mess_prototype/repositories/device_repository.dart';
 import 'package:mess_prototype/repositories/user_repository.dart';
+import 'package:mess_prototype/services/device_info_service.dart';
 import 'package:mess_prototype/services/realtime_service.dart';
 
 class UserProvider extends ChangeNotifier {
   final UserRepository repository;
   final RealtimeService realtimeService;
+  final DeviceRepository deviceRepository;
+  final DeviceInfoService deviceInfoService;
 
   late final StreamSubscription<Map<String, dynamic>> _realtimeSubscription;
 
   UserProvider({
     required this.repository,
     required this.realtimeService,
+    required this.deviceRepository,
+    required this.deviceInfoService,
   }) {
     realtimeService.addListener(_handleRealtimeStateChanged);
     _realtimeSubscription = realtimeService.events.listen(_handleRealtimeEvent);
@@ -28,49 +34,86 @@ class UserProvider extends ChangeNotifier {
   bool get isInitialized => _isInitialized;
 
   Future<void> loadUser() async {
-    final localUser = await repository.getCurrentUser();
-
-    if (localUser == null) {
-      _user = null;
-      _isInitialized = true;
-      notifyListeners();
-      return;
-    }
-
-    final token = localUser.token;
-    if (token == null || token.isEmpty) {
-      await repository.deleteUser();
-      _user = null;
-      _isInitialized = true;
-      notifyListeners();
-      return;
-    }
-
-    _user = localUser;
-    notifyListeners();
-
     try {
-      final serverUser = await repository.getCurrentUserFromServer();
-      final syncedUser = await repository.syncAvatar(localUser, serverUser);
+      final localUser = await repository.getCurrentUser();
 
-      _user = syncedUser;
-      await repository.syncUser(syncedUser);
-      notifyListeners();
-    } on ApiException catch (error) {
-      if (error.statusCode == 401 || error.statusCode == 403) {
+      if (localUser == null) {
+        _user = null;
+        return;
+      }
+
+      final token = localUser.token;
+
+      if (token == null || token.isEmpty) {
         await repository.deleteUser();
         _user = null;
-        notifyListeners();
-      } else {
-        debugPrint('Не удалось синхронизировать пользователя: $error');
+        return;
       }
-    } catch (error) {
-      debugPrint('Не удалось синхронизировать пользователя: $error');
+
+      _user = localUser;
+      notifyListeners();
+
+      try {
+        final serverUser =
+            await repository.getCurrentUserFromServer();
+
+        final syncedUser =
+            await repository.syncAvatar(
+          localUser,
+          serverUser,
+        );
+
+        _user = syncedUser;
+
+        await repository.syncUser(
+          syncedUser,
+        );
+
+        notifyListeners();
+      } on ApiException catch (error) {
+        if (error.statusCode == 401 ||
+            error.statusCode == 403) {
+          await repository.deleteUser();
+          _user = null;
+          notifyListeners();
+
+          return;
+        }
+
+        debugPrint(
+          'Не удалось синхронизировать пользователя: $error',
+        );
+      } catch (error) {
+        debugPrint(
+          'Не удалось синхронизировать пользователя: $error',
+        );
+      }
+    } catch (error, stackTrace) {
+      debugPrint(
+        'Ошибка загрузки пользователя: $error',
+      );
+      debugPrint(
+        stackTrace.toString(),
+      );
+    } finally {
+      // Приложение считается инициализированным,
+      // даже если realtime сейчас недоступен.
+      _isInitialized = true;
+      notifyListeners();
     }
 
-    await realtimeService.connect(token);
-    _isInitialized = true;
-    notifyListeners();
+    // Realtime подключаем ПОСЛЕ завершения инициализации.
+    // Ошибка WS не должна блокировать запуск приложения.
+    final currentUser = _user;
+    final token = currentUser?.token;
+
+    if (currentUser != null &&
+        token != null &&
+        token.isNotEmpty) {
+      unawaited(
+        _connectCurrentDevice(token),
+      );
+    }
   }
 
   Future<void> login({
@@ -82,11 +125,13 @@ class UserProvider extends ChangeNotifier {
       password: password,
     );
 
+    final syncedUser = await repository.syncAvatar(user, user);
+
     await repository.saveUser(user);
-    _user = user;
+    _user = syncedUser;
     notifyListeners();
 
-    await realtimeService.connect(user.token ?? '');
+    await _connectCurrentDevice(user.token ?? '');
   }
 
   Future<void> register({
@@ -108,10 +153,6 @@ class UserProvider extends ChangeNotifier {
       username: username,
       password: password,
     );
-
-    if (realtimeService.isConnected) {
-      await setStatus('online');
-    }
   }
 
   Future<void> updateUser(User user) async {
@@ -265,7 +306,7 @@ class UserProvider extends ChangeNotifier {
     }
   }
 
-  void _handleRealtimeEvent(Map<String, dynamic> event) {
+  Future<void> _handleRealtimeEvent(Map<String, dynamic> event) async {
     final currentUser = _user;
     if (currentUser == null) return;
 
@@ -297,6 +338,57 @@ class UserProvider extends ChangeNotifier {
       _user = currentUser.copyWith(status: status);
     }
 
+    if (type == 'profile.updated') {
+      final userId = data['user_id'];
+
+      if (userId != currentUser.id) {
+        return;
+      }
+
+      final updatedUser = currentUser.copyWith(
+        username: data['username'] as String?,
+        firstName: data['first_name'] as String?,
+        email: data['email'] as String?,
+        phone: data['phone'] as String?,
+        status: data['status'] as String?,
+        presence: data['presence'] as String?,
+        lastSeen: data['last_seen'] != null
+            ? DateTime.tryParse(
+                data['last_seen'] as String,
+              )
+            : null,
+        isActive: data['is_active'] as bool?,
+      );
+
+      _user = updatedUser;
+
+      await repository.updateUser(
+        updatedUser,
+      );
+
+      notifyListeners();
+
+      return;
+    }
+
+    if (type == 'avatar.updated') {
+      final userId = data['user_id'];
+
+      if (userId != currentUser.id) {
+        return;
+      }
+
+      final avatarFileId = data['avatar_file_id'] as String?;
+
+      final updatedUser = await repository.applyRemoteAvatar(avatarFileId,);
+
+      _user = updatedUser;
+
+      notifyListeners();
+
+      return;
+    }
+
     notifyListeners();
     _persistPresence();
   }
@@ -309,6 +401,47 @@ class UserProvider extends ChangeNotifier {
       await repository.updateUser(currentUser);
     } catch (error) {
       debugPrint('Не удалось сохранить presence локально: $error');
+    }
+  }
+
+  Future<void> _connectCurrentDevice(
+    String token,
+  ) async {
+    if (token.isEmpty) {
+      return;
+    }
+
+    try {
+      final deviceInfo =
+          await deviceInfoService.getDeviceInfo();
+
+      final deviceSession =
+          await deviceRepository.registerCurrentDevice(
+        token: token,
+        deviceInfo: deviceInfo,
+      );
+
+      debugPrint(
+        'Device session: ${deviceSession.sessionId}',
+      );
+
+      final connected =
+          await realtimeService.connect(
+        token: token,
+        deviceId: deviceInfo.deviceId,
+      );
+
+      debugPrint(
+        'Realtime connected: $connected',
+      );
+    } catch (error, stackTrace) {
+      debugPrint(
+        'Не удалось подключить устройство: $error',
+      );
+
+      debugPrint(
+        stackTrace.toString(),
+      );
     }
   }
 
