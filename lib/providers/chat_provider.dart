@@ -18,8 +18,6 @@ class ChatProvider extends ChangeNotifier {
 
   StreamSubscription? _realtimeSubscription;
 
-  final List<Chat> _chats = [];
-
   ChatProvider({
     required this.repository,
     required this.userRepository,
@@ -40,9 +38,6 @@ class ChatProvider extends ChangeNotifier {
     );
   }
 
-  List<Chat> get chats =>
-      List.unmodifiable(_chats);
-
   Future<void> sync() async {
     final user =
         await userRepository.getCurrentUser();
@@ -53,12 +48,7 @@ class ChatProvider extends ChangeNotifier {
       return;
     }
 
-    final chats =
-        await repository.syncChats(
-      token: token,
-    );
-
-    _replaceChats(chats);
+    await repository.syncChats(token: token);
   }
 
   Future<int> createDirectChat(
@@ -187,18 +177,16 @@ class ChatProvider extends ChangeNotifier {
     );
   }
 
-  void _replaceChats(
-    List<Chat> chats,
-  ) {
-    _chats
-      ..clear()
-      ..addAll(chats);
-
-    notifyListeners();
-  }
-
   Stream<List<LocalChat>> watchChats() {
     return repository.watchChats();
+  }
+
+  Future<void> loadMessages(
+    int chatId,
+  ) async {
+    await repository.loadMessages(
+      chatId,
+    );
   }
 
   @override

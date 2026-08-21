@@ -20,15 +20,51 @@ class ChatScreen extends StatefulWidget {
       _ChatScreenState();
 }
 
-class _ChatScreenState
-    extends State<ChatScreen> {
-  final TextEditingController
-      _controller =
-      TextEditingController();
+class _ChatScreenState extends State<ChatScreen> {
+  final TextEditingController _controller = TextEditingController();
 
-  final ScrollController
-      _scrollController =
-      ScrollController();
+  final ScrollController _scrollController = ScrollController();
+
+  bool _loadingHistory = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) {
+        if (!mounted) {
+          return;
+        }
+
+        _loadHistory();
+      },
+    );
+  }
+
+  Future<void> _loadHistory() async {
+    setState(() {
+      _loadingHistory = true;
+    });
+
+    try {
+      await context.read<ChatProvider>().loadMessages(
+        widget.chatId,
+      );
+    } catch (error) {
+      debugPrint(
+        'Не удалось загрузить историю чата: $error',
+      );
+    } finally {
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        _loadingHistory = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

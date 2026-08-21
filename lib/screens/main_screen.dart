@@ -89,7 +89,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   }
 
   @override
-  void dispose() async {
+  void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _searchDebounce?.cancel();
     _searchController.dispose();
@@ -327,12 +327,7 @@ class LeftPanelState extends State<LeftPanel> {
     final user = userProvider.user;
 
     if (user == null) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => AuthScreen()
-        )
-      );
+      return const SizedBox.shrink();
     }
 
     return SafeArea(
