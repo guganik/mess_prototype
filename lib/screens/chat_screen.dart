@@ -8,11 +8,13 @@ import 'package:mess_prototype/providers/chat_provider.dart';
 class ChatScreen extends StatefulWidget {
   final int chatId;
   final int currentUserId;
+  final PublicUser? otherUser;
 
   const ChatScreen({
     super.key,
     required this.chatId,
     required this.currentUserId,
+    final PublicUser 
   });
 
   @override

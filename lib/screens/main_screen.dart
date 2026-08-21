@@ -6,6 +6,7 @@ import 'package:mess_prototype/database/app_database.dart';
 
 import 'package:mess_prototype/models/app_settings.dart';
 import 'package:mess_prototype/models/friend_search_result.dart';
+import 'package:mess_prototype/models/public_user.dart';
 import 'package:mess_prototype/models/user.dart';
 import 'package:mess_prototype/providers/chat_provider.dart';
 import 'package:mess_prototype/providers/friend_provider.dart';
@@ -20,6 +21,8 @@ import 'package:mess_prototype/services/connection_checker.dart';
 
 import 'package:mess_prototype/widgets/change_status_button.dart';
 import 'package:mess_prototype/widgets/default_button.dart';
+import 'package:mess_prototype/widgets/public_user_avatar.dart';
+import 'package:mess_prototype/widgets/public_user_profile.dart';
 import 'package:mess_prototype/widgets/public_user_tile.dart';
 
 import 'package:provider/provider.dart';
@@ -797,50 +800,78 @@ class _ChatListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final title =
-        chat.title ??
-        (
-          chat.otherUserId != null
-              ? '@${chat.otherUserId}'
-              : 'Чат'
-        );
+    final friendProvider =
+        context.watch<FriendProvider>();
+
+    PublicUser? otherUser;
+
+    for (final friend in friendProvider.friends) {
+      if (friend.user.id == chat.otherUserId) {
+        otherUser = friend.user;
+        break;
+      }
+    }
+
+    final displayName = otherUser != null
+        ? (
+            otherUser!.firstName != null &&
+                    otherUser.firstName!.trim().isNotEmpty
+                ? otherUser.firstName!.trim()
+                : '@${otherUser.username}'
+          )
+        : 'Чат';
 
     return ListTile(
-      contentPadding:
-          const EdgeInsets.symmetric(
+      contentPadding: const EdgeInsets.symmetric(
         horizontal: 8,
         vertical: 4,
       ),
-      leading: const CircleAvatar(
-        child: Icon(
-          Icons.person,
-        ),
+      leading: PublicUserAvatar(
+        localPath: otherUser?.avatarLocalPath,
+        username: otherUser?.username ?? '?',
+        size: 48,
       ),
       title: Text(
-        title,
+        displayName,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),
-      subtitle: chat.lastMessageText != null
+      subtitle: otherUser != null
           ? Text(
-              chat.lastMessageText!,
+              '@${otherUser.username}',
               maxLines: 1,
-              overflow:
-                  TextOverflow.ellipsis,
+              overflow: TextOverflow.ellipsis,
             )
-          : const Text(
-              'Нет сообщений',
-            ),
-      trailing: chat.lastMessageCreatedAt != null
-          ? Text(
+          : chat.lastMessageText != null
+              ? Text(
+                  chat.lastMessageText!,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                )
+              : const Text(
+                  'Нет сообщений',
+                ),
+      trailing: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          if (chat.lastMessageCreatedAt != null)
+            Text(
               _formatChatTime(
                 chat.lastMessageCreatedAt!,
               ),
               style: const TextStyle(
                 fontSize: 11,
               ),
-            )
-          : null,
+            ),
+          if (otherUser != null)
+            const SizedBox(height: 4),
+          if (otherUser != null)
+            _PresenceDot(
+              presence: otherUser.presence,
+            ),
+        ],
+      ),
       onTap: () {
         Navigator.push(
           context,
@@ -851,10 +882,33 @@ class _ChatListTile extends StatelessWidget {
                   .read<UserProvider>()
                   .user!
                   .id,
+              otherUser: otherUser,
             ),
           ),
         );
       },
+      onLongPress: otherUser == null
+          ? null
+          : () {
+              showModalBottomSheet(
+                context: context,
+                showDragHandle: true,
+                builder: (_) {
+                  return Padding(
+                    padding:
+                        const EdgeInsets.fromLTRB(
+                      24,
+                      12,
+                      24,
+                      32,
+                    ),
+                    child: PublicUserProfile(
+                      user: otherUser!,
+                    ),
+                  );
+                },
+              );
+            },
     );
   }
 
@@ -869,19 +923,43 @@ class _ChatListTile extends StatelessWidget {
         now.day == dateTime.day;
 
     if (sameDay) {
-      final hour =
-          dateTime.hour
-              .toString()
-              .padLeft(2, '0');
+      final hour = dateTime.hour
+          .toString()
+          .padLeft(2, '0');
 
-      final minute =
-          dateTime.minute
-              .toString()
-              .padLeft(2, '0');
+      final minute = dateTime.minute
+          .toString()
+          .padLeft(2, '0');
 
       return '$hour:$minute';
     }
 
     return '${dateTime.day}.${dateTime.month}';
+  }
+}
+
+class _PresenceDot extends StatelessWidget {
+  final String presence;
+
+  const _PresenceDot({
+    required this.presence,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final color = switch (presence) {
+      'online' => Colors.greenAccent,
+      'away' => Colors.yellowAccent,
+      _ => Colors.grey,
+    };
+
+    return Container(
+      width: 9,
+      height: 9,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: color,
+      ),
+    );
   }
 }
