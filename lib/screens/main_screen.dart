@@ -153,20 +153,21 @@ class MainScreenState extends State<MainScreen> {
                                 Row(
                                   children: [
                                     Expanded(
-                                      child: TextField(
-                                        controller: _searchController,
-                                        textAlignVertical: TextAlignVertical.center,
-                                        decoration: const InputDecoration(
-                                          border: InputBorder.none,
-                                          contentPadding: EdgeInsets.only(
-                                            top: 0,
-                                            bottom: 0,
+                                      child: SizedBox(
+                                        height: 30,
+                                        child: TextField(
+                                          controller: _searchController,
+                                          textAlignVertical: TextAlignVertical.center,
+                                          decoration: const InputDecoration(
+                                            border: InputBorder.none,
+                                            isDense: true,
+                                            contentPadding: EdgeInsets.zero,
+                                            hintText: 'Поиск...',
                                           ),
-                                          isDense: true,
-                                          hintText: 'Поиск...',
-                                        ),
-                                        style: const TextStyle(
-                                          fontSize: 14,
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                            height: 1.0,
+                                          ),
                                         ),
                                       ),
                                     ),
