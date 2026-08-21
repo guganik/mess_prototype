@@ -1,6 +1,7 @@
 import 'package:mess_prototype/api/api_service.dart';
 import 'package:mess_prototype/models/friend.dart';
 import 'package:mess_prototype/models/friend_request.dart';
+import 'package:mess_prototype/models/friend_search_result.dart';
 
 class FriendSync {
   final List<Friend> friends;
@@ -102,6 +103,16 @@ class FriendRepository {
     await apiService.delete(
       path: '/friends/$userId',
       token: token,
+    );
+  }
+
+  Future<List<FriendSearchResult>> searchUsers({
+    required String token,
+    required String query,
+  }) {
+    return apiService.searchFriendUsers(
+      token: token,
+      query: query,
     );
   }
 }

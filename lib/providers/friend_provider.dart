@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 
 import 'package:mess_prototype/models/friend.dart';
 import 'package:mess_prototype/models/friend_request.dart';
+import 'package:mess_prototype/models/friend_search_result.dart';
 import 'package:mess_prototype/repositories/friend_repository.dart';
 import 'package:mess_prototype/services/realtime_service.dart';
 import 'package:mess_prototype/repositories/user_repository.dart';
@@ -42,6 +43,14 @@ class FriendProvider extends ChangeNotifier {
       List.unmodifiable(_outgoingRequests);
 
   bool get loading => _loading;
+
+  List<FriendSearchResult> _searchResults = [];
+
+  bool _searchLoading = false;
+
+  List<FriendSearchResult> get searchResults => List.unmodifiable(_searchResults);
+
+  bool get searchLoading => _searchLoading;
 
   Future<void> refresh() async {
     final user =

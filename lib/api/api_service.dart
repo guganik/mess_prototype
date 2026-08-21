@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:mess_prototype/models/account_sync.dart';
 import 'package:mess_prototype/models/chat.dart';
 import 'package:mess_prototype/models/device_session.dart';
+import 'package:mess_prototype/models/friend_search_result.dart';
 
 import '../models/user.dart';
 import '../services/server_config.dart';
@@ -523,6 +524,47 @@ class ApiService {
     return messages
         .map(
           (item) => ChatMessage.fromJson(
+            item as Map<String, dynamic>,
+          ),
+        )
+        .toList();
+  }
+
+  Future<List<FriendSearchResult>> searchFriendUsers({
+    required String token,
+    required String query,
+  }) async {
+    final uri = Uri.parse(
+      '$serverUrl/friends/search',
+    ).replace(
+      queryParameters: {
+        'q': query,
+      },
+    );
+
+    final response = await _client.get(
+      uri,
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    _checkResponse(response);
+
+    final decoded = jsonDecode(
+      response.body,
+    );
+
+    if (decoded is! List) {
+      throw ApiException(
+        statusCode: response.statusCode,
+        message: 'Invalid search response',
+      );
+    }
+
+    return decoded
+        .map(
+          (item) => FriendSearchResult.fromJson(
             item as Map<String, dynamic>,
           ),
         )
