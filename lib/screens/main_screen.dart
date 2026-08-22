@@ -809,12 +809,19 @@ class _ChatList extends StatelessWidget {
   }
 }
 
-class _ChatListTile extends StatelessWidget {
+class _ChatListTile extends StatefulWidget {
   final LocalChat chat;
 
-  const _ChatListTile({
+  _ChatListTile({
     required this.chat,
   });
+
+  @override
+  _ChatListTileState createState() => _ChatListTileState();
+}
+
+class _ChatListTileState extends State<_ChatListTile> {
+  bool chatHovered = false;
 
   @override
   Widget build(BuildContext context) {
@@ -824,7 +831,7 @@ class _ChatListTile extends StatelessWidget {
     PublicUser? otherUser;
 
     for (final friend in friendProvider.friends) {
-      if (friend.user.id == chat.otherUserId) {
+      if (friend.user.id == widget.chat.otherUserId) {
         otherUser = friend.user;
         break;
       }
@@ -838,114 +845,31 @@ class _ChatListTile extends StatelessWidget {
       )
       : 'Чат';
 
-    return AnimatedContainer(
-      duration: Duration(milliseconds: 300),
-      padding: EdgeInsets.all(4),
-      decoration: BoxDecoration(
-        color: chatHovered
-          ? Color.fromRGBO(75, 75, 75, 0.7)
-          : 
-      ),
-      child: Row(
-        children: [
-
-        ],
-      )
-    );
-    
-    ListTile(
-      contentPadding: const EdgeInsets.symmetric(
-        horizontal: 8,
-        vertical: 4,
-      ),
-      leading: PublicUserAvatar(
-        localPath: otherUser?.avatarLocalPath,
-        username: otherUser?.username ?? '?',
-        size: 48,
-      ),
-      title: Text(
-        displayName,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-      ),
-      subtitle: chat.lastMessageText != null && chat.lastMessageText!.trim().isNotEmpty
-        ? Text(
-            chat.lastMessageText!,
-            style: TextStyle(
-              color: const Color.fromRGBO(75, 75, 75, 0.7)
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          )
-        : otherUser != null
-            ? Text(
-                '@${otherUser.username}',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              )
-            : const Text(
-                'Нет сообщений',
-              ),
-      trailing: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          if (chat.lastMessageCreatedAt != null)
-            Text(
-              _formatChatTime(
-                chat.lastMessageCreatedAt!,
-              ),
-              style: const TextStyle(
-                fontSize: 11,
-                color: Color.fromRGBO(75, 75, 75, 0.7)
-              ),
-            ),
-          if (otherUser != null)
-            const SizedBox(height: 4),
-          if (otherUser != null)
-            _StatusDot(
-              status: otherUser.status,
-              presence: otherUser.presence,
-            ),
-        ],
-      ),
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => ChatScreen(
-              chatId: chat.id,
-              currentUserId: context
-                  .read<UserProvider>()
-                  .user!
-                  .id,
-              otherUser: otherUser,
-            ),
-          ),
-        );
+    return MouseRegion(
+      onEnter: (event) {
+        chatHovered = true;
       },
-      onLongPress: otherUser == null
-        ? null
-        : () {
-            showModalBottomSheet(
-              context: context,
-              showDragHandle: true,
-              builder: (_) {
-                return Padding(
-                  padding:
-                      const EdgeInsets.fromLTRB(
-                    24,
-                    12,
-                    24,
-                    32,
-                  ),
-                  child: PublicUserProfile(
-                    user: otherUser!,
-                  ),
-                );
-              },
-            );
-          },
+
+      onExit: (event) {
+        setState(() {
+          chatHovered = false;
+        });
+      },
+
+      child: AnimatedContainer(
+        duration: Duration(milliseconds: 300),
+        padding: EdgeInsets.all(4),
+        decoration: BoxDecoration(
+          color: chatHovered
+            ? Color.fromRGBO(75, 75, 75, 0.3)
+            : Colors.transparent,
+        ),
+        child: Row(
+          children: [
+
+          ],
+        )
+      )
     );
   }
 
