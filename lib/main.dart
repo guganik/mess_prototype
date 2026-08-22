@@ -80,7 +80,7 @@ void main() {
 
         ChangeNotifierProvider(
           create: (_) => ConnectionChecker(
-            pingUrl: '$serverUrl/health',
+            pingUrl: '$serverUrl/health', 
           )..start(),
         ),
 

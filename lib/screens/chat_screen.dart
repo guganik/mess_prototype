@@ -82,10 +82,6 @@ class _ChatScreenState extends State<ChatScreen> {
         'Не удалось загрузить историю чата: $error',
       );
     } finally {
-      if (!mounted) {
-        return;
-      }
-
       setState(() {
         _loadingHistory = false;
       });

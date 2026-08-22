@@ -32,6 +32,9 @@ class _LoadScreenState extends State<LoadScreen> {
     debugPrint('DEVICE ID: ${deviceInfo.deviceId}');
     debugPrint('DEVICE NAME: ${deviceInfo.deviceName}');
     debugPrint('PLATFORM: ${deviceInfo.platform}');
+
+    if (!mounted) return;
+    
     final checker = context.read<ConnectionChecker>();
 
     while (!checker.isConnected) {
@@ -42,8 +45,6 @@ class _LoadScreenState extends State<LoadScreen> {
     final userProvider = context.read<UserProvider>();
 
     await userProvider.loadUser();
-
-    if (!mounted) return;
 
     final settings = await settingsRepository.getAppSettings();
     final user = userProvider.user;

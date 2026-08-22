@@ -465,7 +465,7 @@ class LeftPanelState extends State<LeftPanel> {
               DefaultButton(funTap: () => print(""), label: ""),
               SizedBox(height: 8,),
               DefaultButton(funTap: () => print(""), label: ""),
-              SizedBox(height: 8,),// Статус онлайна (или последнее время онлайна в случае невидимки), его редактирование
+              SizedBox(height: 8,),
               MouseRegion(
                 onEnter: (event) {
                   setState(() {
@@ -631,7 +631,7 @@ class _FriendSearchResults
     return ListView.separated(
       itemCount:
           provider.searchResults.length,
-      separatorBuilder: (_, __) =>
+      separatorBuilder: (_, _) =>
           const Divider(
         height: 1,
       ),
@@ -882,7 +882,7 @@ class _ChatListTile extends StatelessWidget {
               ),
               style: const TextStyle(
                 fontSize: 11,
-                color: const Color.fromRGBO(75, 75, 75, 0.7)
+                color: Color.fromRGBO(75, 75, 75, 0.7)
               ),
             ),
           if (otherUser != null)
