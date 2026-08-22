@@ -869,12 +869,23 @@ class _ChatListTileState extends State<_ChatListTile> {
         child: Row(
           children: [
             Stack(
-              
-            )
-            PublicUserAvatar(
-              localPath: otherUser?.avatarFileId,
-              username: otherUser?.username ?? '?',
-              size: 52,
+              alignment: AlignmentGeometry.topRight,
+              children: [
+                PublicUserAvatar(
+                  localPath: otherUser?.avatarFileId,
+                  username: otherUser?.username ?? '?',
+                  size: 52,
+                ),
+                Container(
+                  height: 14,
+                  width: 14,
+                  decoration: BoxDecoration(
+                    color: _StatusDot(status: otherUser.status, presence: otherUser.presence),
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.white, width: 2)
+                  ),
+                )
+              ],
             ),
             SizedBox(width: 8,),
             Column(
@@ -1016,18 +1027,11 @@ class _ChatListTileState extends State<_ChatListTile> {
   }
 }
 
-class _StatusDot extends StatelessWidget {
+Color statusDot({
+  
+}) {
   final String status;
   final String presence;
-
-  const _StatusDot({
-    required this.status,
-    required this.presence
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    Color color;
     if (presence == 'online') {
       color = switch (status) {
         'online' => Colors.greenAccent,
@@ -1038,14 +1042,4 @@ class _StatusDot extends StatelessWidget {
     } else {
       color = Colors.grey;
     }
-
-    return Container(
-      width: 9,
-      height: 9,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: color,
-      ),
-    );
-  }
 }
