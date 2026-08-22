@@ -838,7 +838,22 @@ class _ChatListTile extends StatelessWidget {
       )
       : 'Чат';
 
-    return ListTile(
+    return AnimatedContainer(
+      duration: Duration(milliseconds: 300),
+      padding: EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: chatHovered
+          ? Color.fromRGBO(75, 75, 75, 0.7)
+          : 
+      ),
+      child: Row(
+        children: [
+
+        ],
+      )
+    );
+    
+    ListTile(
       contentPadding: const EdgeInsets.symmetric(
         horizontal: 8,
         vertical: 4,
