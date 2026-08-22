@@ -847,7 +847,9 @@ class _ChatListTileState extends State<_ChatListTile> {
 
     return MouseRegion(
       onEnter: (event) {
-        chatHovered = true;
+        setState(() {
+          chatHovered = true;
+        });
       },
 
       onExit: (event) {
@@ -861,12 +863,31 @@ class _ChatListTileState extends State<_ChatListTile> {
         padding: EdgeInsets.all(4),
         decoration: BoxDecoration(
           color: chatHovered
-            ? Color.fromRGBO(75, 75, 75, 0.3)
+            ? Color.fromRGBO(75, 75, 75, 0.2)
             : Colors.transparent,
         ),
         child: Row(
           children: [
-
+            Container(
+              width: 52,
+              height: 52,
+              decoration: BoxDecoration(
+                color: Color.fromRGBO(75, 75, 75, 0.5),
+                shape: BoxShape.circle
+              ),
+            ),
+            SizedBox(width: 8,),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('User name'),
+                SizedBox(height: 4,),
+                Text('Last message')
+              ],
+            ),
+            Spacer(),
+            
+            SizedBox(width: 4,)
           ],
         )
       )
