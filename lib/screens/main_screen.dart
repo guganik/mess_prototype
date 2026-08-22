@@ -868,31 +868,127 @@ class _ChatListTileState extends State<_ChatListTile> {
         ),
         child: Row(
           children: [
-            Container(
-              width: 52,
-              height: 52,
-              decoration: BoxDecoration(
-                color: Color.fromRGBO(75, 75, 75, 0.5),
-                shape: BoxShape.circle
-              ),
+            Stack(
+              
+            )
+            PublicUserAvatar(
+              localPath: otherUser?.avatarFileId,
+              username: otherUser?.username ?? '?',
+              size: 52,
             ),
             SizedBox(width: 8,),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('User name'),
+                Text(displayName),
                 SizedBox(height: 4,),
-                Text('Last message')
+                widget.chat.lastMessageText != null && widget.chat.lastMessageText!.trim().isNotEmpty
+                  ? Text(widget.chat.lastMessageText!)
+                  : Text(''),
               ],
             ),
             Spacer(),
-            
+            Text('00:00'),
             SizedBox(width: 4,)
           ],
         )
       )
     );
   }
+  // ListTile(
+  //     contentPadding: const EdgeInsets.symmetric(
+  //       horizontal: 8,
+  //       vertical: 4,
+  //     ),
+  //     leading: PublicUserAvatar(
+  //       localPath: otherUser?.avatarLocalPath,
+  //       username: otherUser?.username ?? '?',
+  //       size: 48,
+  //     ),
+  //     title: Text(
+  //       displayName,
+  //       maxLines: 1,
+  //       overflow: TextOverflow.ellipsis,
+  //     ),
+  //     subtitle: chat.lastMessageText != null && chat.lastMessageText!.trim().isNotEmpty
+  //       ? Text(
+  //           chat.lastMessageText!,
+  //           style: TextStyle(
+  //             color: const Color.fromRGBO(75, 75, 75, 0.7)
+  //           ),
+  //           maxLines: 1,
+  //           overflow: TextOverflow.ellipsis,
+  //         )
+  //       : otherUser != null
+  //           ? Text(
+  //               '@${otherUser.username}',
+  //               maxLines: 1,
+  //               overflow: TextOverflow.ellipsis,
+  //             )
+  //           : const Text(
+  //               'Нет сообщений',
+  //             ),
+  //     trailing: Column(
+  //       mainAxisAlignment: MainAxisAlignment.center,
+  //       crossAxisAlignment: CrossAxisAlignment.end,
+  //       children: [
+  //         if (chat.lastMessageCreatedAt != null)
+  //           Text(
+  //             _formatChatTime(
+  //               chat.lastMessageCreatedAt!,
+  //             ),
+  //             style: const TextStyle(
+  //               fontSize: 11,
+  //               color: Color.fromRGBO(75, 75, 75, 0.7)
+  //             ),
+  //           ),
+  //         if (otherUser != null)
+  //           const SizedBox(height: 4),
+  //         if (otherUser != null)
+  //           _StatusDot(
+  //             status: otherUser.status,
+  //             presence: otherUser.presence,
+  //           ),
+  //       ],
+  //     ),
+  //     onTap: () {
+  //       Navigator.push(
+  //         context,
+  //         MaterialPageRoute(
+  //           builder: (_) => ChatScreen(
+  //             chatId: chat.id,
+  //             currentUserId: context
+  //                 .read<UserProvider>()
+  //                 .user!
+  //                 .id,
+  //             otherUser: otherUser,
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //     onLongPress: otherUser == null
+  //       ? null
+  //       : () {
+  //           showModalBottomSheet(
+  //             context: context,
+  //             showDragHandle: true,
+  //             builder: (_) {
+  //               return Padding(
+  //                 padding:
+  //                     const EdgeInsets.fromLTRB(
+  //                   24,
+  //                   12,
+  //                   24,
+  //                   32,
+  //                 ),
+  //                 child: PublicUserProfile(
+  //                   user: otherUser!,
+  //                 ),
+  //               );
+  //             },
+  //           );
+  //         },
+  //   );
 
   String _formatChatTime(
     DateTime dateTime,
