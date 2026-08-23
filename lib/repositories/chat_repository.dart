@@ -82,8 +82,7 @@ class ChatRepository {
       );
     }
 
-    final messages =
-        await apiService.getMessages(
+    final messages = await apiService.getMessages(
       token: token,
       chatId: chatId,
       beforeId: beforeId,

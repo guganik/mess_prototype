@@ -11,6 +11,7 @@ import 'package:mess_prototype/models/user.dart';
 import 'package:mess_prototype/providers/chat_provider.dart';
 import 'package:mess_prototype/providers/friend_provider.dart';
 import 'package:mess_prototype/providers/user_provider.dart';
+import 'package:mess_prototype/repositories/message_repository.dart';
 import 'package:mess_prototype/screens/auth_screen.dart';
 import 'package:mess_prototype/screens/chat_screen.dart';
 import 'package:mess_prototype/screens/friends_screen.dart';
@@ -825,7 +826,8 @@ class _ChatListTileState extends State<_ChatListTile> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
+    final messageRepository = context.read<MessageRepository>();
+    print(messageRepository.findByClientMessageId(int.parse(widget.chat.lastMessageId)));
 
     final friendProvider = context.watch<FriendProvider>();
 
@@ -952,7 +954,7 @@ class _ChatListTileState extends State<_ChatListTile> {
                     _formatChatTime(widget.chat.lastMessageCreatedAt!)
                   ),
 
-                  if (widget.chat.las)
+                  // if ( widget.chat.lastMessageId)
                 ],
               ),
               SizedBox(width: 4,)
