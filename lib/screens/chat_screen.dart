@@ -33,6 +33,8 @@ class _ChatScreenState extends State<ChatScreen> {
 
   bool _loadingHistory = false;
 
+  late ChatProvider _chatProvider;
+
   @override
   void initState() {
     super.initState();
@@ -213,11 +215,19 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _chatProvider = context.read<ChatProvider>();
+  }
+
+  @override
   void dispose() {
-    context.read<ChatProvider>().clearActiveChat(widget.chatId);
-    _controller.dispose();
-    _scrollController.dispose();
-    super.dispose();
+    _chatProvider.clearActiveChat(widget.chatId);
+
+  _controller.dispose();
+  _scrollController.dispose();
+
+  super.dispose();
   }
 }
 
