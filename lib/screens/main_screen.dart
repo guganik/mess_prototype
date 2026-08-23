@@ -825,8 +825,9 @@ class _ChatListTileState extends State<_ChatListTile> {
 
   @override
   Widget build(BuildContext context) {
-    final friendProvider =
-        context.watch<FriendProvider>();
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    final friendProvider = context.watch<FriendProvider>();
 
     PublicUser? otherUser;
 
@@ -933,7 +934,11 @@ class _ChatListTileState extends State<_ChatListTile> {
                   Text(displayName),
                   SizedBox(height: 4,),
                   widget.chat.lastMessageText != null && widget.chat.lastMessageText!.trim().isNotEmpty
-                    ? Text(widget.chat.lastMessageText!)
+                    ? Text(
+                        widget.chat.lastMessageText!,
+                        maxLines: 1,
+                        overflow: TextOverflow.,
+                      )
                     : Text(''),
                 ],
               ),
