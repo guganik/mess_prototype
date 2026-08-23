@@ -68,7 +68,7 @@ dev_dependencies:
 msix_config:
   display_name: GoogaTalk
   publisher_display_name: GoogaTalk
-  identity_name: googa_talk
+  identity_name: googa-talk
   msix_version: 1.0.1.0
 
   install_certificate: true
