@@ -349,7 +349,7 @@ class LeftPanelState extends State<LeftPanel> {
           child: Column(
             children: [
               Text(
-                'Version 1.0.2.1',
+                'Version 1.0.3.0',
                 style: TextStyle(
                   fontSize: 10,
                   color: Colors.grey[500]
