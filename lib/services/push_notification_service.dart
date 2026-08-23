@@ -1,6 +1,9 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 
+import 'package:mess_prototype/api/api_service.dart';
+import 'package:mess_prototype/services/notification_service.dart';
+
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(
   RemoteMessage message,
@@ -11,10 +14,25 @@ Future<void> firebaseMessagingBackgroundHandler(
 }
 
 class PushNotificationService {
-  static Future<void> initialize() async {
-    final messaging = FirebaseMessaging.instance;
+  PushNotificationService._();
 
-    await messaging.requestPermission(
+  static final FirebaseMessaging _messaging =
+      FirebaseMessaging.instance;
+
+  static bool _initialized = false;
+
+  static Future<void> initialize({
+    required ApiService apiService,
+    required String authToken,
+    required String deviceId,
+  }) async {
+    if (_initialized) {
+      return;
+    }
+
+    _initialized = true;
+
+    await _messaging.requestPermission(
       alert: true,
       badge: true,
       sound: true,
@@ -24,13 +42,52 @@ class PushNotificationService {
       firebaseMessagingBackgroundHandler,
     );
 
-    final token = await messaging.getToken();
+    final token = await _messaging.getToken();
 
-    debugPrint('FCM TOKEN: $token');
+    if (token != null && token.isNotEmpty) {
+      debugPrint('FCM TOKEN: $token');
 
-    messaging.onTokenRefresh.listen(
-      (newToken) {
-        debugPrint('NEW FCM TOKEN: $newToken');
+      await apiService.updateFcmToken(
+        token: authToken,
+        deviceId: deviceId,
+        fcmToken: token,
+      );
+    }
+
+    _messaging.onTokenRefresh.listen(
+      (newToken) async {
+        if (newToken.isEmpty) {
+          return;
+        }
+
+        try {
+          await apiService.updateFcmToken(
+            token: authToken,
+            deviceId: deviceId,
+            fcmToken: newToken,
+          );
+        } catch (error) {
+          debugPrint(
+            'FCM token update error: $error',
+          );
+        }
+      },
+    );
+
+    FirebaseMessaging.onMessage.listen(
+      (RemoteMessage message) async {
+        final notification = message.notification;
+
+        if (notification == null) {
+          return;
+        }
+
+        await NotificationService.showMessage(
+          senderName:
+              notification.title ?? 'Новое сообщение',
+          message:
+              notification.body ?? '',
+        );
       },
     );
   }

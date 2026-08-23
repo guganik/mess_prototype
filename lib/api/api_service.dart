@@ -570,6 +570,28 @@ class ApiService {
         .toList();
   }
 
+  Future<void> updateFcmToken({
+    required String token,
+    required String deviceId,
+    required String fcmToken,
+  }) async {
+    final response = await _client.patch(
+      Uri.parse(
+        '$serverUrl/users/me/devices/fcm-token',
+      ),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'device_id': deviceId,
+        'fcm_token': fcmToken,
+      }),
+    );
+
+    _checkResponse(response);
+  }
+
   void dispose() {
     _client.close();
   }

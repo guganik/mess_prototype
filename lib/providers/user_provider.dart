@@ -7,6 +7,7 @@ import 'package:mess_prototype/models/user.dart';
 import 'package:mess_prototype/repositories/device_repository.dart';
 import 'package:mess_prototype/repositories/user_repository.dart';
 import 'package:mess_prototype/services/device_info_service.dart';
+import 'package:mess_prototype/services/push_notification_service.dart';
 import 'package:mess_prototype/services/realtime_service.dart';
 
 class UserProvider extends ChangeNotifier {
@@ -442,6 +443,12 @@ class UserProvider extends ChangeNotifier {
           await deviceRepository.registerCurrentDevice(
         token: token,
         deviceInfo: deviceInfo,
+      );
+
+      await PushNotificationService.initialize(
+        apiService: deviceRepository.apiService,
+        authToken: token,
+        deviceId: deviceInfo.deviceId,
       );
 
       debugPrint(
