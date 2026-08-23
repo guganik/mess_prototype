@@ -80,6 +80,8 @@ class PushNotificationService {
           return;
         }
 
+        debugPrint(notification.body);
+
         await NotificationService.showMessage(
           senderName:
               notification.title ?? 'Новое сообщение',
