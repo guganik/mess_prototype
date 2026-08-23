@@ -11,7 +11,6 @@ import 'package:mess_prototype/models/user.dart';
 import 'package:mess_prototype/providers/chat_provider.dart';
 import 'package:mess_prototype/providers/friend_provider.dart';
 import 'package:mess_prototype/providers/user_provider.dart';
-import 'package:mess_prototype/repositories/message_repository.dart';
 import 'package:mess_prototype/screens/auth_screen.dart';
 import 'package:mess_prototype/screens/chat_screen.dart';
 import 'package:mess_prototype/screens/friends_screen.dart';
@@ -28,6 +27,7 @@ import 'package:mess_prototype/widgets/public_user_tile.dart';
 import 'package:mess_prototype/widgets/slide_drawer.dart';
 
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MainScreen extends StatefulWidget {
   final Settings settings;
@@ -348,6 +348,13 @@ class LeftPanelState extends State<LeftPanel> {
           padding: EdgeInsets.all(16),
           child: Column(
             children: [
+              Text(
+                'Version 1.0.1.0',
+                style: TextStyle(
+                  fontSize: 10,
+                  color: Colors.grey[200]
+                ),
+              ),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -462,11 +469,7 @@ class LeftPanelState extends State<LeftPanel> {
                 label: 'Друзья',
                 icon: Icons.group,
               ),
-              SizedBox(),
-              DefaultButton(funTap: () => print(""), label: ""),
-              SizedBox(height: 8,),
-              DefaultButton(funTap: () => print(""), label: ""),
-              SizedBox(height: 8,),
+              SizedBox(height: 4,),
               MouseRegion(
                 onEnter: (event) {
                   setState(() {
@@ -575,12 +578,12 @@ class LeftPanelState extends State<LeftPanel> {
                 ),
               ),
               Spacer(),
-              DefaultButton(funTap: () => print(""), label: ""),
-              SizedBox(height: 8,),
-              DefaultButton(funTap: () => print(""), label: ""),
-              SizedBox(height: 8,),
-              DefaultButton(funTap: () => print(""), label: ""),
-              SizedBox(height: 8,),
+              ListTile(
+                leading: const Icon(Icons.system_update),
+                title: const Text('Проверить обновления'),
+                onTap: checkForUpdates,
+              ),
+              SizedBox(height: 4,),
               DefaultButton(
                 funTap: () async {
                   await context.read<UserProvider>().logout();
@@ -813,7 +816,7 @@ class _ChatList extends StatelessWidget {
 class _ChatListTile extends StatefulWidget {
   final LocalChat chat;
 
-  _ChatListTile({
+  const _ChatListTile({
     required this.chat,
   });
 
@@ -826,8 +829,6 @@ class _ChatListTileState extends State<_ChatListTile> {
 
   @override
   Widget build(BuildContext context) {
-    final messageRepository = context.read<MessageRepository>();
-    print(messageRepository.findByClientMessageId(int.parse(widget.chat.lastMessageId)));
 
     final friendProvider = context.watch<FriendProvider>();
 
@@ -868,10 +869,7 @@ class _ChatListTileState extends State<_ChatListTile> {
             MaterialPageRoute(
               builder: (_) => ChatScreen(
                 chatId: widget.chat.id,
-                currentUserId: context
-                    .read<UserProvider>()
-                    .user!
-                    .id,
+                currentUserId: context.read<UserProvider>().user!.id,
                 otherUser: otherUser,
               ),
             ),
@@ -885,13 +883,7 @@ class _ChatListTileState extends State<_ChatListTile> {
               showDragHandle: true,
               builder: (_) {
                 return Padding(
-                  padding:
-                      const EdgeInsets.fromLTRB(
-                    24,
-                    12,
-                    24,
-                    32,
-                  ),
+                  padding: const EdgeInsets.fromLTRB(24, 12, 24, 32),
                   child: PublicUserProfile(
                     user: otherUser!,
                   ),
@@ -903,8 +895,9 @@ class _ChatListTileState extends State<_ChatListTile> {
           duration: Duration(milliseconds: 300),
           padding: EdgeInsets.all(4),
           decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(15)),
             color: chatHovered
-              ? Color.fromRGBO(75, 75, 75, 0.2)
+              ? Color.fromRGBO(75, 75, 75, 0.15)
               : Colors.transparent,
           ),
           child: Row(
@@ -913,7 +906,7 @@ class _ChatListTileState extends State<_ChatListTile> {
                 alignment: AlignmentGeometry.topRight,
                 children: [
                   PublicUserAvatar(
-                    localPath: otherUser?.avatarFileId,
+                    localPath: otherUser?.avatarLocalPath,
                     username: otherUser?.username ?? '?',
                     size: 52,
                   ),
@@ -922,7 +915,7 @@ class _ChatListTileState extends State<_ChatListTile> {
                     height: 14,
                     width: 14,
                     decoration: BoxDecoration(
-                      color: statusDot(status: otherUser.status, presence: otherUser.presence),
+                      color: _statusDot(status: otherUser.status, presence: otherUser.presence),
                       shape: BoxShape.circle,
                       border: Border.all(color: Colors.white, width: 2)
                     ),
@@ -953,8 +946,6 @@ class _ChatListTileState extends State<_ChatListTile> {
                   Text(
                     _formatChatTime(widget.chat.lastMessageCreatedAt!)
                   ),
-
-                  // if ( widget.chat.lastMessageId)
                 ],
               ),
               SizedBox(width: 4,)
@@ -964,100 +955,6 @@ class _ChatListTileState extends State<_ChatListTile> {
       )
     );
   }
-  // ListTile(
-  //     contentPadding: const EdgeInsets.symmetric(
-  //       horizontal: 8,
-  //       vertical: 4,
-  //     ),
-  //     leading: PublicUserAvatar(
-  //       localPath: otherUser?.avatarLocalPath,
-  //       username: otherUser?.username ?? '?',
-  //       size: 48,
-  //     ),
-  //     title: Text(
-  //       displayName,
-  //       maxLines: 1,
-  //       overflow: TextOverflow.ellipsis,
-  //     ),
-  //     subtitle: chat.lastMessageText != null && chat.lastMessageText!.trim().isNotEmpty
-  //       ? Text(
-  //           chat.lastMessageText!,
-  //           style: TextStyle(
-  //             color: const Color.fromRGBO(75, 75, 75, 0.7)
-  //           ),
-  //           maxLines: 1,
-  //           overflow: TextOverflow.ellipsis,
-  //         )
-  //       : otherUser != null
-  //           ? Text(
-  //               '@${otherUser.username}',
-  //               maxLines: 1,
-  //               overflow: TextOverflow.ellipsis,
-  //             )
-  //           : const Text(
-  //               'Нет сообщений',
-  //             ),
-  //     trailing: Column(
-  //       mainAxisAlignment: MainAxisAlignment.center,
-  //       crossAxisAlignment: CrossAxisAlignment.end,
-  //       children: [
-  //         if (chat.lastMessageCreatedAt != null)
-  //           Text(
-  //             _formatChatTime(
-  //               chat.lastMessageCreatedAt!,
-  //             ),
-  //             style: const TextStyle(
-  //               fontSize: 11,
-  //               color: Color.fromRGBO(75, 75, 75, 0.7)
-  //             ),
-  //           ),
-  //         if (otherUser != null)
-  //           const SizedBox(height: 4),
-  //         if (otherUser != null)
-  //           _StatusDot(
-  //             status: otherUser.status,
-  //             presence: otherUser.presence,
-  //           ),
-  //       ],
-  //     ),
-  //     onTap: () {
-  //       Navigator.push(
-  //         context,
-  //         MaterialPageRoute(
-  //           builder: (_) => ChatScreen(
-  //             chatId: chat.id,
-  //             currentUserId: context
-  //                 .read<UserProvider>()
-  //                 .user!
-  //                 .id,
-  //             otherUser: otherUser,
-  //           ),
-  //         ),
-  //       );
-  //     },
-  //     onLongPress: otherUser == null
-  //       ? null
-  //       : () {
-  //           showModalBottomSheet(
-  //             context: context,
-  //             showDragHandle: true,
-  //             builder: (_) {
-  //               return Padding(
-  //                 padding:
-  //                     const EdgeInsets.fromLTRB(
-  //                   24,
-  //                   12,
-  //                   24,
-  //                   32,
-  //                 ),
-  //                 child: PublicUserProfile(
-  //                   user: otherUser!,
-  //                 ),
-  //               );
-  //             },
-  //           );
-  //         },
-  //   );
 
   String _formatChatTime(
     DateTime dateTime,
@@ -1085,7 +982,7 @@ class _ChatListTileState extends State<_ChatListTile> {
   }
 }
 
-Color statusDot({
+Color _statusDot({
   required String presence,
   required String status
 }) {
@@ -1103,4 +1000,17 @@ Color statusDot({
   }
 
   return color;
+}
+
+Future<void> checkForUpdates() async {
+  final uri = Uri.parse(
+    'ms-appinstaller:?source=https://googa-talk.ru/downloads/mess_prototype.appinstaller',
+  );
+
+  if (!await launchUrl(
+    uri,
+    mode: LaunchMode.externalApplication,
+  )) {
+    throw Exception('Не удалось открыть App Installer');
+  }
 }

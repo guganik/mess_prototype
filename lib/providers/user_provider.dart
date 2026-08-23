@@ -324,7 +324,6 @@ class UserProvider extends ChangeNotifier {
     if (userId != currentUser.id) {
       return;
     }
-    print(type);
 
     switch (type) {
       case 'presence.updated':

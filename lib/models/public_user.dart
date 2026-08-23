@@ -56,10 +56,8 @@ class PublicUser {
       id: id ?? this.id,
       username: username ?? this.username,
       firstName: firstName ?? this.firstName,
-      avatarFileId:
-          avatarFileId ?? this.avatarFileId,
-      avatarLocalPath:
-          avatarLocalPath ?? this.avatarLocalPath,
+      avatarFileId: avatarFileId ?? this.avatarFileId,
+      avatarLocalPath: avatarLocalPath ?? this.avatarLocalPath,
       status: status ?? this.status,
       presence: presence ?? this.presence,
       lastSeen: lastSeen ?? this.lastSeen,

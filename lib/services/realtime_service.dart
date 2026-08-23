@@ -62,6 +62,7 @@ class RealtimeService extends ChangeNotifier with WidgetsBindingObserver {
 
       case AppLifecycleState.paused:
       case AppLifecycleState.hidden:
+      case AppLifecycleState.inactive:
         _pauseForBackground();
         break;
 

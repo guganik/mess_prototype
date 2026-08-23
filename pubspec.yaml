@@ -1,5 +1,5 @@
 name: mess_prototype
-description: "A new Flutter project."
+description: "It's my messanger :)"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -42,6 +42,7 @@ dependencies:
   mask_text_input_formatter: ^2.9.0
   device_info_plus: ^11.5.0
   shared_preferences: ^2.5.3
+  url_launcher: ^6.3.2
 
   cupertino_icons: ^1.0.8
   collection: ^1.19.1
@@ -62,6 +63,23 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
+  msix: ^3.16.8
+
+msix_config:
+  display_name: GoogaTalk
+  publisher_display_name: GoogaTalk
+  identity_name: googa_talk
+  msix_version: 1.0.1.0
+
+  install_certificate: true
+
+  app_installer:
+    publish_folder_path: build/windows/appinstaller
+    hours_between_update_checks: 0
+    automatic_background_task: false
+    update_blocks_activation: false
+    show_prompt: true
+    force_update_from_any_version: false
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

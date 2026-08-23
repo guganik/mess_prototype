@@ -238,7 +238,6 @@ class ApiService {
 
     final response = await http.Response.fromStream(streamedResponse);
 
-    print(response.body);
     _checkResponse(response);
 
     final data = _decodeJson(response);

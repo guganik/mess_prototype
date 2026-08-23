@@ -382,6 +382,59 @@ class FriendProvider extends ChangeNotifier {
         await refresh();
         break;
 
+      case 'profile.updated':
+        final userId = data['user_id'];
+
+        if (userId is! int) {
+          return;
+        }
+
+        _updateProfileInCollections(
+          userId,
+          username: data['username'] as String?,
+          firstName: data['first_name'] as String?,
+        );
+
+        notifyListeners();
+        break;
+
+      case 'avatar.updated':
+        final userId = data['user_id'];
+
+        if (userId is! int) {
+          return;
+        }
+
+        final avatarFileId =
+            data['avatar_file_id'] as String?;
+
+        String? avatarLocalPath;
+
+        if (avatarFileId != null &&
+            avatarFileId.isNotEmpty) {
+          final user =
+              await userRepository.getCurrentUser();
+
+          final token = user?.token;
+
+          if (token != null && token.isNotEmpty) {
+            avatarLocalPath =
+                await userRepository.avatarCache.downloadAvatar(
+              fileId: avatarFileId,
+              token: token,
+            );
+          }
+        }
+
+        _updateAvatarInCollections(
+          userId,
+          avatarFileId,
+          avatarLocalPath,
+        );
+
+        notifyListeners();
+        break;
+
       case 'presence.updated':
         final userId = data['user_id'];
 
@@ -452,6 +505,166 @@ class FriendProvider extends ChangeNotifier {
 
       return user;
     }
+  }
+
+  void _updateAvatarInCollections(
+    int userId,
+    String? avatarFileId,
+    String? avatarLocalPath,
+  ) {
+    _friends = _friends.map((friend) {
+      if (friend.user.id != userId) {
+        return friend;
+      }
+
+      return Friend(
+        friendshipId: friend.friendshipId,
+        createdAt: friend.createdAt,
+        user: PublicUser(
+          id: friend.user.id,
+          username: friend.user.username,
+          firstName: friend.user.firstName,
+          avatarFileId: avatarFileId,
+          avatarLocalPath: avatarLocalPath,
+          status: friend.user.status,
+          presence: friend.user.presence,
+          lastSeen: friend.user.lastSeen,
+        ),
+      );
+    }).toList();
+
+    _incomingRequests =
+        _incomingRequests.map((request) {
+      if (request.user.id != userId) {
+        return request;
+      }
+
+      return FriendRequest(
+        friendshipId: request.friendshipId,
+        createdAt: request.createdAt,
+        user: PublicUser(
+          id: request.user.id,
+          username: request.user.username,
+          firstName: request.user.firstName,
+          avatarFileId: avatarFileId,
+          avatarLocalPath: avatarLocalPath,
+          status: request.user.status,
+          presence: request.user.presence,
+          lastSeen: request.user.lastSeen,
+        ),
+      );
+    }).toList();
+
+    _outgoingRequests =
+        _outgoingRequests.map((request) {
+      if (request.user.id != userId) {
+        return request;
+      }
+
+      return FriendRequest(
+        friendshipId: request.friendshipId,
+        createdAt: request.createdAt,
+        user: PublicUser(
+          id: request.user.id,
+          username: request.user.username,
+          firstName: request.user.firstName,
+          avatarFileId: avatarFileId,
+          avatarLocalPath: avatarLocalPath,
+          status: request.user.status,
+          presence: request.user.presence,
+          lastSeen: request.user.lastSeen,
+        ),
+      );
+    }).toList();
+
+    _searchResults =
+        _searchResults.map((result) {
+      if (result.user.id != userId) {
+        return result;
+      }
+
+      return FriendSearchResult(
+        relation: result.relation,
+        user: PublicUser(
+          id: result.user.id,
+          username: result.user.username,
+          firstName: result.user.firstName,
+          avatarFileId: avatarFileId,
+          avatarLocalPath: avatarLocalPath,
+          status: result.user.status,
+          presence: result.user.presence,
+          lastSeen: result.user.lastSeen,
+        ),
+      );
+    }).toList();
+  }
+
+  void _updateProfileInCollections(
+    int userId, {
+    String? username,
+    String? firstName,
+  }) {
+    _friends = _friends.map((friend) {
+      if (friend.user.id != userId) {
+        return friend;
+      }
+
+      return Friend(
+        friendshipId: friend.friendshipId,
+        createdAt: friend.createdAt,
+        user: friend.user.copyWith(
+          username: username,
+          firstName: firstName,
+        ),
+      );
+    }).toList();
+
+    _incomingRequests =
+        _incomingRequests.map((request) {
+      if (request.user.id != userId) {
+        return request;
+      }
+
+      return FriendRequest(
+        friendshipId: request.friendshipId,
+        createdAt: request.createdAt,
+        user: request.user.copyWith(
+          username: username,
+          firstName: firstName,
+        ),
+      );
+    }).toList();
+
+    _outgoingRequests =
+        _outgoingRequests.map((request) {
+      if (request.user.id != userId) {
+        return request;
+      }
+
+      return FriendRequest(
+        friendshipId: request.friendshipId,
+        createdAt: request.createdAt,
+        user: request.user.copyWith(
+          username: username,
+          firstName: firstName,
+        ),
+      );
+    }).toList();
+
+    _searchResults =
+        _searchResults.map((result) {
+      if (result.user.id != userId) {
+        return result;
+      }
+
+      return FriendSearchResult(
+        relation: result.relation,
+        user: result.user.copyWith(
+          username: username,
+          firstName: firstName,
+        ),
+      );
+    }).toList();
   }
 
   @override
