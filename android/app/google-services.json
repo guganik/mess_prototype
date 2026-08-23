@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "325599984560",
+    "project_id": "googa-17e45",
+    "storage_bucket": "googa-17e45.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:325599984560:android:90dc55c3113a40fae73475",
+        "android_client_info": {
+          "package_name": "com.example.mess_prototype"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAUF_iIiasjxF39L8oOgtKkdZyFfojVgJc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
