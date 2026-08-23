@@ -1,6 +1,8 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mess_prototype/database/app_database.dart';
+import 'package:mess_prototype/firebase_options.dart';
 import 'package:mess_prototype/providers/chat_provider.dart';
 import 'package:mess_prototype/providers/friend_provider.dart';
 import 'package:mess_prototype/repositories/chat_repository.dart';
@@ -9,6 +11,7 @@ import 'package:mess_prototype/repositories/friend_repository.dart';
 import 'package:mess_prototype/repositories/message_repository.dart';
 import 'package:mess_prototype/services/device_info_service.dart';
 import 'package:mess_prototype/services/notification_service.dart';
+import 'package:mess_prototype/services/push_notification_service.dart';
 import 'package:provider/provider.dart';
 
 import 'package:mess_prototype/api/api_service.dart';
@@ -21,6 +24,12 @@ import 'package:mess_prototype/screens/load_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  await PushNotificationService.initialize();
 
   await NotificationService.initialize();
 
