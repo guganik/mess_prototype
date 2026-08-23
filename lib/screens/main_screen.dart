@@ -928,22 +928,33 @@ class _ChatListTileState extends State<_ChatListTile> {
                 ],
               ),
               SizedBox(width: 8,),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(displayName),
+                    SizedBox(height: 4,),
+                    widget.chat.lastMessageText != null && widget.chat.lastMessageText!.trim().isNotEmpty
+                      ? Text(
+                          widget.chat.lastMessageText!,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        )
+                      : Text(''),
+                  ],
+                ),
+              ),
+              SizedBox(width: 8,),
               Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(displayName),
-                  SizedBox(height: 4,),
-                  widget.chat.lastMessageText != null && widget.chat.lastMessageText!.trim().isNotEmpty
-                    ? Text(
-                        widget.chat.lastMessageText!,
-                        maxLines: 1,
-                        overflow: TextOverflow.,
-                      )
-                    : Text(''),
+                  if (widget.chat.lastMessageCreatedAt != null)
+                  Text(
+                    _formatChatTime(widget.chat.lastMessageCreatedAt!)
+                  ),
+
+                  if (widget.chat.las)
                 ],
               ),
-              Spacer(),
-              Text('00:00'),
               SizedBox(width: 4,)
             ],
           )
