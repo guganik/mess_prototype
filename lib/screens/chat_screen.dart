@@ -287,6 +287,7 @@ class _MessageBubble
             ),
             const SizedBox(height: 4),
             Row(
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Text(sendedAt),
                 SizedBox(width: 4,),
