@@ -348,13 +348,6 @@ class LeftPanelState extends State<LeftPanel> {
           padding: EdgeInsets.all(16),
           child: Column(
             children: [
-              Text(
-                'Version 1.0.3.1',
-                style: TextStyle(
-                  fontSize: 10,
-                  color: Colors.grey[500]
-                ),
-              ),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -598,6 +591,14 @@ class LeftPanelState extends State<LeftPanel> {
                 defaultColor: const Color.fromRGBO(220, 5, 5, 0.5),
                 defaultColorHover: const Color.fromRGBO(200, 5, 5, 0.7),
                 defaultColorPressed: const Color.fromRGBO(180, 5, 5, 0.75),
+              ),
+              SizedBox(height: 4,),
+              Text(
+                'Version 1.0.3.2',
+                style: TextStyle(
+                  fontSize: 10,
+                  color: Colors.grey[500]
+                ),
               ),
             ],
           ),
