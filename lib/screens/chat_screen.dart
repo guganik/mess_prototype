@@ -140,11 +140,12 @@ class _ChatScreenState extends State<ChatScreen> {
 
                     final isMine = message.senderId == widget.currentUserId;
 
-                    final sendedAt = message.createdAt;
+                    final sendedAt = _formatChatTime(message.createdAt);
 
                     return _MessageBubble(
                       message: message,
                       isMine: isMine,
+                      sendedAt: sendedAt,
                     );
                   },
                 );
@@ -225,10 +226,12 @@ class _MessageBubble
     extends StatelessWidget {
   final LocalMessage message;
   final bool isMine;
+  final String sendedAt;
 
   const _MessageBubble({
     required this.message,
     required this.isMine,
+    required this.sendedAt,
   });
 
   @override
@@ -273,12 +276,18 @@ class _MessageBubble
               ),
             ),
             const SizedBox(height: 4),
-            _Status(
-              status: MessageSendStatus.values.firstWhere(
-                (value) => value.name == message.sendStatus,
-                orElse: () => MessageSendStatus.sent,
-              ),
-            ),
+            Row(
+              children: [
+                Text(sendedAt),
+                SizedBox(width: 4,),
+                _Status(
+                  status: MessageSendStatus.values.firstWhere(
+                    (value) => value.name == message.sendStatus,
+                    orElse: () => MessageSendStatus.sent,
+                  ),
+                ),
+              ],
+            )
           ],
         ),
       ),
@@ -480,4 +489,18 @@ class _ChatHeader extends StatelessWidget {
       return 'Не в сети';
     }
   }
+}
+
+String _formatChatTime(
+  DateTime dateTime,
+) {
+  final hour = dateTime.hour
+      .toString()
+      .padLeft(2, '0');
+
+  final minute = dateTime.minute
+      .toString()
+      .padLeft(2, '0');
+
+  return '$hour:$minute';
 }
