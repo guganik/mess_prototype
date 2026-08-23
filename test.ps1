@@ -1,33 +1,32 @@
 $ErrorActionPreference = "Stop"
 
 $baseUrl = "https://googa-talk.ru/downloads"
+
 $certUrl = "$baseUrl/Googa.cer"
 $appInstallerUrl = "$baseUrl/mess_prototype.appinstaller"
 
 $tempDir = Join-Path $env:TEMP "GoogaInstaller"
-
-Write-Host "Подготовка установки Googa..." -ForegroundColor Cyan
 
 New-Item -ItemType Directory -Force -Path $tempDir | Out-Null
 
 $certPath = Join-Path $tempDir "Googa.cer"
 $appInstallerPath = Join-Path $tempDir "mess_prototype.appinstaller"
 
-Write-Host "Скачивание сертификата..."
+Write-Host "Downloading certificate..."
 Invoke-WebRequest -Uri $certUrl -OutFile $certPath
 
-Write-Host "Установка сертификата..."
+Write-Host "Installing certificate..."
 Import-Certificate `
     -FilePath $certPath `
-    -CertStoreLocation "Cert:\CurrentUser\TrustedPeople" | Out-Null
+    -CertStoreLocation "Cert:\LocalMachine\TrustedPeople"
 
-Write-Host "Скачивание установщика..."
+Write-Host "Downloading installer..."
 Invoke-WebRequest -Uri $appInstallerUrl -OutFile $appInstallerPath
 
-Write-Host "Запуск установки Googa..." -ForegroundColor Green
-
-Start-Process $appInstallerPath
+Write-Host "Starting Googa installer..."
+Start-Process -FilePath $appInstallerPath
 
 Write-Host ""
-Write-Host "Готово. Откроется установщик Googa." -ForegroundColor Green
-Read-Host "Нажмите Enter для выхода"
+Write-Host "Done." -ForegroundColor Green
+
+Read-Host "Press Enter to exit"
