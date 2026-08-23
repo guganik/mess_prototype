@@ -46,7 +46,6 @@ class PushNotificationService {
 
     if (token != null && token.isNotEmpty) {
       debugPrint('FCM TOKEN: $token');
-
       await apiService.updateFcmToken(
         token: authToken,
         deviceId: deviceId,
