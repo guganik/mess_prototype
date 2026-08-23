@@ -487,7 +487,7 @@ class ApiService {
   Future<List<ChatMessage>> getMessages({
     required String token,
     required int chatId,
-    int limit = 50,
+    int limit = 2000,
     int? beforeId,
   }) async {
     final uri = Uri.parse(
