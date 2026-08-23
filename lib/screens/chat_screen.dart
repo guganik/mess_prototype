@@ -114,7 +114,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 context,
                 snapshot,
               ) {
-                final messages = snapshot.data ?? const [];
+                final messages = snapshot.data?.reversed.toList() ?? const [];
 
                 if (_loadingHistory && messages.isEmpty) {
                   return const Center(
@@ -130,7 +130,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
                 return ListView.builder(
                   controller: _scrollController,
-                  reverse: false,
+                  reverse: true,
                   padding:
                       const EdgeInsets.all(12),
                   itemCount: messages.length,
