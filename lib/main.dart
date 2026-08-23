@@ -11,7 +11,6 @@ import 'package:mess_prototype/repositories/friend_repository.dart';
 import 'package:mess_prototype/repositories/message_repository.dart';
 import 'package:mess_prototype/services/device_info_service.dart';
 import 'package:mess_prototype/services/notification_service.dart';
-import 'package:mess_prototype/services/push_notification_service.dart';
 import 'package:provider/provider.dart';
 
 import 'package:mess_prototype/api/api_service.dart';
@@ -28,8 +27,6 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
-  await PushNotificationService.initialize();
 
   await NotificationService.initialize();
 

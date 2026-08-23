@@ -54,6 +54,8 @@ class PushNotificationService {
       );
     }
 
+    debugPrint('FCM token успешно отправлен на сервер');
+
     _messaging.onTokenRefresh.listen(
       (newToken) async {
         if (newToken.isEmpty) {
