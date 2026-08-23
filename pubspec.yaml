@@ -76,7 +76,7 @@ msix_config:
   app_installer:
     publish_folder_path: build/windows/appinstaller
     hours_between_update_checks: 0
-    automatic_background_task: false
+    automatic_background_task: true
     update_blocks_activation: false
     show_prompt: true
     force_update_from_any_version: false
