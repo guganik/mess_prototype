@@ -8,6 +8,7 @@ import 'package:mess_prototype/repositories/chat_repository.dart';
 import 'package:mess_prototype/repositories/message_repository.dart';
 import 'package:mess_prototype/repositories/user_repository.dart';
 import 'package:mess_prototype/services/realtime_service.dart';
+import 'package:mess_prototype/services/notification_service.dart';
 import 'package:mess_prototype/database/app_database.dart';
 
 class ChatProvider extends ChangeNotifier {
@@ -17,6 +18,9 @@ class ChatProvider extends ChangeNotifier {
   final MessageRepository messageRepository;
 
   StreamSubscription? _realtimeSubscription;
+
+  int? _activeChatId;
+  final Map<int, String> _chatNotificationNames = {};
 
   ChatProvider({
     required this.repository,
@@ -28,6 +32,16 @@ class ChatProvider extends ChangeNotifier {
         realtimeService.events.listen(
       _handleEvent,
     );
+  }
+
+  void setActiveChat(int chatId) {
+    _activeChatId = chatId;
+  }
+
+  void clearActiveChat(int chatId) {
+    if (_activeChatId == chatId) {
+      _activeChatId = null;
+    }
   }
 
   Stream<List<LocalMessage>> watchMessages(
@@ -48,7 +62,37 @@ class ChatProvider extends ChangeNotifier {
       return;
     }
 
-    await repository.syncChats(token: token);
+    final chats = await repository.syncChats(token: token);
+
+    _chatNotificationNames
+      ..clear()
+      ..addEntries(
+        chats.map(
+          (chat) => MapEntry(
+            chat.id,
+            _chatDisplayName(chat),
+          ),
+        ),
+      );
+  }
+
+  String _chatDisplayName(Chat chat) {
+    final otherUser = chat.otherUser;
+
+    if (otherUser?.firstName != null &&
+        otherUser!.firstName!.trim().isNotEmpty) {
+      return otherUser.firstName!.trim();
+    }
+
+    if (otherUser != null && otherUser.username.trim().isNotEmpty) {
+      return '@${otherUser.username}';
+    }
+
+    if (chat.title != null && chat.title!.trim().isNotEmpty) {
+      return chat.title!.trim();
+    }
+
+    return 'Новое сообщение';
   }
 
   Future<int> createDirectChat(
@@ -195,6 +239,32 @@ class ChatProvider extends ChangeNotifier {
       editedAt: message.editedAt,
       isDeleted: message.isDeleted,
     );
+
+    final currentUser =
+        await userRepository.getCurrentUser();
+
+    final isOwnMessage =
+        currentUser?.id == message.senderId;
+
+    final isActiveChat =
+        _activeChatId == message.chatId;
+
+    if (!isOwnMessage && !isActiveChat) {
+      try {
+        await NotificationService.showMessage(
+          senderName: _chatNotificationNames[message.chatId] ??
+              'Новое сообщение',
+          message: message.text,
+        );
+      } catch (error, stackTrace) {
+        debugPrint(
+          'Не удалось показать уведомление: $error',
+        );
+        debugPrint(
+          stackTrace.toString(),
+        );
+      }
+    }
   }
 
   Stream<List<LocalChat>> watchChats() {

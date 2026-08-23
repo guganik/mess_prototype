@@ -37,6 +37,8 @@ class _ChatScreenState extends State<ChatScreen> {
   void initState() {
     super.initState();
 
+    context.read<ChatProvider>().setActiveChat(widget.chatId);
+
     WidgetsBinding.instance.addPostFrameCallback(
       (_) {
         if (!mounted) {
@@ -110,7 +112,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 context,
                 snapshot,
               ) {
-                final messages = snapshot.data?.reversed.toList() ?? const [];
+                final messages = snapshot.data ?? const [];
 
                 if (_loadingHistory && messages.isEmpty) {
                   return const Center(
@@ -126,7 +128,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
                 return ListView.builder(
                   controller: _scrollController,
-                  reverse: true,
+                  reverse: false,
                   padding:
                       const EdgeInsets.all(12),
                   itemCount: messages.length,
@@ -134,12 +136,11 @@ class _ChatScreenState extends State<ChatScreen> {
                     context,
                     index,
                   ) {
-                    final message =
-                        messages[index];
+                    final message = messages[index];
 
-                    final isMine =
-                        message.senderId ==
-                            widget.currentUserId;
+                    final isMine = message.senderId == widget.currentUserId;
+
+                    final sendedAt = message.createdAt;
 
                     return _MessageBubble(
                       message: message,
@@ -200,7 +201,19 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   @override
+  void didUpdateWidget(covariant ChatScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.chatId != widget.chatId) {
+      final chatProvider = context.read<ChatProvider>();
+      chatProvider.clearActiveChat(oldWidget.chatId);
+      chatProvider.setActiveChat(widget.chatId);
+    }
+  }
+
+  @override
   void dispose() {
+    context.read<ChatProvider>().clearActiveChat(widget.chatId);
     _controller.dispose();
     _scrollController.dispose();
     super.dispose();
