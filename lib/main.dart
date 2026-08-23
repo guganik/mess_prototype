@@ -8,6 +8,7 @@ import 'package:mess_prototype/repositories/device_repository.dart';
 import 'package:mess_prototype/repositories/friend_repository.dart';
 import 'package:mess_prototype/repositories/message_repository.dart';
 import 'package:mess_prototype/services/device_info_service.dart';
+import 'package:mess_prototype/services/notification_service.dart';
 import 'package:provider/provider.dart';
 
 import 'package:mess_prototype/api/api_service.dart';
@@ -18,8 +19,10 @@ import 'package:mess_prototype/services/realtime_service.dart';
 import 'package:mess_prototype/services/server_config.dart';
 import 'package:mess_prototype/screens/load_screen.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await NotificationService.initialize();
 
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
