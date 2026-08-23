@@ -858,50 +858,90 @@ class _ChatListTileState extends State<_ChatListTile> {
         });
       },
 
-      child: AnimatedContainer(
-        duration: Duration(milliseconds: 300),
-        padding: EdgeInsets.all(4),
-        decoration: BoxDecoration(
-          color: chatHovered
-            ? Color.fromRGBO(75, 75, 75, 0.2)
-            : Colors.transparent,
-        ),
-        child: Row(
-          children: [
-            Stack(
-              alignment: AlignmentGeometry.topRight,
-              children: [
-                PublicUserAvatar(
-                  localPath: otherUser?.avatarFileId,
-                  username: otherUser?.username ?? '?',
-                  size: 52,
-                ),
-                Container(
-                  height: 14,
-                  width: 14,
-                  decoration: BoxDecoration(
-                    color: _StatusDot(status: otherUser.status, presence: otherUser.presence),
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.white, width: 2)
+      child: GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => ChatScreen(
+                chatId: widget.chat.id,
+                currentUserId: context
+                    .read<UserProvider>()
+                    .user!
+                    .id,
+                otherUser: otherUser,
+              ),
+            ),
+          );
+        },
+        onLongPress: otherUser == null
+          ? null
+          : () {
+            showModalBottomSheet(
+              context: context,
+              showDragHandle: true,
+              builder: (_) {
+                return Padding(
+                  padding:
+                      const EdgeInsets.fromLTRB(
+                    24,
+                    12,
+                    24,
+                    32,
                   ),
-                )
-              ],
-            ),
-            SizedBox(width: 8,),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(displayName),
-                SizedBox(height: 4,),
-                widget.chat.lastMessageText != null && widget.chat.lastMessageText!.trim().isNotEmpty
-                  ? Text(widget.chat.lastMessageText!)
-                  : Text(''),
-              ],
-            ),
-            Spacer(),
-            Text('00:00'),
-            SizedBox(width: 4,)
-          ],
+                  child: PublicUserProfile(
+                    user: otherUser!,
+                  ),
+                );
+              },
+            );
+          },
+        child: AnimatedContainer(
+          duration: Duration(milliseconds: 300),
+          padding: EdgeInsets.all(4),
+          decoration: BoxDecoration(
+            color: chatHovered
+              ? Color.fromRGBO(75, 75, 75, 0.2)
+              : Colors.transparent,
+          ),
+          child: Row(
+            children: [
+              Stack(
+                alignment: AlignmentGeometry.topRight,
+                children: [
+                  PublicUserAvatar(
+                    localPath: otherUser?.avatarFileId,
+                    username: otherUser?.username ?? '?',
+                    size: 52,
+                  ),
+                  if (otherUser != null)
+                  Container(
+                    height: 14,
+                    width: 14,
+                    decoration: BoxDecoration(
+                      color: statusDot(status: otherUser.status, presence: otherUser.presence),
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white, width: 2)
+                    ),
+                  )
+                ],
+              ),
+              SizedBox(width: 8,),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(displayName),
+                  SizedBox(height: 4,),
+                  widget.chat.lastMessageText != null && widget.chat.lastMessageText!.trim().isNotEmpty
+                    ? Text(widget.chat.lastMessageText!)
+                    : Text(''),
+                ],
+              ),
+              Spacer(),
+              Text('00:00'),
+              SizedBox(width: 4,)
+            ],
+          )
         )
       )
     );
@@ -1028,18 +1068,21 @@ class _ChatListTileState extends State<_ChatListTile> {
 }
 
 Color statusDot({
-  
+  required String presence,
+  required String status
 }) {
-  final String status;
-  final String presence;
-    if (presence == 'online') {
-      color = switch (status) {
-        'online' => Colors.greenAccent,
-        'away' => Colors.yellowAccent,
-        'do_not_disturb' => Colors.redAccent,
-        _ => Colors.grey
-      };
-    } else {
-      color = Colors.grey;
-    }
+  Color color;
+
+  if (presence == 'online') {
+    color = switch (status) {
+      'online' => Colors.greenAccent,
+      'away' => Colors.yellowAccent,
+      'do_not_disturb' => Colors.redAccent,
+      _ => Colors.grey
+    };
+  } else {
+    color = Colors.grey;
+  }
+
+  return color;
 }
