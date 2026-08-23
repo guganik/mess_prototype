@@ -45,15 +45,12 @@ class PushNotificationService {
     final token = await _messaging.getToken();
 
     if (token != null && token.isNotEmpty) {
-      debugPrint('FCM TOKEN: $token');
       await apiService.updateFcmToken(
         token: authToken,
         deviceId: deviceId,
         fcmToken: token,
       );
     }
-
-    debugPrint('FCM token успешно отправлен на сервер');
 
     _messaging.onTokenRefresh.listen(
       (newToken) async {
