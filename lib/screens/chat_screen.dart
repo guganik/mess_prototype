@@ -99,6 +99,8 @@ class _ChatScreenState extends State<ChatScreen> {
     final chatProvider = context.read<ChatProvider>();
     final otherUser = _getCurrentOtherUser(context);
 
+    print(otherUser?.lastSeen ?? 'Еще не подгрузился');
+
     final chatWidth = (screenWidth * 0.6).clamp(400.0, 600.0);
 
     return Scaffold(
@@ -246,12 +248,10 @@ class _ChatScreenState extends State<ChatScreen> {
                       BackArrow(),
 
                       Expanded(
-                        child: Center(
-                          child: SizedBox(
-                            width: chatWidth,
-                            child: _ChatHeader(
-                              user: otherUser,
-                            ),
+                        child: SizedBox(
+                          width: chatWidth,
+                          child: _ChatHeader(
+                            user: otherUser,
                           ),
                         ),
                       ),

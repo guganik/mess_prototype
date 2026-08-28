@@ -21,6 +21,7 @@ import 'package:mess_prototype/services/connection_checker.dart';
 
 import 'package:mess_prototype/widgets/change_status_button.dart';
 import 'package:mess_prototype/widgets/default_button.dart';
+import 'package:mess_prototype/widgets/divider.dart';
 import 'package:mess_prototype/widgets/public_user_avatar.dart';
 import 'package:mess_prototype/widgets/public_user_profile.dart';
 import 'package:mess_prototype/widgets/public_user_tile.dart';
@@ -794,9 +795,7 @@ class _ChatList extends StatelessWidget {
             context,
             index,
           ) {
-            return const Divider(
-              height: 1,
-            );
+            return CustomDivider();
           },
           itemBuilder: (
             context,
