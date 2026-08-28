@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 import 'package:mess_prototype/controllers/auth_controller.dart';
-import 'package:mess_prototype/models/user.dart';
 import 'package:mess_prototype/providers/user_provider.dart';
 import 'package:mess_prototype/repositories/app_settings_repository.dart';
 import 'package:mess_prototype/screens/auth_screen.dart';
@@ -38,7 +37,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final value = controller.username;
 
     if (value.isEmpty) {
-      usernameError = '';
+      usernameError = 'Имя пользователя не может быть пустым';
       return;
     }
 
@@ -46,7 +45,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   void _validateFirstName() {
-    firstNameError = isValidValues.firstName(controller.firstName) ?? '';
+    final value = controller.firstName;
+
+    if (value.isEmpty) {
+      usernameError = 'Имя не может быть пустым';
+      return;
+    }
+
+    firstNameError = isValidValues.firstName(value) ?? '';
   }
 
   void _validateEmail() {
@@ -75,7 +81,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final value = controller.password;
 
     if (value.isEmpty) {
-      passwordError = '';
+      passwordError = 'Пароль не может быть пустым';
       return;
     }
 
@@ -104,8 +110,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Future<void> register() async {
     if (loading) return;
 
-    setState(_validateAll);
-
     setState(() {
       loading = true;
     });
@@ -131,10 +135,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ),
       );
     } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString())),
-      );
+      print(e);
     } finally {
       if (mounted) {
         setState(() {
@@ -337,16 +338,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           });
                         },
                         child: GestureDetector(
-                          onTap: register,
+                          onTap: () {
+                            setState(_validateAll);
+                            if (!hasErrors) {
+                              register;
+                            }
+                          },
                           child: AnimatedContainer(
                             padding: EdgeInsets.symmetric(horizontal: 32, vertical: 8),
                             duration: Duration(milliseconds: 200),
                             decoration: BoxDecoration(
                               color: hasErrors
-                                ? hovered
-                                  ? Colors.grey[400]
-                                  : Colors.grey[300]
-                                : ,
+                                ? Colors.grey[300]
+                                : hovered
+                                  ? Colors.grey[500]
+                                  : Colors.grey[400],
                               borderRadius: BorderRadius.all(Radius.circular(20))
                             ),
                             child: Text('Создать аккаунт'),
