@@ -276,7 +276,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                       SizedBox(height: 8,),
                       TextField(
-                        controller: controller.passwordController,
+                        controller: controller.passwordCurrectlyController,
                         obscureText: hidingPassword,
                         decoration: InputDecoration(
                           labelText: 'Подтверждение пароля',
@@ -290,9 +290,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             borderRadius: BorderRadius.all(Radius.circular(8))
                           ),
                         ),
-                        onChanged: (_) {
+                        onChanged: (value) {
                           setState(() {
-                            _validatePassword();
+                            if (controller.password != value) {
+                              passwordCurrectlyError = 'Пароли не совпадают';
+                            } else {
+                              passwordCurrectlyError = '';
+                            }
                           });
                         },
                       ),

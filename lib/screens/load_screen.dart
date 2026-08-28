@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:mess_prototype/providers/user_provider.dart';
 import 'package:mess_prototype/repositories/app_settings_repository.dart';
 import 'package:mess_prototype/screens/auth_screen.dart';
-import 'package:mess_prototype/screens/register_screen.dart';
 import 'package:mess_prototype/screens/main_screen.dart';
 import 'package:mess_prototype/services/connection_checker.dart';
 
@@ -57,7 +56,7 @@ class _LoadScreenState extends State<LoadScreen> {
       MaterialPageRoute(
         builder: (_) => user != null
           ? MainScreen(settings: settings)
-          : const RegisterScreen(),
+          : const AuthScreen(),
       ),
     );
   }

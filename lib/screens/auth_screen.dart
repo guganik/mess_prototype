@@ -79,20 +79,19 @@ class _AuthScreenState extends State<AuthScreen> {
           Spacer(),
           Center(
             child: Container(
-              width: screenWidth * 0.8,
+              padding: EdgeInsets.all(16),
+              width: screenWidth * 0.6,
               constraints: BoxConstraints(
                 maxWidth: 600,
                 minWidth: 400
               ),
-              padding: EdgeInsets.all(16),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(20)),
                 color: Colors.white,
+                borderRadius: BorderRadius.all(Radius.circular(10)),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color.fromRGBO(0, 0, 0, 0.2),
-                    offset: Offset(0, 4),
-                    blurRadius: 10
+                    color: const Color.fromARGB(75, 75, 75, 75),
+                    blurRadius: 4
                   )
                 ]
               ),

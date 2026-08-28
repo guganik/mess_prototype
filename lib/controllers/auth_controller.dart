@@ -5,6 +5,7 @@ class AuthController {
   final firstNameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final passwordCurrectlyController = TextEditingController();
   final phoneController = TextEditingController();
   final loginController = TextEditingController();
 
@@ -12,6 +13,7 @@ class AuthController {
   String get firstName => firstNameController.text.trim();
   String get email => emailController.text.trim();
   String get password => passwordController.text.trim();
+  String get passwordCurrectly => passwordCurrectlyController.text.trim();
   String get phone => phoneController.text.trim();
   String get login => loginController.text.trim();
 
@@ -20,6 +22,7 @@ class AuthController {
     firstNameController.dispose();
     emailController.dispose();
     passwordController.dispose();
+    passwordCurrectlyController.dispose();
     phoneController.dispose();
     loginController.dispose();
   }
