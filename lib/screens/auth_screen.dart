@@ -107,94 +107,134 @@ class _AuthScreenState extends State<AuthScreen> {
                     ]
                   ),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-
-                    ],
-                  ),
-                  ),
-                  SizedBox(height: 20,),
-                  Row(
-                    children: [
-                      Spacer(),
-                      MouseRegion(
-                        onEnter: (_) {
-                          setState(() {
-                            hovered = true;
-                          });
-                        },
-                        onExit: (event) {
-                          setState(() {
-                            hovered = false;
-                          });
-                        },
-                        child: GestureDetector(
-                          onTap: () {
-                            if (controller.username != '' && controller.password != '') {
-                              authorization();
-                            } else {
-                              setState(() {
-                                errorText = 'Не все поля заполнены';
-                              });
-                            }
-                          },
-                          child: AnimatedContainer(
-                            padding: EdgeInsets.symmetric(horizontal: 32, vertical: 8),
-                            duration: Duration(milliseconds: 200),
-                            decoration: BoxDecoration(
-                              color: hovered
-                                ? Colors.grey[400]
-                                : Colors.grey[300],
-                              borderRadius: BorderRadius.all(Radius.circular(20))
-                            ),
-                            child: Text('Войти'),
+                      TextField(
+                        controller: controller.usernameController,
+                        decoration: InputDecoration(
+                          labelText: 'Имя пользователя',
+                          labelStyle: TextStyle(
+                            fontSize: 16
+                          ),
+                          
+                          contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(8))
                           ),
                         ),
                       ),
-                      Spacer()
-                    ]
-                  ),
-                  SizedBox(height: 16,),
-                  Row(
-                    children: [
-                      Spacer(),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => RegisterScreen()
-                            )
-                          );
-                        },
+                      SizedBox(height: 8,),
+                      TextField(
+                        controller: controller.passwordController,
+                        obscureText: hidingPassword,
+                        decoration: InputDecoration(
+                          labelText: 'Пароль',
+                          labelStyle: TextStyle(
+                            fontSize: 16
+                          ),
 
-                        child: Column(
-                          children: [
-                            Text('Нет аккаунта? Создай!'),
-                            SizedBox(height: 2,),
-                            Container(
-                              color: Colors.grey[500],
-                              width: 125,
-                              height: 1,
-                            )
-                          ]
+                          suffixIcon: IconButton(
+                            onPressed: () {
+                              setState(() {
+                                hidingPassword = !hidingPassword;
+                              });
+                            },
+                            icon: hidingPassword
+                              ? Icon(Icons.visibility_outlined)
+                              : Icon(Icons.visibility_off_outlined)
+                          ),
+                          
+                          contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(8))
+                          ),
+                        )
+                      ),
+                      SizedBox(height: 8,),
+                      errorText == null
+                        ? SizedBox()
+                        : Text(
+                          errorText!,
+                          style: TextStyle(
+                            color: Colors.redAccent[400]
                         ),
                       ),
-                      Spacer(),
                     ],
                   ),
-                  SizedBox(height: 8,),
-                  errorText == null
-                    ? SizedBox()
-                    : Text(
-                        errorText!,
-                        style: TextStyle(
-                          color: Colors.redAccent[400]
+                ),
+                SizedBox(height: 20,),
+                Row(
+                  children: [
+                    Spacer(),
+                    MouseRegion(
+                      onEnter: (_) {
+                        setState(() {
+                          hovered = true;
+                        });
+                      },
+                      onExit: (event) {
+                        setState(() {
+                          hovered = false;
+                        });
+                      },
+                      child: GestureDetector(
+                        onTap: () {
+                          if (controller.username != '' && controller.password != '') {
+                            authorization();
+                          } else {
+                            setState(() {
+                              errorText = 'Не все поля заполнены';
+                            });
+                          }
+                        },
+                        child: AnimatedContainer(
+                          padding: EdgeInsets.symmetric(horizontal: 32, vertical: 8),
+                          duration: Duration(milliseconds: 200),
+                          decoration: BoxDecoration(
+                            color: hovered
+                              ? Colors.grey[400]
+                              : Colors.grey[300],
+                            borderRadius: BorderRadius.all(Radius.circular(20))
+                          ),
+                          child: Text('Войти'),
                         ),
                       ),
-                    )
-                  ]),
-                )
-    ),
+                    ),
+                    Spacer()
+                  ]
+                ),
+                SizedBox(height: 16,),
+                Row(
+                  children: [
+                    Spacer(),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => RegisterScreen()
+                          )
+                        );
+                      },
+
+                      child: Column(
+                        children: [
+                          Text('Нет аккаунта? Создай!'),
+                          SizedBox(height: 2,),
+                          Container(
+                            color: Colors.grey[500],
+                            width: 125,
+                            height: 1,
+                          )
+                        ]
+                      ),
+                    ),
+                    Spacer(),
+                  ],
+                ),
+              ]
+            )
+          ),
           Spacer()
         ]
       ),
