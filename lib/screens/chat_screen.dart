@@ -99,7 +99,7 @@ class _ChatScreenState extends State<ChatScreen> {
     final chatProvider = context.read<ChatProvider>();
     final otherUser = _getCurrentOtherUser(context);
 
-    print(otherUser?.lastSeen ?? 'Еще не подгрузился');
+    print(formatAccountLastSeen() ?? 'Еще не подгрузился');
 
     final chatWidth = (screenWidth * 0.6).clamp(400.0, 600.0);
 
@@ -148,20 +148,12 @@ class _ChatScreenState extends State<ChatScreen> {
                             ),
 
                             itemCount: messages.length,
-                            itemBuilder: (
-                              context,
-                              index,
-                            ) {
+                            itemBuilder: (context, index) {
                               final message = messages[index];
 
-                              final isMine =
-                                  message.senderId ==
-                                  widget.currentUserId;
+                              final isMine = message.senderId == widget.currentUserId;
 
-                              final sendedAt =
-                                  _formatChatTime(
-                                    message.createdAt,
-                                  );
+                              final sendedAt = _formatChatTime(message.createdAt);
 
                               return _MessageBubble(
                                 message: message,
@@ -184,8 +176,7 @@ class _ChatScreenState extends State<ChatScreen> {
                               controller: _controller,
                               maxLines: 5,
                               minLines: 1,
-                              textInputAction:
-                                  TextInputAction.newline,
+                              textInputAction: TextInputAction.newline,
                               decoration: const InputDecoration(
                                 hintText: 'Сообщение...',
                               ),
@@ -299,8 +290,7 @@ class _ChatScreenState extends State<ChatScreen> {
 }
 
 
-class _MessageBubble
-    extends StatelessWidget {
+class _MessageBubble extends StatelessWidget {
   final LocalMessage message;
   final bool isMine;
   final String sendedAt;
@@ -318,33 +308,19 @@ class _MessageBubble
           ? Alignment.centerRight
           : Alignment.centerLeft,
       child: Container(
-        margin: const EdgeInsets.symmetric(
-          vertical: 4,
-        ),
-        padding:
-            const EdgeInsets.symmetric(
-          horizontal: 12,
-          vertical: 8,
-        ),
-        constraints:
-            const BoxConstraints(
+        margin: const EdgeInsets.symmetric(vertical: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        constraints: const BoxConstraints(
           maxWidth: 320,
         ),
-        decoration:
-            BoxDecoration(
+        decoration: BoxDecoration(
           color: isMine
-              ? Theme.of(context)
-                  .colorScheme
-                  .primaryContainer
-              : Theme.of(context)
-                  .colorScheme
-                  .surfaceContainerHighest,
-          borderRadius:
-              BorderRadius.circular(16),
+            ? Theme.of(context).colorScheme.primaryContainer
+            : Theme.of(context).colorScheme.surfaceContainerHighest,
+          borderRadius: BorderRadius.circular(16),
         ),
         child: Column(
-          crossAxisAlignment:
-              CrossAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Align(
               alignment: Alignment.centerLeft,
@@ -581,4 +557,27 @@ String _formatChatTime(
       .padLeft(2, '0');
 
   return '$hour:$minute';
+}
+
+String formatAccountLastSeen(DateTime value) {
+  final dateTime = DateTime.parse(value).toLocal();
+  final now = DateTime.now();
+
+  final isToday =
+      dateTime.year == now.year &&
+      dateTime.month == now.month &&
+      dateTime.day == now.day;
+
+  final hour = dateTime.hour.toString().padLeft(2, '0');
+  final minute = dateTime.minute.toString().padLeft(2, '0');
+  final second = dateTime.second.toString().padLeft(2, '0');
+
+  if (isToday) {
+    return '$hour:$minute:$second';
+  }
+
+  final day = dateTime.day.toString().padLeft(2, '0');
+  final month = dateTime.month.toString().padLeft(2, '0');
+
+  return '$day.$month.${dateTime.year}, $hour:$minute:$second';
 }
