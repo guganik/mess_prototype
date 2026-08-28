@@ -100,12 +100,6 @@ class _ChatScreenState extends State<ChatScreen> {
     final otherUser = _getCurrentOtherUser(context);
 
     return Scaffold(
-      appBar: AppBar(
-        titleSpacing: 0,
-        title: _ChatHeader(
-          user: otherUser,
-        ),
-      ),
       body: Column(
         children: [
           Expanded(
