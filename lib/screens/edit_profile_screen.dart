@@ -213,8 +213,24 @@ class EditProfileScreenState extends State<EditProfileScreen> {
               ),
               SizedBox(height: 32,),
               Container(
-                padding: EdgeInsets.all(8),
+                padding: EdgeInsets.all(16),
+                width: screenWidth * 0.6,
+                constraints: BoxConstraints(
+                  maxWidth: 900,
+                  minWidth: 400
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color.fromARGB(75, 75, 75, 75),
+                      blurRadius: 4
+                    )
+                  ]
+                ),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     TextField(
                       controller: controller.usernameController,
@@ -258,10 +274,18 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                         });
                       },
                     ),
+                    SizedBox(height: 8,),
+                    Text(
+                      'Обязательные поля!',
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: 14
+                      ),
+                    )
                   ],
                 ),
               ),
-              SizedBox(height: 8,),
+              SizedBox(height: 32,),
               TextField(
                 controller: controller.emailController,
                 decoration: InputDecoration(
