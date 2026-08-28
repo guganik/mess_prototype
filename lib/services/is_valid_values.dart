@@ -66,4 +66,12 @@ class IsValidValues {
 
     return null;
   }
+
+  String? password(String password) {
+    if (password.length < 8) return 'Пароль должен быть длиной минимум 8 символов';
+
+    if (password.length > 255) return 'Пароль должен быть длиной максимум 255 символов';
+
+    return null;
+  }
 }

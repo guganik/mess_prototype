@@ -71,38 +71,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
     phoneError = isValidValues.phone(phoneFormatter) ?? '';
   }
 
+  void _validatePassword() {
+    final value = controller.password;
+
+    if (value.isEmpty) {
+      passwordError = '';
+      return;
+    }
+
+    passwordError = isValidValues.password(value) ?? '';
+  }
+
   void _validateAll() {
     _validateUsername();
     _validateFirstName();
     _validateEmail();
     _validatePhone();
-  }
-
-  Map<String, String> _buildChanges(User user) {
-    final changes = <String, String>{};
-
-    final username = controller.username.trim();
-    final firstName = controller.firstName.trim();
-    final email = controller.email.trim();
-    final phone = controller.phone.trim();
-
-    if (username.isNotEmpty && username != user.username) {
-      changes['username'] = username;
-    }
-
-    if (firstName.isNotEmpty && firstName != user.firstName) {
-      changes['first_name'] = firstName;
-    }
-    
-    if (email.isNotEmpty && email != (user.email ?? '')) {
-      changes['email'] = email;
-    }
-    
-    if (phone.isNotEmpty && phone != (user.phone ?? '')) {
-      changes['phone'] = phone;
-    }
-
-    return changes;
+    _validatePassword();
   }
 
   bool loading = false;
@@ -222,6 +207,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         borderRadius: BorderRadius.all(Radius.circular(8))
                       ),
                     ),
+                    onChanged: (_) {
+                      setState(() {
+                        _validateUsername();
+                      });
+                    },
                   ),
                   SizedBox(height: 8,),
                   TextField(
@@ -241,6 +231,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         borderRadius: BorderRadius.all(Radius.circular(8))
                       ),
                     ),
+                    onChanged: (_) {
+                      setState(() {
+                        _validateFirstName();
+                      });
+                    },
                   ),
                   SizedBox(height: 8,),
                   TextField(
@@ -260,6 +255,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         borderRadius: BorderRadius.all(Radius.circular(8))
                       ),
                     ),
+                    onChanged: (_) {
+                      setState(() {
+                        _validateEmail();
+                      });
+                    },
                   ),
                   SizedBox(height: 8,),
                   TextField(
@@ -283,7 +283,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         borderRadius: BorderRadius.all(Radius.circular(8))
                       ),
                     ),
-                    onChanged: (value) => print(phoneFormatter.unmaskText(controller.phone)),
+                    onChanged: (value) {
+                      setState(() {
+                        _validatePhone();
+                      });
+                    },
                   ),
                   SizedBox(height: 8,),
                   TextField(
@@ -311,6 +315,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         borderRadius: BorderRadius.all(Radius.circular(8))
                       ),
                     ),
+                    onChanged: (_) {
+                      setState(() {
+                        _validatePassword();
+                      });
+                    },
                   ),
                   SizedBox(height: 20,),
                   Row(
@@ -333,9 +342,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             padding: EdgeInsets.symmetric(horizontal: 32, vertical: 8),
                             duration: Duration(milliseconds: 200),
                             decoration: BoxDecoration(
-                              color: hovered
-                                ? Colors.grey[400]
-                                : Colors.grey[300],
+                              color: hasErrors
+                                ? hovered
+                                  ? Colors.grey[400]
+                                  : Colors.grey[300]
+                                : ,
                               borderRadius: BorderRadius.all(Radius.circular(20))
                             ),
                             child: Text('Создать аккаунт'),
