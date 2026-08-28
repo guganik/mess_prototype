@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -1105,5 +1106,5 @@ Future<String> _loadChangelog() async {
     );
   }
 
-  return response.body;
+  return utf8.decode(response.bodyBytes);
 }
