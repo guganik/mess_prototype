@@ -25,30 +25,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String firstNameError = '';
   String emailError = '';
   String phoneError = '';
+  String passwordError = '';
 
   bool get hasErrors => 
     usernameError.isNotEmpty ||
     firstNameError.isNotEmpty ||
     emailError.isNotEmpty ||
-    phoneError.isNotEmpty;
-
-  User? get currentUser {return context.read<UserProvider>().user;}
-
-  bool get hasChanges {
-    final user = currentUser;
-
-    if (user == null) return false;
-
-    final username = controller.username.trim();
-    final firstName = controller.firstName.trim();
-    final email = controller.email.trim();
-    final phone = controller.phone.trim();
-
-    return username.isNotEmpty && username != user.username ||
-      firstName.isNotEmpty && firstName != (user.firstName ?? '') ||
-      email.isNotEmpty && email != (user.email ?? '') ||
-      phone.isNotEmpty && phone != (user.phone ?? '');
-  }
+    phoneError.isNotEmpty ||
+    passwordError.isNotEmpty;
 
   void _validateUsername() {
     final value = controller.username;
@@ -133,6 +117,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
   );
 
   Future<void> register() async {
+    if (loading) return;
+
+    setState(_validateAll);
+
     setState(() {
       loading = true;
     });
@@ -225,6 +213,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                       prefixText: '@',
                       
+                      errorText: usernameError.isNotEmpty
+                        ? usernameError
+                        : null,
+                      
                       contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(8))
@@ -240,6 +232,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         fontSize: 16
                       ),
                       
+                      errorText: firstNameError.isNotEmpty
+                        ? firstNameError
+                        : null,
+                      
                       contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(8))
@@ -254,6 +250,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       labelStyle: TextStyle(
                         fontSize: 16
                       ),
+                      
+                      errorText: emailError.isNotEmpty
+                        ? emailError
+                        : null,
                       
                       contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                       border: OutlineInputBorder(
@@ -273,6 +273,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
 
                       prefixText: '+7 ',
+                      
+                      errorText: phoneError.isNotEmpty
+                        ? phoneError
+                        : null,
                       
                       contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                       border: OutlineInputBorder(
@@ -297,6 +301,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ? Icon(Icons.visibility_outlined)
                           : Icon(Icons.visibility_off_outlined)
                       ),
+                      
+                      errorText: passwordError.isNotEmpty
+                        ? passwordError
+                        : null,
                       
                       contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                       border: OutlineInputBorder(
