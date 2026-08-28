@@ -80,7 +80,11 @@ class _AuthScreenState extends State<AuthScreen> {
           Center(
             child: Container(
               width: screenWidth * 0.8,
-              padding: EdgeInsets.all(16*4),
+              constraints: BoxConstraints(
+                maxWidth: 900,
+                minWidth: 400
+              ),
+              padding: EdgeInsets.all(16),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.all(Radius.circular(20)),
                 color: Colors.white,
@@ -95,6 +99,14 @@ class _AuthScreenState extends State<AuthScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  Text(
+                    'Авторизация',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold
+                    ),
+                  ),
+                  SizedBox(height: 16,),
                   TextField(
                     controller: controller.usernameController,
                     decoration: InputDecoration(
@@ -118,7 +130,7 @@ class _AuthScreenState extends State<AuthScreen> {
                       labelStyle: TextStyle(
                         fontSize: 16
                       ),
-                      
+
                       suffixIcon: IconButton(
                         onPressed: () {
                           setState(() {

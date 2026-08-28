@@ -286,53 +286,84 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                 ),
               ),
               SizedBox(height: 32,),
-              TextField(
-                controller: controller.emailController,
-                decoration: InputDecoration(
-                  hintText: user.email ?? 'example@example.com',
-                  labelText: 'Почта',
-                  errorText: emailError.isNotEmpty
-                    ? emailError
-                    : null,
-                      
-                  contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(8))
-                  ),
+              Container(
+                padding: EdgeInsets.all(16),
+                width: screenWidth * 0.6,
+                constraints: BoxConstraints(
+                  maxWidth: 900,
+                  minWidth: 400
                 ),
-                onChanged: (_) {
-                  setState(() {
-                    _validateEmail();
-                  });
-                },
-              ),
-              SizedBox(height: 8,),
-              TextField(
-                inputFormatters: [phoneFormatter],
-                keyboardType: TextInputType.phone,
-                controller: controller.phoneController,
-                decoration: InputDecoration(
-                  hintText: user.phone != null
-                    ? phoneFormatter.maskText(user.phone!)
-                    : '987 654 32-10',
-                  labelText: 'Номер телефона',
-
-                  prefixText: '+7 ',
-
-                  errorText: phoneError.isNotEmpty
-                    ? phoneError
-                    : null,
-                      
-                  contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(8))
-                  ),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color.fromARGB(75, 75, 75, 75),
+                      blurRadius: 4
+                    )
+                  ]
                 ),
-                onChanged: (_) {
-                  setState(() {
-                    _validatePhone();
-                  });
-                },
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextField(
+                      controller: controller.emailController,
+                      decoration: InputDecoration(
+                        hintText: user.email ?? 'example@example.com',
+                        labelText: 'Почта',
+                        errorText: emailError.isNotEmpty
+                          ? emailError
+                          : null,
+                            
+                        contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(8))
+                        ),
+                      ),
+                      onChanged: (_) {
+                        setState(() {
+                          _validateEmail();
+                        });
+                      },
+                    ),
+                    SizedBox(height: 8,),
+                    TextField(
+                      inputFormatters: [phoneFormatter],
+                      keyboardType: TextInputType.phone,
+                      controller: controller.phoneController,
+                      decoration: InputDecoration(
+                        hintText: user.phone != null
+                          ? phoneFormatter.maskText(user.phone!)
+                          : '987 654 32-10',
+                        labelText: 'Номер телефона',
+
+                        prefixText: '+7 ',
+
+                        errorText: phoneError.isNotEmpty
+                          ? phoneError
+                          : null,
+                            
+                        contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(8))
+                        ),
+                      ),
+                      onChanged: (_) {
+                        setState(() {
+                          _validatePhone();
+                        });
+                      },
+                    ),
+                    SizedBox(height: 8,),
+                    Text(
+                      'Необязательные поля',
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: 14
+                      ),
+                    )
+                  ],
+                ),
               ),
               Spacer(),
               MouseRegion(

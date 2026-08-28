@@ -81,7 +81,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
           Center(
             child: Container(
               width: screenWidth * 0.8,
-              padding: EdgeInsets.all(16*4),
+              constraints: BoxConstraints(
+                maxWidth: 900,
+                minWidth: 400
+              ),
+              padding: EdgeInsets.all(16),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.all(Radius.circular(20)),
                 color: Colors.white,
