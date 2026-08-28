@@ -290,7 +290,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                 padding: EdgeInsets.all(16),
                 width: screenWidth * 0.6,
                 constraints: BoxConstraints(
-                  maxWidth: 900,
+                  maxWidth: 600,
                   minWidth: 400
                 ),
                 decoration: BoxDecoration(

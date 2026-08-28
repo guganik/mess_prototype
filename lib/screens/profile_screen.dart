@@ -157,14 +157,17 @@ class ProfileScreenState extends State<ProfileScreen> {
     return SafeArea(
       child: Scaffold(
         body: Container(
-          width: screenWidth,
           padding: EdgeInsets.all(16),
+          width: screenWidth * 0.6,
+          constraints: BoxConstraints(
+            maxWidth: 600,
+            minWidth: 400
+          ),
           child: Column(
             children: [
               Row(
                 children: [
                   BackArrow(),
-                  Spacer(),
                 ],
               ),
               MouseRegion(
