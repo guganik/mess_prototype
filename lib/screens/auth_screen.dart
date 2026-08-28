@@ -78,74 +78,39 @@ class _AuthScreenState extends State<AuthScreen> {
         children: [
           Spacer(),
           Center(
-            child: Container(
-              padding: EdgeInsets.all(16),
-              width: screenWidth * 0.6,
-              constraints: BoxConstraints(
-                maxWidth: 600,
-                minWidth: 400
-              ),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.all(Radius.circular(10)),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color.fromARGB(75, 75, 75, 75),
-                    blurRadius: 4
-                  )
-                ]
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Авторизация',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold
-                    ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Авторизация',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold
                   ),
-                  SizedBox(height: 16,),
-                  TextField(
-                    controller: controller.usernameController,
-                    decoration: InputDecoration(
-                      labelText: 'Имя пользователя',
-                      labelStyle: TextStyle(
-                        fontSize: 16
-                      ),
-                      
-                      contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(8))
-                      ),
-                    ),
+                ),
+                SizedBox(height: 16,),
+                Container(
+                  padding: EdgeInsets.all(16),
+                  width: screenWidth * 0.6,
+                  constraints: BoxConstraints(
+                    maxWidth: 600,
+                    minWidth: 400
                   ),
-                  SizedBox(height: 8,),
-                  TextField(
-                    controller: controller.passwordController,
-                    obscureText: hidingPassword,
-                    decoration: InputDecoration(
-                      labelText: 'Пароль',
-                      labelStyle: TextStyle(
-                        fontSize: 16
-                      ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color.fromARGB(75, 75, 75, 75),
+                        blurRadius: 4
+                      )
+                    ]
+                  ),
+                  child: Column(
+                    children: [
 
-                      suffixIcon: IconButton(
-                        onPressed: () {
-                          setState(() {
-                            hidingPassword = !hidingPassword;
-                          });
-                        },
-                        icon: hidingPassword
-                          ? Icon(Icons.visibility_outlined)
-                          : Icon(Icons.visibility_off_outlined)
-                      ),
-                      
-                      contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(8))
-                      ),
-                    )
+                    ],
+                  ),
                   ),
                   SizedBox(height: 20,),
                   Row(
@@ -226,10 +191,10 @@ class _AuthScreenState extends State<AuthScreen> {
                           color: Colors.redAccent[400]
                         ),
                       ),
-                ],
-              ),
-            )
-          ),
+                    )
+                  ]),
+                )
+    ),
           Spacer()
         ]
       ),
