@@ -105,21 +105,34 @@ class _ChatScreenState extends State<ChatScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // Кастомная шапка
-            Padding(
+            Container(
               padding: EdgeInsetsGeometry.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color.fromARGB(75, 75, 75, 75),
+                    offset: Offset(0, 5),
+                    blurRadius: 5
+                  )
+                ]
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   BackArrow(),
                   SizedBox(width: 8,),
-                  _ChatHeader(user: user)
+                  SizedBox(
+                    width: chatWidth,
+                    child: _ChatHeader(
+                      user: otherUser,
+                    ),
+                  ),
                   Spacer(),
                 ],
               ),
             ),
 
-            // Всё остальное пространство занимает чат
             Expanded(
               child: SizedBox(
                 width: chatWidth,
