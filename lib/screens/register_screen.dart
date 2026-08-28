@@ -99,12 +99,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   TextField(
                     controller: controller.usernameController,
                     decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          width: 2
-                        )
+                      hintText: 'Имя пользователя',
+                      hintStyle: TextStyle(
+                        fontSize: 16
                       ),
-                      hintText: 'Имя пользователя'
+                      contentPadding: EdgeInsets.all(2),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(8))
+                      ),
                     ),
                   ),
                   TextField(
