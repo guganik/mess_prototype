@@ -3,6 +3,7 @@ import 'package:mess_prototype/database/app_database.dart';
 import 'package:mess_prototype/models/message_send_status.dart';
 import 'package:mess_prototype/models/public_user.dart';
 import 'package:mess_prototype/providers/friend_provider.dart';
+import 'package:mess_prototype/widgets/back_arrow.dart';
 import 'package:mess_prototype/widgets/public_user_avatar.dart';
 import 'package:mess_prototype/widgets/public_user_profile.dart';
 import 'package:provider/provider.dart';
@@ -95,99 +96,138 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-
     final chatProvider = context.read<ChatProvider>();
     final otherUser = _getCurrentOtherUser(context);
 
+    final chatWidth = (screenWidth * 0.6).clamp(400.0, 600.0);
+
     return Scaffold(
-      body: Container(
-        child: 
-      )
-      Column(
-        children: [
-          Expanded(
-            child: StreamBuilder<List<LocalMessage>>(
-              stream: chatProvider.watchMessages(widget.chatId),
-              builder: (
-                context,
-                snapshot,
-              ) {
-                final messages = snapshot.data?.reversed.toList() ?? const [];
-
-                if (_loadingHistory && messages.isEmpty) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-
-                if (messages.isEmpty) {
-                  return const Center(
-                    child: Text('Нет сообщений'),
-                  );
-                }
-
-                return ListView.builder(
-                  controller: _scrollController,
-                  reverse: true,
-                  padding: const EdgeInsets.all(12),
-                  itemCount: messages.length,
-                  itemBuilder: (
-                    context,
-                    index,
-                  ) {
-                    final message = messages[index];
-
-                    final isMine = message.senderId == widget.currentUserId;
-
-                    final sendedAt = _formatChatTime(message.createdAt);
-
-                    return _MessageBubble(
-                      message: message,
-                      isMine: isMine,
-                      sendedAt: sendedAt,
-                    );
-                  },
-                );
-              },
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Кастомная шапка
+            Padding(
+              padding: EdgeInsetsGeometry.all(16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  BackArrow(),
+                  SizedBox(width: 8,),
+                  _ChatHeader(user: user)
+                  Spacer(),
+                ],
+              ),
             ),
-          ),
 
-          SafeArea(
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _controller,
-                    maxLines: 5,
-                    minLines: 1,
-                    textInputAction: TextInputAction.newline,
-                    decoration: const InputDecoration(
-                      hintText: 'Сообщение...',
+            // Всё остальное пространство занимает чат
+            Expanded(
+              child: SizedBox(
+                width: chatWidth,
+                child: Column(
+                  children: [
+                    // Сообщения
+                    Expanded(
+                      child: StreamBuilder<List<LocalMessage>>(
+                        stream: chatProvider.watchMessages(widget.chatId),
+                        builder: (
+                          context,
+                          snapshot,
+                        ) {
+                          final messages =
+                              snapshot.data?.reversed.toList() ??
+                              const [];
+
+                          if (_loadingHistory && messages.isEmpty) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+
+                          if (messages.isEmpty) {
+                            return const Center(
+                              child: Text('Нет сообщений'),
+                            );
+                          }
+
+                          return ListView.builder(
+                            controller: _scrollController,
+                            reverse: true,
+                            padding: const EdgeInsets.all(12),
+                            itemCount: messages.length,
+                            itemBuilder: (
+                              context,
+                              index,
+                            ) {
+                              final message = messages[index];
+
+                              final isMine =
+                                  message.senderId ==
+                                  widget.currentUserId;
+
+                              final sendedAt =
+                                  _formatChatTime(
+                                    message.createdAt,
+                                  );
+
+                              return _MessageBubble(
+                                message: message,
+                                isMine: isMine,
+                                sendedAt: sendedAt,
+                              );
+                            },
+                          );
+                        },
+                      ),
                     ),
-                  ),
+
+                    // Поле ввода
+                    SafeArea(
+                      top: false,
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              controller: _controller,
+                              maxLines: 5,
+                              minLines: 1,
+                              textInputAction:
+                                  TextInputAction.newline,
+                              decoration: const InputDecoration(
+                                hintText: 'Сообщение...',
+                              ),
+                            ),
+                          ),
+
+                          IconButton(
+                            icon: const Icon(Icons.send),
+                            onPressed: () async {
+                              final text = _controller.text.trim();
+
+                              if (text.isEmpty) {
+                                return;
+                              }
+
+                              _controller.clear();
+
+                              final chatProvider =
+                                  context.read<ChatProvider>();
+
+                              await chatProvider.sendMessage(
+                                chatId: widget.chatId,
+                                senderId: widget.currentUserId,
+                                text: text,
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-                IconButton(
-                  icon: const Icon(
-                    Icons.send,
-                  ),
-                  onPressed: () async {
-                    final text = _controller.text;
-
-                    _controller.clear();
-
-                    final user = context.read<ChatProvider>();
-
-                    await user.sendMessage(
-                      chatId: widget.chatId,
-                      senderId: widget.currentUserId,
-                      text: text,
-                    );
-                  },
-                ),
-              ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
