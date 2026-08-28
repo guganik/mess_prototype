@@ -103,42 +103,14 @@ class _ChatScreenState extends State<ChatScreen> {
 
     return Scaffold(
       body: SafeArea(
-        child: Column(
+        child: Stack(
           children: [
-            Container(
-              padding: EdgeInsetsGeometry.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color.fromARGB(75, 75, 75, 75),
-                    offset: Offset(0, 5),
-                    blurRadius: 5
-                  )
-                ]
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  BackArrow(),
-                  SizedBox(width: 8,),
-                  SizedBox(
-                    width: chatWidth,
-                    child: _ChatHeader(
-                      user: otherUser,
-                    ),
-                  ),
-                  Spacer(),
-                ],
-              ),
-            ),
-
-            Expanded(
+            Align(
+              alignment: Alignment.topCenter,
               child: SizedBox(
                 width: chatWidth,
                 child: Column(
                   children: [
-                    // Сообщения
                     Expanded(
                       child: StreamBuilder<List<LocalMessage>>(
                         stream: chatProvider.watchMessages(widget.chatId),
@@ -165,7 +137,14 @@ class _ChatScreenState extends State<ChatScreen> {
                           return ListView.builder(
                             controller: _scrollController,
                             reverse: true,
-                            padding: const EdgeInsets.all(12),
+
+                            padding: const EdgeInsets.only(
+                              top: 80,
+                              left: 12,
+                              right: 12,
+                              bottom: 12,
+                            ),
+
                             itemCount: messages.length,
                             itemBuilder: (
                               context,
@@ -214,7 +193,8 @@ class _ChatScreenState extends State<ChatScreen> {
                           IconButton(
                             icon: const Icon(Icons.send),
                             onPressed: () async {
-                              final text = _controller.text.trim();
+                              final text =
+                                  _controller.text.trim();
 
                               if (text.isEmpty) {
                                 return;
@@ -222,20 +202,65 @@ class _ChatScreenState extends State<ChatScreen> {
 
                               _controller.clear();
 
-                              final chatProvider =
-                                  context.read<ChatProvider>();
-
-                              await chatProvider.sendMessage(
-                                chatId: widget.chatId,
-                                senderId: widget.currentUserId,
-                                text: text,
-                              );
+                              await context
+                                  .read<ChatProvider>()
+                                  .sendMessage(
+                                    chatId: widget.chatId,
+                                    senderId: widget.currentUserId,
+                                    text: text,
+                                  );
                             },
                           ),
                         ],
                       ),
                     ),
                   ],
+                ),
+              ),
+            ),
+
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color.fromARGB(
+                        75,
+                        75,
+                        75,
+                        75,
+                      ),
+                      offset: const Offset(0, 5),
+                      blurRadius: 5,
+                    ),
+                  ],
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    children: [
+                      BackArrow(),
+
+                      Expanded(
+                        child: Center(
+                          child: SizedBox(
+                            width: chatWidth,
+                            child: _ChatHeader(
+                              user: otherUser,
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(
+                        width: 40,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
