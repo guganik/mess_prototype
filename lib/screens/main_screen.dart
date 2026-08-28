@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:http/http.dart' as http;
 import 'package:mess_prototype/database/app_database.dart';
 
 import 'package:mess_prototype/models/app_settings.dart';
@@ -583,19 +585,50 @@ class LeftPanelState extends State<LeftPanel> {
                         child: Container(
                           padding: EdgeInsets.all(8),
                           width: screenWidth * 0.6,
-                          height: screenHeight * 0.5,
+                          height: screenHeight * 0.9,
                           constraints: BoxConstraints(
                             maxWidth: 600,
                             minWidth: 400,
                             maxHeight: 1000,
-                            minHeight: 700
+                            minHeight: 400
                           ),
                           child: Column(
                             children: [
                               Container(
                                 child: Column(
                                   children: [
-                                    Text('Что за обнова?')
+                                    Text('Что за обнова?'),
+                                    SizedBox(height: 4,),
+                                    Expanded(
+                                      child: FutureBuilder<String>(
+                                        future: _loadChangelog(),
+                                        builder: (context, snapshot) {
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.waiting) {
+                                            return const Center(
+                                              child: CircularProgressIndicator(),
+                                            );
+                                          }
+
+                                          if (snapshot.hasError) {
+                                            return const Center(
+                                              child: Text(
+                                                'Не удалось загрузить список обновлений',
+                                              ),
+                                            );
+                                          }
+
+                                          return SingleChildScrollView(
+                                            padding: const EdgeInsets.only(
+                                              right: 8,
+                                            ),
+                                            child: MarkdownBody(
+                                              data: snapshot.data ?? '',
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
                                   ],
                                 )
                               ),
@@ -1051,4 +1084,20 @@ Future<void> checkForUpdates() async {
   )) {
     throw Exception('Не удалось открыть App Installer');
   }
+}
+
+Future<String> _loadChangelog() async {
+  final response = await http.get(
+    Uri.parse(
+      'https://googa-talk.ru/downloads/changelog.md',
+    ),
+  );
+
+  if (response.statusCode != 200) {
+    throw Exception(
+      'Не удалось загрузить список обновлений',
+    );
+  }
+
+  return response.body;
 }
