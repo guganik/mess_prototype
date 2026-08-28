@@ -583,64 +583,70 @@ class LeftPanelState extends State<LeftPanel> {
                       final screenHeight = MediaQuery.of(context).size.height;
                       return Dialog(
                         child: Container(
-                          padding: EdgeInsets.all(8),
                           width: screenWidth * 0.6,
-                          height: screenHeight * 0.9,
-                          constraints: BoxConstraints(
+                          height: screenHeight * 0.5,
+                          constraints: const BoxConstraints(
                             maxWidth: 600,
                             minWidth: 400,
                             maxHeight: 1000,
-                            minHeight: 400
+                            minHeight: 700,
                           ),
+                          padding: const EdgeInsets.all(16),
                           child: Column(
                             children: [
-                              Container(
-                                child: Column(
-                                  children: [
-                                    Text('Что за обнова?'),
-                                    SizedBox(height: 4,),
-                                    Expanded(
-                                      child: FutureBuilder<String>(
-                                        future: _loadChangelog(),
-                                        builder: (context, snapshot) {
-                                          if (snapshot.connectionState ==
-                                              ConnectionState.waiting) {
-                                            return const Center(
-                                              child: CircularProgressIndicator(),
-                                            );
-                                          }
-
-                                          if (snapshot.hasError) {
-                                            return const Center(
-                                              child: Text(
-                                                'Не удалось загрузить список обновлений',
-                                              ),
-                                            );
-                                          }
-
-                                          return SingleChildScrollView(
-                                            padding: const EdgeInsets.only(
-                                              right: 8,
-                                            ),
-                                            child: MarkdownBody(
-                                              data: snapshot.data ?? '',
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                )
+                              const Text(
+                                'Что за обнова?',
+                                style: TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                              SizedBox(height: 8,),
+
+                              const SizedBox(height: 12),
+
+                              // Список обновлений
+                              Expanded(
+                                child: FutureBuilder<String>(
+                                  future: _loadChangelog(),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return const Center(
+                                        child: CircularProgressIndicator(),
+                                      );
+                                    }
+
+                                    if (snapshot.hasError) {
+                                      return const Center(
+                                        child: Text(
+                                          'Не удалось загрузить список обновлений',
+                                        ),
+                                      );
+                                    }
+
+                                    return SingleChildScrollView(
+                                      padding: const EdgeInsets.only(
+                                        right: 8,
+                                      ),
+                                      child: MarkdownBody(
+                                        data: snapshot.data ?? '',
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+
+                              const SizedBox(height: 12),
+
+                              // Кнопка всегда внизу
                               DefaultButton(
                                 funTap: checkForUpdates,
                                 label: 'Проверить обновления',
                                 icon: Icons.replay_outlined,
-                              )
+                              ),
                             ],
-                          )
-                        )
+                          ),
+                        ),
                       );
                     }
                   );
