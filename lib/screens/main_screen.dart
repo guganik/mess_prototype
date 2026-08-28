@@ -577,11 +577,42 @@ class LeftPanelState extends State<LeftPanel> {
                   showDialog(
                     context: context,
                     builder: (context) {
-                      
+                      final screenWidth = MediaQuery.of(context).size.width;
+                      final screenHeight = MediaQuery.of(context).size.height;
+                      return Dialog(
+                        child: Container(
+                          padding: EdgeInsets.all(8),
+                          width: screenWidth * 0.6,
+                          height: screenHeight * 0.5,
+                          constraints: BoxConstraints(
+                            maxWidth: 600,
+                            minWidth: 400,
+                            maxHeight: 1000,
+                            minHeight: 700
+                          ),
+                          child: Column(
+                            children: [
+                              Container(
+                                child: Column(
+                                  children: [
+                                    Text('Что за обнова?')
+                                  ],
+                                )
+                              ),
+                              SizedBox(height: 8,),
+                              DefaultButton(
+                                funTap: checkForUpdates,
+                                label: 'Проверить обновления',
+                                icon: Icons.replay_outlined,
+                              )
+                            ],
+                          )
+                        )
+                      );
                     }
                   );
                 },
-                label: 'Проверить обновления',
+                label: 'Обновления',
                 icon: Icons.system_update,
               ),
               SizedBox(height: 8,),
