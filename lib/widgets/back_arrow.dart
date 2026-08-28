@@ -7,7 +7,8 @@ class BackArrow extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => Navigator.pop(context),
-      child: SizedBox(
+      child: Container(
+        padding: EdgeInsets.all(16),
         width: 32,
         height: 32,
         child: Icon(Icons.arrow_back)
