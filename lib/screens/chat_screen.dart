@@ -94,8 +94,9 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final chatProvider = context.read<ChatProvider>();
+    final screenWidth = MediaQuery.of(context).size.width;
 
+    final chatProvider = context.read<ChatProvider>();
     final otherUser = _getCurrentOtherUser(context);
 
     return Scaffold(
@@ -155,46 +156,38 @@ class _ChatScreenState extends State<ChatScreen> {
           ),
 
           SafeArea(
-            child: Padding(
-              padding:
-                  const EdgeInsets.all(8),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: _controller,
-                      maxLines: 5,
-                      minLines: 1,
-                      textInputAction:
-                          TextInputAction.newline,
-                      decoration:
-                          const InputDecoration(
-                        hintText:
-                            'Сообщение...',
-                      ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _controller,
+                    maxLines: 5,
+                    minLines: 1,
+                    textInputAction: TextInputAction.newline,
+                    decoration: const InputDecoration(
+                      hintText: 'Сообщение...',
                     ),
                   ),
-                  IconButton(
-                    icon: const Icon(
-                      Icons.send,
-                    ),
-                    onPressed: () async {
-                      final text = _controller.text;
-
-                      _controller.clear();
-
-                      final user = context.read<ChatProvider>();
-
-                      await user.sendMessage(
-                        chatId: widget.chatId,
-                        senderId:
-                            widget.currentUserId,
-                        text: text,
-                      );
-                    },
+                ),
+                IconButton(
+                  icon: const Icon(
+                    Icons.send,
                   ),
-                ],
-              ),
+                  onPressed: () async {
+                    final text = _controller.text;
+
+                    _controller.clear();
+
+                    final user = context.read<ChatProvider>();
+
+                    await user.sendMessage(
+                      chatId: widget.chatId,
+                      senderId: widget.currentUserId,
+                      text: text,
+                    );
+                  },
+                ),
+              ],
             ),
           ),
         ],
