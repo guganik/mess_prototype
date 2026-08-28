@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:mess_prototype/controllers/auth_controller.dart';
@@ -209,38 +211,55 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                   Spacer(),
                 ],
               ),
-              SizedBox(height: 16,),
-              TextField(
-                controller: controller.usernameController,
-                decoration: InputDecoration(
-                  prefixText: '@',
-                  hintText: user.username,
-                  labelText: 'Имя пользователя',
-                  errorText: usernameError.isNotEmpty
-                    ? usernameError
-                    : null,
+              SizedBox(height: 32,),
+              Container(
+                padding: EdgeInsets.all(8),
+                child: Column(
+                  children: [
+                    TextField(
+                      controller: controller.usernameController,
+                      decoration: InputDecoration(
+                        prefixText: '@',
+                        hintText: user.username,
+                        labelText: 'Имя пользователя',
+                        errorText: usernameError.isNotEmpty
+                          ? usernameError
+                          : null,
+                            
+                        contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(8))
+                        ),
+                      ),
+                      onChanged: (_) {
+                        setState(() {
+                          _validateUsername();
+                        });
+                      },
+                    ),
+                    SizedBox(height: 8,),
+                    TextField(
+                      controller: controller.firstNameController,
+                      decoration: InputDecoration(
+                        hintText: user.firstName ?? 'Введите свое имя',
+                        labelText: 'Имя',
+                        errorText: firstNameError.isNotEmpty 
+                          ? firstNameError
+                          : null,
+                            
+                        contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(8))
+                        ),
+                      ),
+                      onChanged: (_) {
+                        setState(() {
+                          _validateFirstName();
+                        });
+                      },
+                    ),
+                  ],
                 ),
-                onChanged: (_) {
-                  setState(() {
-                    _validateUsername();
-                  });
-                },
-              ),
-              SizedBox(height: 8,),
-              TextField(
-                controller: controller.firstNameController,
-                decoration: InputDecoration(
-                  hintText: user.firstName ?? 'Введите свое имя',
-                  labelText: 'Имя',
-                  errorText: firstNameError.isNotEmpty 
-                    ? firstNameError
-                    : null,
-                ),
-                onChanged: (_) {
-                  setState(() {
-                    _validateFirstName();
-                  });
-                },
               ),
               SizedBox(height: 8,),
               TextField(
@@ -251,6 +270,11 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                   errorText: emailError.isNotEmpty
                     ? emailError
                     : null,
+                      
+                  contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(8))
+                  ),
                 ),
                 onChanged: (_) {
                   setState(() {
@@ -274,6 +298,11 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                   errorText: phoneError.isNotEmpty
                     ? phoneError
                     : null,
+                      
+                  contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(8))
+                  ),
                 ),
                 onChanged: (_) {
                   setState(() {
