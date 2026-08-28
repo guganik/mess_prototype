@@ -99,8 +99,6 @@ class _ChatScreenState extends State<ChatScreen> {
     final chatProvider = context.read<ChatProvider>();
     final otherUser = _getCurrentOtherUser(context);
 
-    print(formatAccountLastSeen() ?? 'Еще не подгрузился');
-
     final chatWidth = (screenWidth * 0.6).clamp(400.0, 600.0);
 
     return Scaffold(
@@ -465,6 +463,8 @@ class _ChatHeader extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  Row(
+                    children: [
                   Text(
                     displayName,
                     maxLines: 1,
@@ -475,30 +475,16 @@ class _ChatHeader extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 2),
-                  Row(
-                    children: [
-                      Container(
-                        width: 7,
-                        height: 7,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: _statusColor(
-                            user!.presence,
-                            user!.status
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 5,
-                      ),
                       Text(
-                        _statusText(
+                        user!.presence == 'online'
+                        ? _statusText(
                           user!.presence,
                           user!.status
-                        ),
+                        )
+                        : 'Был(а) в сети ${formatAccountLastSeen(user!.lastSeen!)}',
                         style:
                             const TextStyle(
-                          fontSize: 11,
+                          fontSize: 12,
                         ),
                       ),
                     ],
@@ -560,7 +546,7 @@ String _formatChatTime(
 }
 
 String formatAccountLastSeen(DateTime value) {
-  final dateTime = DateTime.parse(value).toLocal();
+  final dateTime = value.toLocal();
   final now = DateTime.now();
 
   final isToday =
