@@ -81,7 +81,7 @@ class _AuthScreenState extends State<AuthScreen> {
             child: Container(
               width: screenWidth * 0.8,
               constraints: BoxConstraints(
-                maxWidth: 900,
+                maxWidth: 600,
                 minWidth: 400
               ),
               padding: EdgeInsets.all(16),

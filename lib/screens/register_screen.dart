@@ -48,7 +48,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final value = controller.firstName;
 
     if (value.isEmpty) {
-      usernameError = 'Имя не может быть пустым';
+      firstNameError = 'Имя не может быть пустым';
       return;
     }
 
@@ -156,250 +156,272 @@ class _RegisterScreenState extends State<RegisterScreen> {
         children: [
           Spacer(),
           Center(
-            child: Container(
-              width: screenWidth * 0.8,
-              constraints: BoxConstraints(
-                maxWidth: 900,
-                minWidth: 400
-              ),
-              padding: EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(20)),
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color.fromRGBO(0, 0, 0, 0.2),
-                    offset: Offset(0, 4),
-                    blurRadius: 10
-                  )
-                ]
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Регистрация',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold
-                    ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Регистрация',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold
                   ),
-                  SizedBox(height: 16,),
-                  TextField(
-                    controller: controller.usernameController,
-                    decoration: InputDecoration(
-                      labelText: 'Имя пользователя',
-                      labelStyle: TextStyle(
-                        fontSize: 16
-                      ),
-
-                      hintText: 'example',
-                      hintStyle: TextStyle(
-                        fontSize: 16
-                      ),
-                      prefixText: '@',
-                      
-                      errorText: usernameError.isNotEmpty
-                        ? usernameError
-                        : null,
-                      
-                      contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(8))
-                      ),
-                    ),
-                    onChanged: (_) {
-                      setState(() {
-                        _validateUsername();
-                      });
-                    },
+                ),
+                SizedBox(height: 16,),
+                Container(
+                  padding: EdgeInsets.all(16),
+                  width: screenWidth * 0.6,
+                  constraints: BoxConstraints(
+                    maxWidth: 600,
+                    minWidth: 400
                   ),
-                  SizedBox(height: 8,),
-                  TextField(
-                    controller: controller.firstNameController,
-                    decoration: InputDecoration(
-                      labelText: 'Имя',
-                      labelStyle: TextStyle(
-                        fontSize: 16
-                      ),
-                      
-                      errorText: firstNameError.isNotEmpty
-                        ? firstNameError
-                        : null,
-                      
-                      contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(8))
-                      ),
-                    ),
-                    onChanged: (_) {
-                      setState(() {
-                        _validateFirstName();
-                      });
-                    },
-                  ),
-                  SizedBox(height: 8,),
-                  TextField(
-                    controller: controller.emailController,
-                    decoration: InputDecoration(
-                      labelText: 'Почта',
-                      labelStyle: TextStyle(
-                        fontSize: 16
-                      ),
-                      
-                      errorText: emailError.isNotEmpty
-                        ? emailError
-                        : null,
-                      
-                      contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(8))
-                      ),
-                    ),
-                    onChanged: (_) {
-                      setState(() {
-                        _validateEmail();
-                      });
-                    },
-                  ),
-                  SizedBox(height: 8,),
-                  TextField(
-                    inputFormatters: [phoneFormatter],
-                    keyboardType: TextInputType.phone,
-                    controller: controller.phoneController,
-                    decoration: InputDecoration(
-                      labelText: 'Номер телефона',
-                      labelStyle: TextStyle(
-                        fontSize: 16
-                      ),
-
-                      prefixText: '+7 ',
-                      
-                      errorText: phoneError.isNotEmpty
-                        ? phoneError
-                        : null,
-                      
-                      contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(8))
-                      ),
-                    ),
-                    onChanged: (value) {
-                      setState(() {
-                        _validatePhone();
-                      });
-                    },
-                  ),
-                  SizedBox(height: 8,),
-                  TextField(
-                    controller: controller.passwordController,
-                    obscureText: hidingPassword,
-                    decoration: InputDecoration(
-                      labelText: 'Пароль',
-                      suffixIcon: IconButton(
-                        onPressed: () {
-                          setState(() {
-                            hidingPassword = !hidingPassword;
-                          });
-                        },
-                        icon: hidingPassword
-                          ? Icon(Icons.visibility_outlined)
-                          : Icon(Icons.visibility_off_outlined)
-                      ),
-                      
-                      errorText: passwordError.isNotEmpty
-                        ? passwordError
-                        : null,
-                      
-                      contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(8))
-                      ),
-                    ),
-                    onChanged: (_) {
-                      setState(() {
-                        _validatePassword();
-                      });
-                    },
-                  ),
-                  SizedBox(height: 20,),
-                  Row(
-                    children: [
-                      Spacer(),
-                      MouseRegion(
-                        onEnter: (_) {
-                          setState(() {
-                            hovered = true;
-                          });
-                        },
-                        onExit: (event) {
-                          setState(() {
-                            hovered = false;
-                          });
-                        },
-                        child: GestureDetector(
-                          onTap: () {
-                            setState(_validateAll);
-                            if (!hasErrors) {
-                              register;
-                            }
-                          },
-                          child: AnimatedContainer(
-                            padding: EdgeInsets.symmetric(horizontal: 32, vertical: 8),
-                            duration: Duration(milliseconds: 200),
-                            decoration: BoxDecoration(
-                              color: hasErrors
-                                ? Colors.grey[300]
-                                : hovered
-                                  ? Colors.grey[500]
-                                  : Colors.grey[400],
-                              borderRadius: BorderRadius.all(Radius.circular(20))
-                            ),
-                            child: Text('Создать аккаунт'),
-                          ),
-                        ),
-                      ),
-                      Spacer()
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color.fromARGB(75, 75, 75, 75),
+                        blurRadius: 4
+                      )
                     ]
                   ),
-                  SizedBox(height: 16,),
-                  Row(
+                  child: Column(
                     children: [
-                      Spacer(),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => AuthScreen()
-                            )
-                          );
-                        },
+                      TextField(
+                        controller: controller.usernameController,
+                        decoration: InputDecoration(
+                          labelText: 'Имя пользователя',
+                          labelStyle: TextStyle(
+                            fontSize: 16
+                          ),
 
-                        child: Column(
-                          children: [
-                            Text('Есть аккаунт? Войди!'),
-                            SizedBox(height: 2,),
-                            Container(
-                              color: Colors.grey[500],
-                              width: 125,
-                              height: 1,
-                            )
-                          ]
+                          hintText: 'example',
+                          hintStyle: TextStyle(
+                            fontSize: 16
+                          ),
+                          prefixText: '@',
+                          
+                          errorText: usernameError.isNotEmpty
+                            ? usernameError
+                            : null,
+                          
+                          contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(8))
+                          ),
+                        ),
+                        onChanged: (_) {
+                          setState(() {
+                            _validateUsername();
+                          });
+                        },
+                      ),
+                      SizedBox(height: 8,),
+                      TextField(
+                        controller: controller.firstNameController,
+                        decoration: InputDecoration(
+                          labelText: 'Имя',
+                          labelStyle: TextStyle(
+                            fontSize: 16
+                          ),
+                          
+                          errorText: firstNameError.isNotEmpty
+                            ? firstNameError
+                            : null,
+                          
+                          contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(8))
+                          ),
+                        ),
+                        onChanged: (_) {
+                          setState(() {
+                            _validateFirstName();
+                          });
+                        },
+                      ),
+                      SizedBox(height: 8,),
+                      TextField(
+                        controller: controller.passwordController,
+                        obscureText: hidingPassword,
+                        decoration: InputDecoration(
+                          labelText: 'Пароль',
+                          suffixIcon: IconButton(
+                            onPressed: () {
+                              setState(() {
+                                hidingPassword = !hidingPassword;
+                              });
+                            },
+                            icon: hidingPassword
+                              ? Icon(Icons.visibility_outlined)
+                              : Icon(Icons.visibility_off_outlined)
+                          ),
+                          
+                          errorText: passwordError.isNotEmpty
+                            ? passwordError
+                            : null,
+                          
+                          contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(8))
+                          ),
+                        ),
+                        onChanged: (_) {
+                          setState(() {
+                            _validatePassword();
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 8,),
+                Container(
+                  padding: EdgeInsets.all(16),
+                  width: screenWidth * 0.6,
+                  constraints: BoxConstraints(
+                    maxWidth: 600,
+                    minWidth: 400
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color.fromARGB(75, 75, 75, 75),
+                        blurRadius: 4
+                      )
+                    ]
+                  ),
+                  child: Column(
+                    children: [
+                      TextField(
+                        controller: controller.emailController,
+                        decoration: InputDecoration(
+                          labelText: 'Почта',
+                          labelStyle: TextStyle(
+                            fontSize: 16
+                          ),
+                          
+                          errorText: emailError.isNotEmpty
+                            ? emailError
+                            : null,
+                          
+                          contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(8))
+                          ),
+                        ),
+                        onChanged: (_) {
+                          setState(() {
+                            _validateEmail();
+                          });
+                        },
+                      ),
+                      SizedBox(height: 8,),
+                      TextField(
+                        inputFormatters: [phoneFormatter],
+                        keyboardType: TextInputType.phone,
+                        controller: controller.phoneController,
+                        decoration: InputDecoration(
+                          labelText: 'Номер телефона',
+                          labelStyle: TextStyle(
+                            fontSize: 16
+                          ),
+
+                          prefixText: '+7 ',
+                          
+                          errorText: phoneError.isNotEmpty
+                            ? phoneError
+                            : null,
+                          
+                          contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(8))
+                          ),
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            _validatePhone();
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 16,),
+                Row(
+                  children: [
+                    Spacer(),
+                    MouseRegion(
+                      onEnter: (_) {
+                        setState(() {
+                          hovered = true;
+                        });
+                      },
+                      onExit: (event) {
+                        setState(() {
+                          hovered = false;
+                        });
+                      },
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(_validateAll);
+                          if (!hasErrors) {
+                            register;
+                          }
+                        },
+                        child: AnimatedContainer(
+                          padding: EdgeInsets.symmetric(horizontal: 32, vertical: 8),
+                          duration: Duration(milliseconds: 200),
+                          decoration: BoxDecoration(
+                            color: hasErrors
+                              ? Colors.grey[300]
+                              : hovered
+                                ? Colors.grey[500]
+                                : Colors.grey[400],
+                            borderRadius: BorderRadius.all(Radius.circular(20))
+                          ),
+                          child: Text('Создать аккаунт'),
                         ),
                       ),
-                      Spacer(),
-                    ],
-                  )
-                ],
-              ),
-            )
+                    ),
+                    Spacer()
+                  ]
+                ),
+                SizedBox(height: 16,),
+                Row(
+                  children: [
+                    Spacer(),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AuthScreen()
+                          )
+                        );
+                      },
+
+                      child: Column(
+                        children: [
+                          Text('Есть аккаунт? Войди!'),
+                          SizedBox(height: 2,),
+                          Container(
+                            color: Colors.grey[500],
+                            width: 125,
+                            height: 1,
+                          )
+                        ]
+                      ),
+                    ),
+                    Spacer(),
+                  ],
+                )
+              ],
+            ),
           ),
           Spacer()
         ]
-
-        // child: Column(
-        // )
       ),
     );
   }
