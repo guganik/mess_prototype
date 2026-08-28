@@ -25,7 +25,7 @@ class _AuthScreenState extends State<AuthScreen> {
   bool hidingPassword = true;
 
   final MaskTextInputFormatter phoneFormatter = MaskTextInputFormatter(
-    mask: '+# ### ### ##-##',
+    mask: '### ### ##-##',
     filter: {"#": RegExp(r'[0-9]')}
   );
 
@@ -98,7 +98,12 @@ class _AuthScreenState extends State<AuthScreen> {
                   TextField(
                     controller: controller.usernameController,
                     decoration: InputDecoration(
-                      hintText: 'Имя пользователя'
+                      hintText: 'Имя пользователя',
+                      
+                      contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(8))
+                      ),
                     ),
                   ),
                   TextField(

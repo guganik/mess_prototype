@@ -25,7 +25,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool hidingPassword = true;
 
   final MaskTextInputFormatter phoneFormatter = MaskTextInputFormatter(
-    mask: '+# ### ### ##-##',
+    mask: '### ### ##-##',
     filter: {"#": RegExp(r'[0-9]')}
   );
 
@@ -157,9 +157,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         fontSize: 16
                       ),
 
-                      hintText: '+7 ',
-                      hintStyle: TextStyle(
-                        fontSize: 16
+                      prefixText: '+7 ',
+                      
+                      contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(8))
                       ),
                     ),
                     onChanged: (value) => print(phoneFormatter.unmaskText(controller.phone)),
@@ -179,7 +181,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         icon: hidingPassword
                           ? Icon(Icons.visibility_outlined)
                           : Icon(Icons.visibility_off_outlined)
-                      )
+                      ),
+                      
+                      contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(8))
+                      ),
                     ),
                   ),
                   SizedBox(height: 20,),
