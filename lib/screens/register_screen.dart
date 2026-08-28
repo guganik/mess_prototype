@@ -171,7 +171,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     controller: controller.passwordController,
                     obscureText: hidingPassword,
                     decoration: InputDecoration(
-                      hintText: 'Пароль',
+                      labelText: 'Пароль',
                       suffixIcon: IconButton(
                         onPressed: () {
                           setState(() {

@@ -19,7 +19,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
   final IsValidValues isValidValues = IsValidValues();
 
   final MaskTextInputFormatter phoneFormatter = MaskTextInputFormatter(
-    mask: '+# ### ### ##-##',
+    mask: '### ### ##-##',
     filter: {"#": RegExp(r'[0-9]')}
   );
 
@@ -117,7 +117,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
       changes['username'] = username;
     }
 
-    if (firstName.isNotEmpty && firstName != (user.firstName ?? '')) {
+    if (firstName.isNotEmpty && firstName != user.firstName) {
       changes['first_name'] = firstName;
     }
     
@@ -266,8 +266,11 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                 decoration: InputDecoration(
                   hintText: user.phone != null
                     ? phoneFormatter.maskText(user.phone!)
-                    : '+7 987 654 32-10',
+                    : '987 654 32-10',
                   labelText: 'Номер телефона',
+
+                  prefixText: '+7 ',
+
                   errorText: phoneError.isNotEmpty
                     ? phoneError
                     : null,

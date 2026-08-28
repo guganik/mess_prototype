@@ -98,7 +98,10 @@ class _AuthScreenState extends State<AuthScreen> {
                   TextField(
                     controller: controller.usernameController,
                     decoration: InputDecoration(
-                      hintText: 'Имя пользователя',
+                      labelText: 'Имя пользователя',
+                      labelStyle: TextStyle(
+                        fontSize: 16
+                      ),
                       
                       contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                       border: OutlineInputBorder(
@@ -106,11 +109,16 @@ class _AuthScreenState extends State<AuthScreen> {
                       ),
                     ),
                   ),
+                  SizedBox(height: 8,),
                   TextField(
                     controller: controller.passwordController,
                     obscureText: hidingPassword,
                     decoration: InputDecoration(
-                      hintText: 'Пароль',
+                      labelText: 'Пароль',
+                      labelStyle: TextStyle(
+                        fontSize: 16
+                      ),
+                      
                       suffixIcon: IconButton(
                         onPressed: () {
                           setState(() {
@@ -120,7 +128,12 @@ class _AuthScreenState extends State<AuthScreen> {
                         icon: hidingPassword
                           ? Icon(Icons.visibility_outlined)
                           : Icon(Icons.visibility_off_outlined)
-                      )
+                      ),
+                      
+                      contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(8))
+                      ),
                     )
                   ),
                   SizedBox(height: 20,),
