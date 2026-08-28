@@ -25,13 +25,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String emailError = '';
   String phoneError = '';
   String passwordError = '';
+  String passwordCurrectlyError = '';
 
   bool get hasErrors => 
     usernameError.isNotEmpty ||
     firstNameError.isNotEmpty ||
     emailError.isNotEmpty ||
     phoneError.isNotEmpty ||
-    passwordError.isNotEmpty;
+    passwordError.isNotEmpty ||
+    passwordCurrectlyError.isNotEmpty;
 
   void _validateUsername() {
     final value = controller.username;
@@ -185,6 +187,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ]
                   ),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       TextField(
                         controller: controller.usernameController,
@@ -271,10 +274,40 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           });
                         },
                       ),
+                      SizedBox(height: 8,),
+                      TextField(
+                        controller: controller.passwordController,
+                        obscureText: hidingPassword,
+                        decoration: InputDecoration(
+                          labelText: 'Подтверждение пароля',
+                          
+                          errorText: passwordCurrectlyError.isNotEmpty
+                            ? passwordCurrectlyError
+                            : null,
+                          
+                          contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(8))
+                          ),
+                        ),
+                        onChanged: (_) {
+                          setState(() {
+                            _validatePassword();
+                          });
+                        },
+                      ),
+                      SizedBox(height: 8,),
+                      Text(
+                        'Обязательные поля',
+                        style: TextStyle(
+                          color: Colors.grey[600],
+                          fontSize: 14
+                        ),
+                      )
                     ],
                   ),
                 ),
-                SizedBox(height: 8,),
+                SizedBox(height: 16,),
                 Container(
                   padding: EdgeInsets.all(16),
                   width: screenWidth * 0.6,
@@ -293,6 +326,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ]
                   ),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       TextField(
                         controller: controller.emailController,
@@ -345,6 +379,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           });
                         },
                       ),
+                      SizedBox(height: 8,),
+                      Text(
+                        'Необязательные поля',
+                        style: TextStyle(
+                          color: Colors.grey[600],
+                          fontSize: 14
+                        ),
+                      )
                     ],
                   ),
                 ),
