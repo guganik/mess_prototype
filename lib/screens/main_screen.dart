@@ -572,12 +572,19 @@ class LeftPanelState extends State<LeftPanel> {
                 ),
               ),
               Spacer(),
-              ListTile(
-                leading: const Icon(Icons.system_update),
-                title: const Text('Проверить обновления'),
-                onTap: checkForUpdates,
+              DefaultButton(
+                funTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      
+                    }
+                  );
+                },
+                label: 'Проверить обновления',
+                icon: Icons.system_update,
               ),
-              SizedBox(height: 4,),
+              SizedBox(height: 8,),
               DefaultButton(
                 funTap: () async {
                   await context.read<UserProvider>().logout();
@@ -595,7 +602,7 @@ class LeftPanelState extends State<LeftPanel> {
               ),
               SizedBox(height: 4,),
               Text(
-                'Version 1.0.4.1',
+                'Version 1.0.5.0',
                 style: TextStyle(
                   fontSize: 10,
                   color: Colors.grey[500]

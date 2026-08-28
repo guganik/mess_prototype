@@ -465,29 +465,41 @@ class _ChatHeader extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                  Text(
-                    displayName,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
                       Text(
-                        user!.presence == 'online'
-                        ? _statusText(
-                          user!.presence,
-                          user!.status
-                        )
-                        : 'Был(а) в сети ${formatAccountLastSeen(user!.lastSeen!)}',
-                        style:
-                            const TextStyle(
-                          fontSize: 12,
+                        displayName,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      SizedBox(width: 4,),
+                      Container(
+                        width: 8,
+                        height: 8,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: _statusColor(
+                            user!.presence,
+                            user!.status
+                          ),
                         ),
                       ),
                     ],
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    user!.presence == 'online'
+                    ? _statusText(
+                      user!.presence,
+                      user!.status
+                    )
+                    : 'Был(а) в сети ${formatAccountLastSeen(user!.lastSeen!)}',
+                    style:
+                        const TextStyle(
+                      fontSize: 12,
+                    ),
                   ),
                 ],
               ),
