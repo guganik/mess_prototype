@@ -100,7 +100,10 @@ class _ChatScreenState extends State<ChatScreen> {
     final otherUser = _getCurrentOtherUser(context);
 
     return Scaffold(
-      body: Column(
+      body: Container(
+        child: 
+      )
+      Column(
         children: [
           Expanded(
             child: StreamBuilder<List<LocalMessage>>(
