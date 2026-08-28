@@ -41,7 +41,7 @@ class IsValidValues {
   String? firstName(String value) {
     final firstName = value.trim();
 
-    if (firstName.isEmpty) return null;
+    if (firstName.isEmpty) return 'Имя не может быть пустым';
 
     if (firstName.length > firstNameMaxLength) return 'Имя пользователя не должно превышать $firstNameMaxLength символов';
 

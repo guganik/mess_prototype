@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 import 'package:mess_prototype/controllers/auth_controller.dart';
+import 'package:mess_prototype/models/user.dart';
 import 'package:mess_prototype/providers/user_provider.dart';
 import 'package:mess_prototype/repositories/app_settings_repository.dart';
 import 'package:mess_prototype/screens/auth_screen.dart';
 
 import 'package:mess_prototype/screens/main_screen.dart';
+import 'package:mess_prototype/services/is_valid_values.dart';
 import 'package:provider/provider.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -17,6 +19,107 @@ class RegisterScreen extends StatefulWidget {
 }
 class _RegisterScreenState extends State<RegisterScreen> {
   final controller = AuthController();
+  final isValidValues = IsValidValues();
+
+  String usernameError = '';
+  String firstNameError = '';
+  String emailError = '';
+  String phoneError = '';
+
+  bool get hasErrors => 
+    usernameError.isNotEmpty ||
+    firstNameError.isNotEmpty ||
+    emailError.isNotEmpty ||
+    phoneError.isNotEmpty;
+
+  User? get currentUser {return context.read<UserProvider>().user;}
+
+  bool get hasChanges {
+    final user = currentUser;
+
+    if (user == null) return false;
+
+    final username = controller.username.trim();
+    final firstName = controller.firstName.trim();
+    final email = controller.email.trim();
+    final phone = controller.phone.trim();
+
+    return username.isNotEmpty && username != user.username ||
+      firstName.isNotEmpty && firstName != (user.firstName ?? '') ||
+      email.isNotEmpty && email != (user.email ?? '') ||
+      phone.isNotEmpty && phone != (user.phone ?? '');
+  }
+
+  void _validateUsername() {
+    final value = controller.username;
+
+    if (value.isEmpty) {
+      usernameError = '';
+      return;
+    }
+
+    usernameError = isValidValues.username(value) ?? '';
+  }
+
+  void _validateFirstName() {
+    firstNameError = isValidValues.firstName(controller.firstName) ?? '';
+  }
+
+  void _validateEmail() {
+    final value = controller.email;
+
+    if (value.isEmpty) {
+      emailError = '';
+      return;
+    }
+
+    emailError = isValidValues.email(value) ?? '';
+  }
+
+  void _validatePhone() {
+    final value = controller.phone;
+
+    if (value.isEmpty) {
+      phoneError = '';
+      return;
+    }
+
+    phoneError = isValidValues.phone(phoneFormatter) ?? '';
+  }
+
+  void _validateAll() {
+    _validateUsername();
+    _validateFirstName();
+    _validateEmail();
+    _validatePhone();
+  }
+
+  Map<String, String> _buildChanges(User user) {
+    final changes = <String, String>{};
+
+    final username = controller.username.trim();
+    final firstName = controller.firstName.trim();
+    final email = controller.email.trim();
+    final phone = controller.phone.trim();
+
+    if (username.isNotEmpty && username != user.username) {
+      changes['username'] = username;
+    }
+
+    if (firstName.isNotEmpty && firstName != user.firstName) {
+      changes['first_name'] = firstName;
+    }
+    
+    if (email.isNotEmpty && email != (user.email ?? '')) {
+      changes['email'] = email;
+    }
+    
+    if (phone.isNotEmpty && phone != (user.phone ?? '')) {
+      changes['phone'] = phone;
+    }
+
+    return changes;
+  }
 
   bool loading = false;
   
@@ -100,6 +203,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  Text(
+                    'Регистрация',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold
+                    ),
+                  ),
+                  SizedBox(height: 16,),
                   TextField(
                     controller: controller.usernameController,
                     decoration: InputDecoration(
