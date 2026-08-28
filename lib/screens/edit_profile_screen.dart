@@ -195,16 +195,22 @@ class EditProfileScreenState extends State<EditProfileScreen> {
           child: Column(
             children: [
               Padding(
-                padding: EdgeInsetsGeometry.all(16),
-                child: Row(
-                  children: [
-                    BackArrow(),
-                    SizedBox(width: 16,),
-                    Text('Редактирование профиля'),
-                    Spacer(),
-                  ],
+                  padding: EdgeInsetsGeometry.all(16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      BackArrow(),
+                      SizedBox(width: 8,),
+                      Text(
+                        'Редактирование профиля',
+                        style: TextStyle(
+                          fontSize: 14
+                        ),
+                      ),
+                      Spacer(),
+                    ],
+                  ),
                 ),
-              ),
               SizedBox(height: 32,),
               Container(
                 padding: EdgeInsets.all(16),

@@ -24,11 +24,22 @@ class SettingsScreenState extends State<SettingsScreen> {
           padding: EdgeInsets.all(16),
           child: Column(
             children: [
-              Row(
-                children: [
-                  BackArrow(),
-                  Spacer(),
-                ],
+              Padding(
+                padding: EdgeInsetsGeometry.all(16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    BackArrow(),
+                    SizedBox(width: 8,),
+                    Text(
+                      'Настройки',
+                      style: TextStyle(
+                        fontSize: 14
+                      ),
+                    ),
+                    Spacer(),
+                  ],
+                ),
               ),
               SizedBox(height: 32,),
               Column(

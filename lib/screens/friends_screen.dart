@@ -30,18 +30,13 @@ class _FriendsScreenState
         return;
       }
 
-      context
-          .read<FriendProvider>()
-          .refresh();
+      context.read<FriendProvider>().refresh();
     });
   }
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
-    final provider =
-        context.watch<FriendProvider>();
+  Widget build(BuildContext context) {
+    final provider = context.watch<FriendProvider>();
 
     return Scaffold(
       appBar: AppBar(

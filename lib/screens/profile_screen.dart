@@ -162,13 +162,14 @@ class ProfileScreenState extends State<ProfileScreen> {
                 Padding(
                   padding: EdgeInsetsGeometry.all(16),
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       BackArrow(),
                       SizedBox(width: 8,),
                       Text(
                         'Мой профиль',
                         style: TextStyle(
-                          fontSize: 16
+                          fontSize: 14
                         ),
                       ),
                       Spacer(),
