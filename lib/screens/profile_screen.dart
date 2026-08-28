@@ -159,11 +159,21 @@ class ProfileScreenState extends State<ProfileScreen> {
         body: Center(
           child: Column(
               children: [
-                Row(
-                  children: [
-                    BackArrow(),
-                    Spacer(),
-                  ],
+                Padding(
+                  padding: EdgeInsetsGeometry.all(16),
+                  child: Row(
+                    children: [
+                      BackArrow(),
+                      SizedBox(width: 8,),
+                      Text(
+                        'Мой профиль',
+                        style: TextStyle(
+                          fontSize: 16
+                        ),
+                      ),
+                      Spacer(),
+                    ],
+                  ),
                 ),
                 Container(
                   padding: EdgeInsets.all(16),

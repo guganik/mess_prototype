@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:mess_prototype/controllers/auth_controller.dart';
@@ -193,23 +191,19 @@ class EditProfileScreenState extends State<EditProfileScreen> {
 
     return SafeArea(
       child: Scaffold(
-        body: Container(
-          width: screenWidth,
-          padding: EdgeInsets.all(16),
+        body: Center(
           child: Column(
             children: [
-              Row(
-                children: [
-                  BackArrow(),
-                  SizedBox(width: 16,),
-                  Text(
-                    'Редактирование профиля',
-                    style: TextStyle(
-                      fontSize: 20,
-                    ),
-                  ),
-                  Spacer(),
-                ],
+              Padding(
+                padding: EdgeInsetsGeometry.all(16),
+                child: Row(
+                  children: [
+                    BackArrow(),
+                    SizedBox(width: 16,),
+                    Text('Редактирование профиля'),
+                    Spacer(),
+                  ],
+                ),
               ),
               SizedBox(height: 32,),
               Container(
@@ -365,7 +359,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                   ],
                 ),
               ),
-              Spacer(),
+              SizedBox(height: 16*4,),
               MouseRegion(
                 onEnter: (event) {
                   setState(() {  
@@ -403,7 +397,8 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                     )
                   ),
                 ),
-              )
+              ),
+              Spacer()
             ],
           )
         )
