@@ -99,37 +99,72 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   TextField(
                     controller: controller.usernameController,
                     decoration: InputDecoration(
-                      hintText: 'Имя пользователя',
+                      labelText: 'Имя пользователя',
+                      labelStyle: TextStyle(
+                        fontSize: 16
+                      ),
+
+                      hintText: 'example',
                       hintStyle: TextStyle(
                         fontSize: 16
                       ),
-                      contentPadding: EdgeInsets.all(2),
+                      prefixText: '@',
+                      
+                      contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(8))
                       ),
                     ),
                   ),
+                  SizedBox(height: 8,),
                   TextField(
                     controller: controller.firstNameController,
                     decoration: InputDecoration(
-                      hintText: 'Имя (необязательно)'
+                      labelText: 'Имя',
+                      labelStyle: TextStyle(
+                        fontSize: 16
+                      ),
+                      
+                      contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(8))
+                      ),
                     ),
                   ),
+                  SizedBox(height: 8,),
                   TextField(
                     controller: controller.emailController,
                     decoration: InputDecoration(
-                      hintText: 'Почта'
+                      labelText: 'Почта',
+                      labelStyle: TextStyle(
+                        fontSize: 16
+                      ),
+                      
+                      contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(8))
+                      ),
                     ),
                   ),
+                  SizedBox(height: 8,),
                   TextField(
                     inputFormatters: [phoneFormatter],
                     keyboardType: TextInputType.phone,
                     controller: controller.phoneController,
                     decoration: InputDecoration(
-                      hintText: 'Номер телефона'
+                      labelText: 'Номер телефона',
+                      labelStyle: TextStyle(
+                        fontSize: 16
+                      ),
+
+                      hintText: '+7 ',
+                      hintStyle: TextStyle(
+                        fontSize: 16
+                      ),
                     ),
                     onChanged: (value) => print(phoneFormatter.unmaskText(controller.phone)),
                   ),
+                  SizedBox(height: 8,),
                   TextField(
                     controller: controller.passwordController,
                     obscureText: hidingPassword,
