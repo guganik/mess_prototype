@@ -673,7 +673,7 @@ class LeftPanelState extends State<LeftPanel> {
               ),
               SizedBox(height: 4,),
               Text(
-                'Version 1.0.5.0',
+                'Version 1.0.5.1',
                 style: TextStyle(
                   fontSize: 10,
                   color: Colors.grey[500]
