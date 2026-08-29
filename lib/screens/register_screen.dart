@@ -413,7 +413,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         onTap: () {
                           setState(_validateAll);
                           if (!hasErrors) {
-                            register;
+                            register();
                           }
                         },
                         child: AnimatedContainer(
